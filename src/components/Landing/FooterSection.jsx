@@ -5,7 +5,7 @@ import React from 'react';
 const FooterSection = () => {
     return (
         <footer className="bg-[#434A54]">
-            <div className="bg-[url('/img/footer.png')] bg-cover px-10 py-16">
+            <div className="bg-[url('/assets/img/footer.png')] bg-cover px-10 py-16">
                 <div className="container mx-auto px-4 text-white">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div data-aos="fade-up" data-aos-delay="100" className="col-span-2 flex justify-center">

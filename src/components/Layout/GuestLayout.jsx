@@ -11,7 +11,7 @@ export default function GuestLayout({ children, button, header, wide=false }) {
             <div className="fixed inset-0 flex justify-center h-screen z-0">
                 <img
                     className="object-cover w-full h-full"
-                    src="/img/bg_land_overlay.png"
+                    src="/assets/img/bg_land_overlay.png"
                     alt="overlay"
                 />
             </div>
@@ -21,7 +21,7 @@ export default function GuestLayout({ children, button, header, wide=false }) {
                     <div className="md:w-1/3">
                         <a href="/" className="text-2xl font-bold text-gray-800">
                             <img
-                                src="/logo.svg"
+                                src="/assets/logo.svg"
                                 alt="Logo"
                                 className="h-8 inline-block mr-2"
                             />

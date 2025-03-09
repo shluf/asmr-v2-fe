@@ -9,7 +9,7 @@ const BannerSection = ({ user }) => {
             <div className="absolute inset-0 flex justify-center z-0">
                 <img
                     className="object-cover w-full h-full"
-                    src="/img/bg_land_overlay.png"
+                    src="/assets/img/bg_land_overlay.png"
                     data-aos="zoom-in"
                     onLoad={(e) => {
                         e.target.setAttribute('data-aos', 'zoom-in');

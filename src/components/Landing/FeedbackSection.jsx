@@ -80,7 +80,7 @@ const FeedbackSection = () => {
                         </form>
                     </div>
                     <div data-aos="fade-left" data-aos-delay="1000" className="w-full md:block hidden">
-                        <img className="max-w-[480px]" src="/img/saran.png" alt="Hero Image" />
+                        <img className="max-w-[480px]" src="/assets/img/saran.png" alt="Hero Image" />
                     </div>
                 </div>
             </div>

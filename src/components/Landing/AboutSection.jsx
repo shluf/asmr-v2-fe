@@ -23,7 +23,7 @@ const AboutSection = () => {
                     </div>
                     <div className="flex items-center justify-center">
                         <img
-                            src="/img/hero-desktop.png"
+                            src="/assets/img/hero-desktop.png"
                             alt="Hero Image"
                             className="rounded-lg object-contain md:w-auto w-full h-60 md:h-[480px]"
                             data-aos="zoom-in-left"

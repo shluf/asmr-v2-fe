@@ -68,7 +68,7 @@ const VerifyEmailForm = () => {
                 <button
                     type="button"
                     className="underline text-sm text-gray-600 hover:text-gray-900"
-                    onClick={logout}>
+                    onClick={() => logout()}>
                     Keluar
                 </button>
             </div>

@@ -11,7 +11,7 @@ const NavigationBar = ({ scrolled, activeSection, user }) => {
             <div className="container mx-auto px-4 py-2 flex justify-between items-center">
                 <div className="md:w-1/3">
                     <a href="#" className="text-2xl font-bold text-gray-800">
-                        <img src="/logo.svg" alt="Logo" className="h-8 inline-block mr-2"/>
+                        <img src="/assets/logo.svg" alt="Logo" className="h-8 inline-block mr-2"/>
                     </a>
                 </div>
                 <div className="hidden md:flex justify-center md:min-w-[500px] md:w-1/3">

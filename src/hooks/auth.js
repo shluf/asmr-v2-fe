@@ -43,10 +43,15 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
         axios
             .post('/login', props)
-            .then(() => mutate())
+            .then(response => {
+                const token = response.data.token
+                
+                document.cookie = `auth_token=${token}; path=/; secure; samesite=strict; max-age=2592000`; // 30 days
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+                mutate(response.data.user)
+            })
             .catch(error => {
                 if (error.response.status !== 422) throw error
-
                 setErrors(error.response.data.errors)
             })
     }
@@ -92,14 +97,31 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     const logout = async () => {
-        if (!error) {
-            await axios.post('/logout').then(() => mutate())
+        try {
+            if (!error) {
+                const response = await axios.post('/logout')
+                
+                if (response.data.status === 'success') {
+                    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+                    delete axios.defaults.headers.common['Authorization']
+                    await mutate(null)
+                    window.location.pathname = '/login'
+                }
+            }
+        } catch (e) {
+            console.error('Logout error:', e)
         }
-
-        window.location.pathname = '/login'
     }
 
     useEffect(() => {
+        if (middleware === 'auth' && !user) {
+            document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+            delete axios.defaults.headers.common['Authorization']
+            
+            router.push('login')
+            return
+        }
+        
         if (middleware === 'guest' && redirectIfAuthenticated && user)
             router.push(redirectIfAuthenticated)
 

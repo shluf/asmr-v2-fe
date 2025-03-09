@@ -46,7 +46,7 @@ const HowItWorksSection = () => {
                         <React.Fragment key={index}>
                             <div data-aos="flip-left" data-aos-delay={step.delay} className="flex justify-start items-center flex-col border border-gray-300 rounded-lg p-6 max-w-96 shadow-md w-full md:w-64">
                                 <div className={`flex justify-center items-center bg-[#${step.bgColor}] rounded-full h-12 w-12`}>
-                                    <img src={`/img/${step.icon}.svg`} alt={`Icon ${index + 1}`} className="h-6 w-6" />
+                                    <img src={`/assets/img/${step.icon}.svg`} alt={`Icon ${index + 1}`} className="h-6 w-6" />
                                 </div>
                                 <h3 className="mt-10 text-lg font-bold text-center text-gray-800 leading-tight">
                                     {step.title}
@@ -60,14 +60,14 @@ const HowItWorksSection = () => {
                                     <img
                                         data-aos="zoom-in-right"
                                         data-aos-delay={step.delay}
-                                        src="/img/arrow.svg"
+                                        src="/assets/img/arrow.svg"
                                         alt="Arrow Icon"
                                         className="h-4 w-4 md:block hidden"
                                     />
                                     <img
                                         data-aos="zoom-in"
                                         data-aos-delay={step.delay}
-                                        src="/img/arrow_down.svg"
+                                        src="/assets/img/arrow_down.svg"
                                         alt="Arrow Icon"
                                         className="block h-4 w-4 md:hidden"
                                     />

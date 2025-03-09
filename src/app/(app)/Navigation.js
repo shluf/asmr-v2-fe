@@ -1,11 +1,5 @@
-import ApplicationLogo from '@/components/ApplicationLogo'
-import Dropdown from '@/components/Dropdown'
 import Link from 'next/link'
-import NavLink from '@/components/NavLink'
-import ResponsiveNavLink, {
-    ResponsiveNavButton,
-} from '@/components/ResponsiveNavLink'
-import { DropdownButton } from '@/components/DropdownLink'
+// import NavLink from '@/components/NavLink'
 import { useAuth } from '@/hooks/auth'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -24,23 +18,23 @@ const Navigation = ({ user }) => {
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center">
                             <Link href="/dashboard">
-                                <ApplicationLogo className="block h-10 w-auto fill-current text-gray-600" />
+                                <h2>LOGO</h2>
                             </Link>
                         </div>
 
                         {/* Navigation Links */}
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <NavLink
+                            {/* <NavLink
                                 href="/dashboard"
                                 active={usePathname() === '/dashboard'}>
                                 Dashboard
-                            </NavLink>
+                            </NavLink> */}
                         </div>
                     </div>
 
                     {/* Settings Dropdown */}
                     <div className="hidden sm:flex sm:items-center sm:ml-6">
-                        <Dropdown
+                        {/* <Dropdown
                             align="right"
                             width="48"
                             trigger={
@@ -61,11 +55,11 @@ const Navigation = ({ user }) => {
                                     </div>
                                 </button>
                             }>
-                            {/* Authentication */}
                             <DropdownButton onClick={logout}>
                                 Logout
                             </DropdownButton>
-                        </Dropdown>
+                        </Dropdown> */}
+                                {/* Authentication */}
                     </div>
 
                     {/* Hamburger */}
@@ -105,11 +99,11 @@ const Navigation = ({ user }) => {
             {open && (
                 <div className="block sm:hidden">
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink
+                        {/* <ResponsiveNavLink
                             href="/dashboard"
                             active={usePathname() === '/dashboard'}>
                             Dashboard
-                        </ResponsiveNavLink>
+                        </ResponsiveNavLink> */}
                     </div>
 
                     {/* Responsive Settings Options */}
@@ -141,12 +135,12 @@ const Navigation = ({ user }) => {
                             </div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
-                            {/* Authentication */}
+                        {/* Authentication */}
+                        {/* <div className="mt-3 space-y-1">
                             <ResponsiveNavButton onClick={logout}>
                                 Logout
                             </ResponsiveNavButton>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             )}
