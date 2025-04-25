@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from "react";
 import { Check, TriangleAlert } from "lucide-react";
 import {
@@ -8,7 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import PrimaryButton from "./PrimaryButton";
+import PrimaryButton from "@/components/Atoms/PrimaryButton";
+import Link from "next/link";
 
 function Alert({
   isOpen,

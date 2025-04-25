@@ -4,11 +4,11 @@ import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
-import TextInput from '@/components/Atom/TextInput'
-import InputError from '@/components/Atom/InputError'
-import InputLabel from '@/components/Atom/InputLabel'
-import PrimaryButton from '@/components/Atom/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atom/Alert'
+import TextInput from '@/components/Atoms/TextInput'
+import InputError from '@/components/Atoms/InputError'
+import InputLabel from '@/components/Atoms/InputLabel'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
 
 const PasswordResetForm = () => {
     const searchParams = useSearchParams()

@@ -1,11 +1,12 @@
+'use client'
+
 import Link from 'next/link'
 
 export const metadata = {
     title: 'ASMR',
 }
 
-export default function GuestLayout({ children, button, header, wide=false }) {
-
+const GuestLayout = ({ children, button, header, wide=false }) => {
     return (
         <section className={`relative bg-gray-100 ${wide ? 'py-20 md:py-32' : ''} overflow-hidden`}>
             <div className="fixed inset-0 flex justify-center h-screen z-0">
@@ -19,39 +20,39 @@ export default function GuestLayout({ children, button, header, wide=false }) {
             <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white bg-opacity-50 backdrop-blur shadow-md mt-4 mx-4 rounded-lg">
                 <div className="container mx-auto px-4 py-2 flex justify-between items-center">
                     <div className="md:w-1/3">
-                        <a href="/" className="text-2xl font-bold text-gray-800">
+                        <Link href="/" className="text-2xl font-bold text-gray-800">
                             <img
                                 src="/assets/logo.svg"
                                 alt="Logo"
                                 className="h-8 inline-block mr-2"
                             />
-                        </a>
+                        </Link>
                     </div>
                     <div className="hidden justify-center md:min-w-[500px] md:flex md:w-1/3">
-                        <a href="/#" className="text-gray-800 hover:text-green">
+                        <Link href="/#" className="text-gray-800 hover:text-green">
                             Beranda
-                        </a>
+                        </Link>
                         <span className="mx-4 text-green">⋮</span>
-                        <a
+                        <Link
                             href="/#tentang"
                             className="text-gray-800 hover:text-green"
                         >
                             Tentang
-                        </a>
+                        </Link>
                         <span className="mx-4 text-green">⋮</span>
-                        <a
+                        <Link
                             href="/#cara-kerja"
                             className="text-gray-800 hover:text-green"
                         >
                             Cara Kerja
-                        </a>
+                        </Link>
                         <span className="mx-4 text-green">⋮</span>
-                        <a
+                        <Link
                             href="/#kritik-saran"
                             className="text-gray-800 hover:text-green"
                         >
                             Kritik Saran
-                        </a>
+                        </Link>
                     </div>
                     <div className="flex md:w-1/3 justify-end">
                         {button == "all" ? (
@@ -91,7 +92,6 @@ export default function GuestLayout({ children, button, header, wide=false }) {
             </nav>
 
             <div className="flex relative z-10 min-h-screen flex-col items-center pt-6 sm:pt-0 justify-center">
-
                 <div className={`mt-6 w-full overflow-hidden bg-white px-6 py-8 shadow-md ${wide ? "sm:max-w-4xl" : "sm:max-w-md"} sm:rounded-lg`}>
                     <h1 className="text-center mb-10 font-bold text-4xl">{header}</h1>
                     {children}
@@ -100,3 +100,5 @@ export default function GuestLayout({ children, button, header, wide=false }) {
         </section>
     );
 }
+
+export default GuestLayout;

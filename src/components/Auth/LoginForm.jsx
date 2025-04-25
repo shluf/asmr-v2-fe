@@ -1,22 +1,25 @@
 'use client'
 
-import Checkbox from '@/components/Atom/Checkbox'
-import InputError from '@/components/Atom/InputError'
-import InputLabel from '@/components/Atom/InputLabel'
-import { AlertWrapper, showAlert } from '@/components/Atom/Alert'
-import PrimaryButton from '@/components/Atom/PrimaryButton'
-import TextInput from '@/components/Atom/TextInput'
+import Checkbox from '@/components/Atoms/Checkbox'
+import InputError from '@/components/Atoms/InputError'
+import InputLabel from '@/components/Atoms/InputLabel'
+import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import TextInput from '@/components/Atoms/TextInput'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const LoginForm = () => {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirect = searchParams.get('redirect')
 
     const { login } = useAuth({
         middleware: 'guest',
-        redirectIfAuthenticated: '/dashboard',
+        // Tidak langsung set redirectIfAuthenticated di sini,
+        // akan dihandle manual setelah login berhasil berdasarkan role
     })
 
     const [data, setData] = useState({
@@ -38,21 +41,84 @@ const LoginForm = () => {
                 color: "green",
             });
         }
-    }, [status])
+        
+        if (errors.general) {
+            showAlert({
+                title: "Gagal",
+                desc: errors.general[0],
+                message: "Silahkan coba lagi",
+                succes: false,
+                color: "red",
+            });
+        }
+    }, [status, errors])
+
+    const redirectBasedOnRole = (userRole) => {
+        const roleRedirectMap = {
+            admin: '/admin',
+            warga: '/warga',
+            rt: '/rt',
+            rw: '/rw'
+        }
+        
+        // Jika ada redirect parameter dari query, gunakan itu
+        if (redirect) {
+            router.push(redirect)
+            return
+        }
+        
+        // Jika tidak, redirect berdasarkan role
+        if (userRole && roleRedirectMap[userRole]) {
+            router.push(roleRedirectMap[userRole])
+            return
+        }
+        
+        // Fallback ke home page jika tidak ada role yang cocok
+        router.push('/')
+    }
 
     const submitForm = async event => {
         event.preventDefault()
         setProcessing(true)
 
-        login({
-            email: data.login,
-            password: data.password,
-            remember: data.remember,
-            setErrors,
-            setStatus,
-        })
-
-        setProcessing(false)
+        try {
+            const loginResult = await login({
+                email: data.login,
+                password: data.password,
+                remember: data.remember,
+                setErrors,
+                setStatus,
+            })
+            
+            if (loginResult === true) {
+                // Decode token for role
+                const authToken = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('auth_token='))
+                    ?.split('=')[1]
+                
+                let userRole = null
+                
+                if (authToken) {
+                    try {
+                        const tokenParts = authToken.split('.')
+                        if (tokenParts.length > 1) {
+                            const payload = JSON.parse(atob(tokenParts[1]))
+                            userRole = payload.role
+                        }
+                    } catch (error) {
+                        console.error('Error parsing token:', error)
+                    }
+                }
+                
+                // Redirect berdasarkan role user
+                redirectBasedOnRole(userRole)
+            }
+        } catch (error) {
+            console.error('Form submission error:', error)
+        } finally {
+            setProcessing(false)
+        }
     }
 
     return (

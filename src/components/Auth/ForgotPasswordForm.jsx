@@ -3,18 +3,22 @@
 import { useAuth } from '@/hooks/auth'
 import { useRef, useState } from 'react'
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
-import TextInput from '@/components/Atom/TextInput'
-import InputError from '@/components/Atom/InputError'
-import InputLabel from '@/components/Atom/InputLabel'
-import PrimaryButton from '@/components/Atom/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atom/Alert'
+import TextInput from '@/components/Atoms/TextInput'
+import InputError from '@/components/Atoms/InputError'
+import InputLabel from '@/components/Atoms/InputLabel'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
 import ReCAPTCHA from 'react-google-recaptcha'
-import axios from 'axios'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const ForgotPasswordForm = () => {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirect = searchParams.get('redirect')
+    
     const { forgotPassword } = useAuth({
         middleware: 'guest',
-        redirectIfAuthenticated: '/dashboard',
+        redirectIfAuthenticated: redirect || '/dashboard',
     })
 
     const [email, setEmail] = useState('')
@@ -42,13 +46,17 @@ const ForgotPasswordForm = () => {
             return
         }
 
-        const formData = {
-            email,
-            recaptcha: recaptchaValue,
-        }
-
         try {
-            await forgotPassword(formData)
+            // Panggil API forgotPassword dengan parameter yang benar
+            await forgotPassword({
+                setErrors,
+                setStatus,
+                email,
+            })
+            
+            // Reset captcha
+            recaptchaRef.current.reset()
+            
             showAlert({
                 title: "Berhasil",
                 desc: "Link untuk mereset password telah terkirim",
@@ -57,6 +65,7 @@ const ForgotPasswordForm = () => {
                 color: "green",
             })
         } catch (error) {
+            console.error("Password reset error:", error)
             showAlert({
                 title: "Gagal",
                 desc: "Gagal mengirim link reset password",

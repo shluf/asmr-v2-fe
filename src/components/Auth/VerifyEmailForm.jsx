@@ -2,8 +2,8 @@
 
 import { useAuth } from '@/hooks/auth'
 import { useState } from 'react'
-import PrimaryButton from '@/components/Atom/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atom/Alert'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
 
 const VerifyEmailForm = () => {
     const { logout, resendEmailVerification } = useAuth({
