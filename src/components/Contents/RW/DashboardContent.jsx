@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserFilled } from "@/utility/svg-icons";
-import { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -11,213 +10,49 @@ import {
     DialogFooter,
     DialogTitle,
 } from "@/components/ui/dialog";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { id as idLocale } from "date-fns/locale";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import InputLabel from "@/components/Atoms/InputLabel";
 import TextInput from "@/components/Atoms/TextInput";
 import { AlertWrapper, showAlert } from "@/components/partials/Alert";
-import { Link } from "next/link";
+import Link from "next/link";
 import ProgramKerja from "@/components/partials/ProgramKerja";
 import { ChevronRight } from "lucide-react";
+import { useProgramKerjaRW, usePengajuanRW } from "@/hooks/rw";
 
 const DashboardContent = ({ idRW }) => {
-    const [pengajuanTerakhir, setPengajuanTerakhir] = useState([]);
-    const [dataProker, setDataProker] = useState([]);
-    const [prokerIsLoading, setProkerIsLoading] = useState(true);
-    const [showEditDialog, setShowEditDialog] = useState(false);
-    const [showAddDialog, setShowAddDialog] = useState(false);
-    const [editProker, setEditProker] = useState({
-        tanggal: "",
-        waktu: "",
-        jenis_kegiatan: "",
-        tempat: "",
-        penanggung_jawab: "",
-    });
+    const {
+        pengajuanTerakhir,
+        isLoadingPengajuan,
+    } = usePengajuanRW(idRW);
 
-    const [tambahProker, setTambahProker] = useState({
-        tanggal: "",
-        waktu: "",
-        jenis_kegiatan: "",
-        tempat: "",
-        penanggung_jawab: "",
-    });
-
-    const [isProcessing, setIsProcessing] = useState({
-        edit: false,
-        add: false,
-        delete: false,
-    });
-
-    useEffect(() => {
-        const fetchPengajuanTerbaruData = async (setPengajuanTerakhir, idRW) => {
-            try {
-                const response = await axios.get(
-                    `/surat/pengajuan/?id_rw=${idRW}&length=2`
-                );
-                setPengajuanTerakhir(response.data);
-                return true
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        const fetchProkerData = async (setDataProker, setProkerIsLoading) => {
-            try {
-                const response = await axios.get(route("program-kerja.show"));
-                // console.log(response.data.proker);
-                setDataProker(response.data.proker);
-                setProkerIsLoading(false)
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        fetchPengajuanTerbaruData(setPengajuanTerakhir, idRW);
-        fetchProkerData(setDataProker, setProkerIsLoading);
-    }, []);
+    const {
+        dataProker,
+        prokerIsLoading,
+        showEditDialog,
+        setShowEditDialog,
+        showAddDialog,
+        setShowAddDialog,
+        editProker,
+        setEditProker,
+        tambahProker,
+        setTambahProker,
+        handleEdit: handleEditProker,
+        handleDelete: handleDeleteProker,
+        handleAdd: handleAddProker,
+        handleSubmitEdit: handleSubmitEditProker,
+        handleSubmitTambah: handleSubmitTambahProker,
+        isProcessing: isProcessingProker,
+    } = useProgramKerjaRW();
 
     const handleEditChange = (e) => {
-        setEditProker({ ...editProker, [e.target.name]: e.target.value });
+        setEditProker((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleTambahChange = (e) => {
-        setTambahProker({ ...tambahProker, [e.target.name]: e.target.value });
-    };
-
-    const handleEdit = (proker) => {
-        setEditProker(proker);
-        setShowEditDialog(true);
-    };
-
-    const handleDelete = async (id) => {
-        try {
-            setIsProcessing((prev) => ({ ...prev, delete: true }));
-            await axios.delete(`/program-kerja/delete/${id}`);
-            const fetchProkerData = async (setDataProker, setProkerIsLoading) => {
-                try {
-                    const response = await axios.get(route("program-kerja.show"));
-                    // console.log(response.data.proker);
-                    setDataProker(response.data.proker);
-                    setProkerIsLoading(false)
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
-
-            fetchProkerData(setDataProker, setProkerIsLoading);
-
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil dihapus.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
-        } catch (error) {
-            showAlert({
-                title: "Terjadi Kesalahan",
-                desc: error.message,
-                message: "Gagal menghapus program kerja.",
-                succes: false,
-                color: "red",
-            });
-        } finally {
-            setIsProcessing((prev) => ({ ...prev, delete: false }));
-        }
-    };
-
-    const handleAdd = () => {
-        setShowAddDialog(true);
-    };
-
-    const handleSubmitEdit = async () => {
-        try {
-            setIsProcessing((prev) => ({ ...prev, edit: true }));
-            await axios.put(
-                `/program-kerja/update/${editProker.id_program_kerja}`,
-                editProker
-            );
-
-            const fetchProkerData = async (setDataProker, setProkerIsLoading) => {
-                try {
-                    const response = await axios.get(route("program-kerja.show"));
-                    // console.log(response.data.proker);
-                    setDataProker(response.data.proker);
-                    setProkerIsLoading(false)
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
-
-            fetchProkerData(setDataProker, setProkerIsLoading);
-
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil diperbarui.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
-            setShowEditDialog(false);
-        } catch (error) {
-            showAlert({
-                title: "Terjadi Kesalahan",
-                desc: error.message,
-                message: "Gagal memperbarui program kerja.",
-                succes: false,
-                color: "red",
-            });
-            console.error("Error updating data:", error);
-        } finally {
-            setIsProcessing((prev) => ({ ...prev, edit: false }));
-        }
-    };
-
-    const handleSubmitTambah = async () => {
-        try {
-            setIsProcessing((prev) => ({ ...prev, add: true }));
-            await axios.post(`/program-kerja/store`, tambahProker);
-
-            const fetchProkerData = async (setDataProker, setProkerIsLoading) => {
-                try {
-                    const response = await axios.get(route("program-kerja.show"));
-                    // console.log(response.data.proker);
-                    setDataProker(response.data.proker);
-                    setProkerIsLoading(false)
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            };
-
-            fetchProkerData(setDataProker, setProkerIsLoading);
-
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil ditambahkan.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
-            setTambahProker({
-                tanggal: "",
-                waktu: "",
-                jenis_kegiatan: "",
-                tempat: "",
-                penanggung_jawab: "",
-            });
-            setShowAddDialog(false);
-        } catch (error) {
-            showAlert({
-                title: "Terjadi Kesalahan",
-                desc: error.message,
-                message: "Gagal menambahkan program kerja.",
-                succes: false,
-                color: "red",
-            });
-            console.error("Error adding data:", error);
-        } finally {
-            setIsProcessing((prev) => ({ ...prev, add: false }));
-        }
+        setTambahProker((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     return (
@@ -228,10 +63,10 @@ const DashboardContent = ({ idRW }) => {
                     dataProker={dataProker}
                     loading={prokerIsLoading}
                     editable={true}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onAdd={handleAdd}
-                    isProcessing={isProcessing}
+                    onEdit={handleEditProker}
+                    onDelete={handleDeleteProker}
+                    onAdd={handleAddProker}
+                    isProcessing={isProcessingProker}
                 />
 
                 <Card>
@@ -241,7 +76,7 @@ const DashboardContent = ({ idRW }) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {!pengajuanTerakhir.data ? (
+                        {isLoadingPengajuan ? (
                             <>
                                 {[...Array(2)].map((_, index) => (
                                     <Card key={index}>
@@ -266,7 +101,7 @@ const DashboardContent = ({ idRW }) => {
                                     </Card>
                                 ))}
                             </>
-                        ) : !pengajuanTerakhir.data.length > 0 ? (
+                        ) : !pengajuanTerakhir || !pengajuanTerakhir.data || pengajuanTerakhir.data.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">
                                 Tidak ada pengajuan surat yang tersedia
                             </div>
@@ -347,7 +182,8 @@ const DashboardContent = ({ idRW }) => {
                                                             submission.status_rw ===
                                                             "approved"
                                                                 ? "bg-green-600 hover:bg-green-700"
-                                                                : "bg-red-600 hover:bg-red-700"
+                                                                : submission.status_rw === "rejected" ? "bg-red-600 hover:bg-red-700" 
+                                                                : "bg-gray-400"
                                                         }`}
                                                     >
                                                         {submission.status_rw}
@@ -374,7 +210,6 @@ const DashboardContent = ({ idRW }) => {
                     </CardContent>
                 </Card>
 
-                {/* Dialog for Editing */}
                 <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
                     <DialogContent>
                         <DialogHeader>
@@ -460,20 +295,21 @@ const DashboardContent = ({ idRW }) => {
                             <Button
                                 variant="outline"
                                 onClick={() => setShowEditDialog(false)}
+                                disabled={isProcessingProker.edit}
                             >
                                 Batal
                             </Button>
                             <Button
                                 variant="default"
-                                onClick={handleSubmitEdit}
+                                onClick={handleSubmitEditProker}
+                                disabled={isProcessingProker.edit}
                             >
-                                Simpan
+                                {isProcessingProker.edit ? "Menyimpan..." : "Simpan"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
 
-                {/* Dialog for Adding */}
                 <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                     <DialogContent>
                         <DialogHeader>
@@ -559,14 +395,16 @@ const DashboardContent = ({ idRW }) => {
                             <Button
                                 variant="outline"
                                 onClick={() => setShowAddDialog(false)}
+                                disabled={isProcessingProker.add}
                             >
                                 Batal
                             </Button>
                             <Button
                                 variant="default"
-                                onClick={handleSubmitTambah}
+                                onClick={handleSubmitTambahProker}
+                                disabled={isProcessingProker.add}
                             >
-                                Simpan
+                               {isProcessingProker.add ? "Menyimpan..." : "Simpan"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

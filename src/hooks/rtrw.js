@@ -11,12 +11,8 @@ export const useRtRw = () => {
         const fetchRw = async () => {
             setIsRwLoading(true)
             try {
-                const response = await axios.get('/api/RW/list')
-                setRwList(response.data.success ? 
-                    (response.data.data || []).map(rw => ({
-                        id: rw.id,
-                        nama_rw: rw.nama_rw
-                    })) : [])
+                const response = await axios.get('/api/wilayah/rw')
+                setRwList(response.data || [])
             } catch (error) {
                 setRwError(error)
                 setRwList([])
@@ -31,12 +27,8 @@ export const useRtRw = () => {
     const getRtList = async (rwId) => {
         setIsRtLoading(true)
         try {
-            const response = await axios.get(`/api/RT/list/${rwId}`)
-            const result = response.data.success ? 
-                (response.data.data || []).map(rt => ({
-                    id: rt.id,
-                    nama_rt: rt.nama_rt
-                })) : []
+            const response = await axios.get(`/api/wilayah/rt/${rwId}`)
+            const result = response.data || []
             setIsRtLoading(false)
             return result
         } catch (error) {

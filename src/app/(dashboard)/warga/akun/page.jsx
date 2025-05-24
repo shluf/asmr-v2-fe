@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/auth';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Akun from '@/components/Contents/Warga/Akun';
-import DashboardLayout from '@/components/Layout/DashboardLayout';
 
 export default function AkunPage() {
     const { user } = useAuth({ middleware: 'auth' });
@@ -12,7 +11,6 @@ export default function AkunPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Verifikasi role user untuk akses dashboard Warga
         if (user) {
             setIsLoading(false);
             if (user.role !== 'Warga') {
@@ -21,21 +19,18 @@ export default function AkunPage() {
         }
     }, [user, router]);
 
-    // Jika masih loading atau user bukan Warga
     if (isLoading || !user) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
     }
 
     if (user.role !== 'Warga') {
-        return null; // Akan di-redirect oleh useEffect
+        return null;
     }
 
     return (
-        <DashboardLayout color={'green'}>
-            <div className="p-4">
-                <h1 className="text-2xl font-bold mb-6">Pengaturan Akun</h1>
-                <Akun nikWarga={user?.nik} />
-            </div>
-        </DashboardLayout>
+        <div className="p-4">
+            <h1 className="text-2xl font-bold mb-6">Pengaturan Akun</h1>
+            <Akun nikWarga={user?.nik} />
+        </div>
     );
 } 

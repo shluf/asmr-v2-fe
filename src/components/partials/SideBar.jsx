@@ -34,15 +34,15 @@ const SideBar = ({ color, userRole }) => {
   // Fungsi untuk memeriksa apakah route aktif
   const isActive = (route) => {
     if (route === "dashboard") {
-      return pathname === `/${userRole.toLowerCase()}`;
+      return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`;
     }
-    return pathname === `/${userRole.toLowerCase()}/${route}` || pathname.startsWith(`/${userRole.toLowerCase()}/${route}/`);
+    return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}` || pathname.startsWith(`/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}/`);
   };
 
   // Fungsi untuk mendapatkan URL
   const getUrl = (route) => {
     if (route === "dashboard") {
-      return `/${userRole.toLowerCase()}`;
+      return `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`;
     }
     
     if (userRole === "Warga") {
@@ -50,6 +50,27 @@ const SideBar = ({ color, userRole }) => {
         return `/warga/${route}`;
       }
       return "/warga";
+    }
+
+    if (userRole === "PejabatRT") {
+      if (route === "pengajuan-masalah" || route === "rekap-pengajuan" || route === "bantuan") {
+        return `/rt/${route}`;
+      }
+      return "/rt";
+    }
+
+    if (userRole === "PejabatRW") {
+      if (route === "pengajuan-masalah" || route === "rekap-pengajuan" || route === "bantuan") {
+        return `/rw/${route}`;
+      }
+      return "/rw";
+    }
+
+    if (userRole === "Admin") {
+      if (route === "biodata-user" || route === "rekap-pengajuan" || route === "approval-role" || route === "tambah-rtrw") {
+        return `/admin/${route}`;
+      }
+      return "/admin";
     }
     
     return `/${route}`;

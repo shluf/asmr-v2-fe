@@ -1,4 +1,4 @@
-import TextInput from "@/Components/TextInput";
+import TextInput from "@/Components/Atoms/TextInput";
 import { Textarea } from "@/Components/ui/textarea";
 
 export const DataField = ({

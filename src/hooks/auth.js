@@ -27,7 +27,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             revalidateOnFocus: false, 
             shouldRetryOnError: false,
             onErrorRetry: (error) => {
-                // Jangan coba lagi jika error 401 (Unauthorized) atau 419 (CSRF token expired)
                 if (error.status === 401 || error.status === 419) return
             }
         }
@@ -44,7 +43,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             const response = await axios.post('/api/register', props)
             console.log('Register response:', response.data)
             
-            // Untuk Next.js App Router, gunakan router.push daripada refresh
             if (response.status === 201 || response.status === 200) {
                 router.push('/login')
             }
@@ -67,21 +65,18 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         try {
             setIsLoading(true)
             
-            // Get fresh CSRF cookie
             await csrf()
             
             setErrors([])
             setStatus(null)
 
-            // Log request untuk debugging
-            console.log('Sending login request to /api/login with data:', { 
-                email: props.email, 
-                password: '[REDACTED]', 
-                remember: props.remember 
-            })
+            // console.log('Sending login request to /api/login with data:', { 
+            //     email: props.email, 
+            //     password: '[REDACTED]', 
+            //     remember: props.remember 
+            // })
 
-            // Kirim permintaan login dengan format yang sama seperti Postman
-            const response = await axios.post('/login', {
+            const response = await axios.post('/api/login', {
                 email: props.email,
                 password: props.password,
                 remember: props.remember ? 1 : 0  // Kirim sebagai 1/0 bukan boolean
@@ -92,29 +87,23 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 }
             })
 
-            // Log respons untuk debugging
-            console.log('Login response:', response.data)
+            // console.log('Login response:', response.data)
 
-            // Penanganan token
             if (response.data && response.data.token) {
                 const token = response.data.token
                 const maxAge = props.remember ? 30 * 24 * 60 * 60 : 24 * 60 * 60 // 30 hari : 1 hari
                 
-                // Set token in cookie dengan domain dan SameSite yang benar
                 document.cookie = `auth_token=${token}; path=/; max-age=${maxAge}; SameSite=Lax`
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
                 
-                // Perbarui data user
                 if (response.data.user) {
                     await mutate(response.data.user)
                 } else {
-                    // Jika user tidak ada di respons, ambil data user dari API
                     await mutate()
                 }
                 
                 setStatus('success')
                 setIsLoading(false)
-                console.log('Login successful, redirecting...')
                 return true
             } else {
                 console.error('Invalid login response format:', response.data)
@@ -178,7 +167,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 const response = await axios.post('/logout')
                 
                 if (response.data.status === 'success') {
-                    // Hapus cookie dengan benar
                     document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
                     delete axios.defaults.headers.common['Authorization']
                     await mutate(null)
@@ -188,10 +176,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         } catch (e) {
             console.error('Logout error:', e)
             // Hapus cookie sebagai fallback
-            document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
-            delete axios.defaults.headers.common['Authorization']
-            await mutate(null)
-            router.push('/login')
+            // document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
+            // delete axios.defaults.headers.common['Authorization']
+            // await mutate(null)
+            // router.push('/login')
         }
     }
 
@@ -225,7 +213,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             router.push(redirectIfAuthenticated)
         }
         
-        // Pastikan menggunakan Next.js App Router path
         if (window.location.pathname === '/verify-email' && user?.email_verified_at && redirectIfAuthenticated) {
             router.push(redirectIfAuthenticated)
         }

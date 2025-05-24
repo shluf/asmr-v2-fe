@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { Check, X, ShieldCheck } from 'lucide-react';
@@ -14,54 +14,20 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import axios from 'axios';
 import PrimaryButton from '@/components/Atoms/PrimaryButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import TextInput from '@/components/Atoms/TextInput';
-import { showAlert } from '@/components/partials/Alert';
+import { usePengajuanMasalahRW } from '@/hooks/rw';
 
 const PengajuanMasalah = ({ idRW }) => {
-  const [openItems, setOpenItems] = useState({});
-  const [pendingSurat, setPendingSurat] = useState([]);
-  const [loading, setLoading] = useState({});
-
-  useEffect(() => {
-    fetchPengajuanMasalahData(setPendingSurat, idRW);
-  }, []);
-
-  const handleAction = async (id_pengajuan_surat, status) => {
-    setLoading({ ...loading, [id_pengajuan_surat]: true });
-    
-    try {
-      await axios.put(`/surat/approval/${id_pengajuan_surat}`, {
-        status_approval: status,
-        approver_type: 'rw',
-        id_approver: idRW
-      });
-
-      showAlert({
-        title: "Berhasil!",
-        desc: `Surat ini telah di${status} oleh anda`,
-        message: "Status approval surat berhasil diperbarui",
-        succes: true,
-        color: "green",
-        });
-
-      fetchPengajuanMasalahData(setPendingSurat, idRW);
-      
-    } catch (error) {
-      showAlert({
-        title: "Terjadi Kesalahan",
-        desc: error,
-        message: "Status approval surat gagal diperbarui",
-        succes: false,
-        color: "red",
-        });
-      console.error('Error updating status:', error);
-    }
-    
-    setLoading({ ...loading, [id_pengajuan_surat]: false });
-  };
+  const {
+    pengajuanMasalahData,
+    isLoadingData,
+    openItems,
+    setOpenItems,
+    handleAction,
+    isActionLoading,
+  } = usePengajuanMasalahRW(idRW);
 
   return (
     <div className="w-full space-y-4">
@@ -70,7 +36,7 @@ const PengajuanMasalah = ({ idRW }) => {
           <CardTitle>Surat Menunggu Persetujuan RW</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {!pendingSurat.data ? (
+          {isLoadingData ? (
             <>
               {[...Array(3)].map((_, index) => (
                 <Card key={index}>
@@ -90,7 +56,7 @@ const PengajuanMasalah = ({ idRW }) => {
                 </Card>
               ))}
             </>
-            ) : !pendingSurat.data.length > 0 ? (
+            ) : !pengajuanMasalahData.data || pengajuanMasalahData.data.length === 0 ? (
             <Card>
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -105,12 +71,12 @@ const PengajuanMasalah = ({ idRW }) => {
               </CardContent>
             </Card>
           ) : (
-            pendingSurat.data.map((surat, index) => (
+            pengajuanMasalahData.data.map((surat) => (
               <Collapsible
               key={surat.id_pengajuan_surat}
-              open={openItems[surat.id_pengajuan_surat]}
+              open={openItems[surat.id_pengajuan_surat] || false}
               onOpenChange={(isOpen) => 
-                setOpenItems({ ...openItems, [surat.id_pengajuan_surat]: isOpen })
+                setOpenItems((prev) => ({ ...prev, [surat.id_pengajuan_surat]: isOpen }))
               }
             >
               <Card className="shadow-md">
@@ -143,7 +109,7 @@ const PengajuanMasalah = ({ idRW }) => {
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.nik_warga}</p>
+                        <p className="text-sm flex h-1/2 text-blue.600">{surat.nik_warga}</p>
                       </div>
                     </div>
 
@@ -223,7 +189,7 @@ const PengajuanMasalah = ({ idRW }) => {
                                   <TextInput
                                       color="blue"
                                       type="radio"
-                                      name="jenis_surat"
+                                      name={`jenis_surat_rw_masalah_${surat.id_pengajuan_surat}`}
                                       value={jenis}
                                       className="form-radio text-blue"
                                       checked={surat.jenis_surat === jenis} 
@@ -242,24 +208,23 @@ const PengajuanMasalah = ({ idRW }) => {
                         <PrimaryButton
                           color="red"
                           rounded='full'
-                          disabled={loading[surat.id_pengajuan_surat]}
+                          disabled={isActionLoading[surat.id_pengajuan_surat]}
                           onClick={() => handleAction(surat.id_pengajuan_surat, 'rejected')}
                         >
                           <X className="w-4 h-4 mr-2" />
-                          Tolak
+                          {isActionLoading[surat.id_pengajuan_surat] ? 'Menolak...' : 'Tolak'}
                         </PrimaryButton>
                         <PrimaryButton
                           color="green"
                           rounded='full'
-                          disabled={loading[surat.id_pengajuan_surat]}
+                          disabled={isActionLoading[surat.id_pengajuan_surat]}
                           onClick={() => handleAction(surat.id_pengajuan_surat, 'approved')}
                         >
                           <Check className="w-4 h-4 mr-2" />
-                          Setujui
+                           {isActionLoading[surat.id_pengajuan_surat] ? 'Menyetujui...' : 'Setujui'}
                         </PrimaryButton>
                       </div>
-                    </CollapsibleContent>
-
+                  </CollapsibleContent>
               </Collapsible>
             ))
           )}

@@ -7,7 +7,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useMediaQuery } from 'react-responsive';
-import { Link } from '@inertiajs/react';
+import Link from 'next/link';
 import { ArrowRight } from '@/utility/svg-icons';
 
 const DataCard = ({ wargaStats, RtRwStats }) => {

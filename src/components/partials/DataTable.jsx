@@ -25,7 +25,7 @@ import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { Input } from "../ui/input";
-import PrimaryButton from "../PrimaryButton";
+import PrimaryButton from "../Atoms/PrimaryButton";
 
 const DataTable = ({
     data,

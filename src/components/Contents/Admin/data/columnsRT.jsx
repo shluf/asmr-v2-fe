@@ -1,6 +1,6 @@
 import { AlertWrapper, showAlert } from "@/Components/partials/Alert";
 import { DataField } from "@/Components/partials/dataField";
-import PrimaryButton from "@/Components/PrimaryButton";
+import PrimaryButton from "@/Components/Atoms/PrimaryButton";
 import { Button } from "@/Components/ui/button";
 import {
     Dialog,

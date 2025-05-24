@@ -19,7 +19,6 @@ export const fetchAkunData = async (setProfileWarga, setData, nikWarga) => {
         agama: profileData.user?.agama || '',
       });
       
-      // Return gender for setting jenis kelamin state
       return profileData.jenis_kelamin || '';
     }
   } catch (error) {

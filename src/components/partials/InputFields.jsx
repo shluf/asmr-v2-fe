@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import TextInput from '../TextInput';
-import InputLabel from '../InputLabel';
-import InputError from '../InputError';
+import TextInput from '../Atoms/TextInput';
+import InputLabel from '../Atoms/InputLabel';
+import InputError from '../Atoms/InputError';
 
 const InputField = ({
     label,

@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/auth';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BiodataUser from "@/components/Contents/Admin/BiodataUser";
-import DashboardLayout from "@/components/Layout/DashboardLayout";
 
 export default function BiodataUserPage() {
     const { user } = useAuth({ middleware: 'auth' });
@@ -12,7 +11,6 @@ export default function BiodataUserPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Verifikasi role user untuk akses dashboard Admin
         if (user) {
             setIsLoading(false);
             if (user.role !== 'Admin') {
@@ -21,21 +19,18 @@ export default function BiodataUserPage() {
         }
     }, [user, router]);
 
-    // Jika masih loading atau user bukan admin
     if (isLoading || !user) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
     }
 
     if (user.role !== 'Admin') {
-        return null; // Akan di-redirect oleh useEffect
+        return null;
     }
 
     return (
-        <DashboardLayout color={"blue"}>
-            <div className="p-4">
-                <h1 className="text-2xl font-bold mb-6">Biodata User</h1>
-                <BiodataUser />
-            </div>
-        </DashboardLayout>
+        <div className="p-4">
+            <h1 className="text-2xl font-bold mb-6">Biodata User</h1>
+            <BiodataUser />
+        </div>
     );
 } 

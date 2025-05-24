@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { Check, X, ShieldCheck, Clock } from 'lucide-react';
@@ -17,14 +17,15 @@ import {
 import PrimaryButton from '@/components/Atoms/PrimaryButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import TextInput from '@/components/Atoms/TextInput';
+import { useRekapPengajuanRW } from '@/hooks/rw';
 
 const RekapPengajuan = ({ idRW, select }) => {
-  const [openItems, setOpenItems] = useState( select ? ({[select]: isOpen}) : {} );
-  const [pendingSurat, setPendingSurat] = useState([]);
-
-  useEffect(() => {
-    fetchRekapRWData(setPendingSurat, idRW);
-  }, []);
+  const {
+    rekapPengajuanData,
+    isLoadingRekap,
+    openItems,
+    setOpenItems,
+  } = useRekapPengajuanRW(idRW, select);
 
   return (
     <div className="w-full space-y-4 mb-4">
@@ -33,7 +34,7 @@ const RekapPengajuan = ({ idRW, select }) => {
         <CardTitle>Rekapitulasi Pengajuan</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!pendingSurat.data ? (
+        {isLoadingRekap ? (
             <>
               {[...Array(3)].map((_, index) => (
                 <Card key={index}>
@@ -53,7 +54,7 @@ const RekapPengajuan = ({ idRW, select }) => {
                 </Card>
               ))}
             </>
-        ) : !pendingSurat.data.length > 0 ? (
+        ) : !rekapPengajuanData.data || rekapPengajuanData.data.length === 0 ? (
           <Card>
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -68,12 +69,12 @@ const RekapPengajuan = ({ idRW, select }) => {
           </CardContent>
         </Card>
         ) : (
-          pendingSurat.data.map((surat, index) => (
+          rekapPengajuanData.data.map((surat) => (
             <Collapsible
             key={surat.id_pengajuan_surat}
-            open={openItems[surat.id_pengajuan_surat]}
+            open={openItems[surat.id_pengajuan_surat] || false}
             onOpenChange={(isOpen) => 
-              setOpenItems({ ...openItems, [surat.id_pengajuan_surat]: isOpen })
+              setOpenItems((prev) => ({ ...prev, [surat.id_pengajuan_surat]: isOpen }))
             }
           >
             <Card className="shadow-md">
@@ -186,7 +187,7 @@ const RekapPengajuan = ({ idRW, select }) => {
                                 <TextInput
                                     color="blue"
                                     type="radio"
-                                    name="jenis_surat"
+                                    name={`jenis_surat_${surat.id_pengajuan_surat}`}
                                     value={jenis}
                                     className="form-radio text-blue"
                                     checked={surat.jenis_surat === jenis} 
@@ -251,16 +252,15 @@ const RekapPengajuan = ({ idRW, select }) => {
                           <Clock className="w-4 h-4 ml-2" />
                         </PrimaryButton>
                         )}
-                      </div>
-                  </CollapsibleContent>
-
+                    </div>
+                </CollapsibleContent>
             </Collapsible>
           ))
         )}
       </CardContent>
     </Card>
-  </div>
-  )
-}
+    </div>
+  );
+};
 
-export default RekapPengajuan
+export default RekapPengajuan;

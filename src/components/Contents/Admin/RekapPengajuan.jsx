@@ -14,10 +14,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import PrimaryButton from '@/Components/PrimaryButton';
+import PrimaryButton from '@/Components/Atoms/PrimaryButton';
 import { Skeleton } from '@/Components/ui/skeleton';
-import TextInput from '@/Components/TextInput';
-import { fetchRekapPengajuanData } from '@/hooks/Admin';
+import TextInput from '@/components/Atoms/TextInput';
+import { fetchRekapPengajuanData } from '@/hooks/admin';
 
 const RekapPengajuan = ({ select }) => {
   const [openItems, setOpenItems] = useState( select ? ({[select]: isOpen}) : {} );

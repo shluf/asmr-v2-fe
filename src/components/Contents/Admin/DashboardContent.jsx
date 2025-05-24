@@ -1,12 +1,14 @@
+'use client';
+
 import React, { useState, useEffect } from "react";
-import { Link } from "@inertiajs/react";
 import { UserFilled } from "@/utility/svg-icons";
-import { Skeleton } from "@/Components/ui/skeleton";
-import { Card, CardContent } from "@/Components/ui/card";
-import { Button } from "@/Components/ui/button";
-import DataCard from "@/Components/partials/DataCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import DataCard from "@/components/partials/DataCard";
 import { ShieldCheck, ChevronRight } from 'lucide-react';
-import { fetchRtRwStats, fetchWargaPendingData, fetchWargaStats } from "@/hooks/Admin";
+import { fetchRtRwStats, fetchWargaPendingData, fetchWargaStats } from "@/hooks/admin";
+import Link from "next/link";
 import { 
   BarChart, 
   Bar as RechartsBar, 
@@ -281,9 +283,7 @@ const DashboardContent = () => {
                                                     Setujui
                                                 </Button>
                                                 <Link
-                                                    href={route("dashboard", {
-                                                        page: "approvalRole",
-                                                    })}
+                                                    href="/dashboard/approvalRole"
                                                 >
                                                     <Button variant="ghost" className="rounded-full p-2">
                                                         <ChevronRight className="h-5 w-5" />

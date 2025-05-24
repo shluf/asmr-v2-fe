@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { Check, X, ShieldCheck } from 'lucide-react';
@@ -14,57 +14,21 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import PrimaryButton from '@/Components/PrimaryButton';
-import { Skeleton } from '@/Components/ui/skeleton';
-import TextInput from '@/Components/TextInput';
-import { fetchPendingRTData } from '@/hooks/RT';
-import axios from 'axios';
-import { AlertWrapper, showAlert } from '@/Components/partials/Alert';
+import PrimaryButton from '@/components/Atoms/PrimaryButton';
+import { Skeleton } from '@/components/ui/skeleton';
+import TextInput from '@/components/Atoms/TextInput';
+import { AlertWrapper } from '@/components/partials/Alert';
+import { usePengajuanMasalahRT } from '@/hooks/rt';
 
 const PengajuanMasalah = ({ idRT }) => {
-  const [openItems, setOpenItems] = useState({});
-  const [pendingSurat, setPendingSurat] = useState([]);
-  const [loading, setLoading] = useState({});
-
-  useEffect(() => {
-    fetchPendingRTData(idRT, setPendingSurat);
-  }, []);
-
-  const handleApprovalPengajuan = async (id_pengajuan_surat, status) => {
-    setLoading({ ...loading, [id_pengajuan_surat]: true });
-
-    try {
-        await axios.put(`/surat/approval/${id_pengajuan_surat}`, {
-        status_approval: status,
-        approver_type: 'rt',
-        id_approver: idRT
-        });
-
-        showAlert({
-          title: "Berhasil!",
-          desc: `Surat ini telah di${status} oleh anda`,
-          message: "Status approval surat berhasil diperbarui",
-          succes: true,
-          color: "green",
-          });
-
-        fetchPendingRTData(idRT, setPendingSurat);
-        
-    } catch (error) {
-      showAlert({
-        title: "Terjadi Kesalahan",
-        desc: error,
-        message: "Status approval surat gagal diperbarui",
-        succes: false,
-        color: "red",
-        });
-
-        console.error('Error updating status:', error);
-    }
-
-    setLoading({ ...loading, [id_pengajuan_surat]: false });
-};
-
+  const {
+    pengajuanMasalahDataRT,
+    isLoadingDataRT,
+    openItemsRT,
+    setOpenItemsRT,
+    handleActionRT,
+    isActionLoadingRT,
+  } = usePengajuanMasalahRT(idRT);
 
   return (
     <>
@@ -75,7 +39,7 @@ const PengajuanMasalah = ({ idRT }) => {
           <CardTitle>Surat Menunggu Persetujuan RT</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {!pendingSurat.data ? (
+          {isLoadingDataRT ? (
               <>
               {[...Array(3)].map((_, index) => (
                 <Card key={index}>
@@ -95,27 +59,27 @@ const PengajuanMasalah = ({ idRT }) => {
                 </Card>
               ))}
             </>
-          ) : !pendingSurat.data.length > 0 ? (
+          ) : !pengajuanMasalahDataRT.data || pengajuanMasalahDataRT.data.length === 0 ? (
             <Card>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
               <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <ShieldCheck className="h-6 w-6 text-yellow" />
+                <ShieldCheck className="h-6 w-6 text-yellow-500" />
               </div>               
               <div className='flex flex-col h-full justify-between'>
                 <p className="font-medium flex items-center h-1/2">Tidak ada surat pending</p>
-                <p className="text-sm flex h-1/2 text-yellow">Semua pengajuan surat telah diproses</p>
+                <p className="text-sm flex h-1/2 text-yellow-600">Semua pengajuan surat telah diproses</p>
               </div>
             </div>
             </CardContent>
           </Card>
           ) : (
-            pendingSurat.data.map((surat, index) => (
+            pengajuanMasalahDataRT.data.map((surat) => (
           <Collapsible
             key={surat.id_pengajuan_surat}
-            open={openItems[surat.id_pengajuan_surat]}
+            open={openItemsRT[surat.id_pengajuan_surat] || false}
             onOpenChange={(isOpen) => 
-              setOpenItems({ ...openItems, [surat.id_pengajuan_surat]: isOpen })
+              setOpenItemsRT((prev) => ({ ...prev, [surat.id_pengajuan_surat]: isOpen }))
             }
           >
             <div className="relative">
@@ -155,7 +119,7 @@ const PengajuanMasalah = ({ idRT }) => {
 
                     <CollapsibleTrigger asChild>
                       <Button variant="outline" className="rounded-full">
-                        {openItems[surat.id_pengajuan_surat] ? "Sembunyikan" : "Detail Surat"}
+                        {openItemsRT[surat.id_pengajuan_surat] ? "Sembunyikan" : "Detail Surat"}
                       </Button>
                     </CollapsibleTrigger>
                   </div>
@@ -163,12 +127,12 @@ const PengajuanMasalah = ({ idRT }) => {
               </Card>
 
               <CollapsibleContent className='mx-2 rounded-b-lg px-8 md:px-16 bg-[#d9d9d926] p-5 shadow-inner'>
-                {openItems[surat.id_pengajuan_surat] && (
+                {openItemsRT[surat.id_pengajuan_surat] && (
                   <div className="sticky top-0 z-10 mb-6" style={{ marginTop: "-1rem" }}>
                     <Card className="shadow-md">
                       <CardContent className="p-6">
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                          {/* Surat Info - Duplicate */}
+                          {/* Surat Info - Duplicate Header for sticky scroll */}
                           <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                             <div className="flex flex-col h-full justify-between">
                               <p className="font-medium flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
@@ -199,7 +163,8 @@ const PengajuanMasalah = ({ idRT }) => {
                           </div>
 
                           <Button variant="outline" className="rounded-full invisible">
-                            {openItems[surat.id_pengajuan_surat] ? "Sembunyikan" : "Detail Surat"}
+                            {/* This button is invisible, likely a spacer or for layout consistency */}
+                            Detail Surat
                           </Button>
                         </div>
                       </CardContent>
@@ -251,35 +216,27 @@ const PengajuanMasalah = ({ idRT }) => {
                   </div>
 
                   <div className="mt-4">
-                    <p className="mb-2text-gray-600">Benar bahwa yang bersangkutan adalah warga {surat.penanggung_jawab_rt} {surat.penanggung_jawab_rw} yang beralamat di{" "}
+                    <p className="mb-2 text-gray-600">Benar bahwa yang bersangkutan adalah warga {surat.penanggung_jawab_rt} {surat.penanggung_jawab_rw} yang beralamat di{" "}
                     {surat.alamat_warga}, dan bermaksud untuk mengurus surat:</p>
                     <div className="mt-4 ml-6 space-y-2">
                       {[
-                        "Pengantar KTP",
-                        "Pengantar KK",
-                        "Pengantar Akta Kelahiran",
-                        "Surat Keterangan Kematian",
-                        "Surat Domisili Tempat tinggal",
-                        "Surat Domisili Usaha",
-                        "Surat Keterangan Tidak Mampu",
-                        "Surat SKCK",
-                        "Surat Ketenagakerjaan",
-                        "Surat Pengantar Nikah",
-                        "Surat Keterangan Pindah",
-                        "lainnya:",
+                          "Pengantar KTP", "Pengantar KK", "Pengantar Akta Kelahiran",
+                          "Surat Keterangan Kematian", "Surat Domisili Tempat tinggal", "Surat Domisili Usaha",
+                          "Surat Keterangan Tidak Mampu", "Surat SKCK", "Surat Ketenagakerjaan",
+                          "Surat Pengantar Nikah", "Surat Keterangan Pindah", "lainnya:",
                       ].map((jenis, index) => (
-                        <label className="flex items-center" key={index}>
-                          <TextInput
-                            color="blue"
-                            type="radio"
-                            name="jenis_surat"
-                            value={jenis}
-                            className="form-radio text-blue"
-                            checked={surat.jenis_surat === jenis} 
-                            readOnly
-                          />
-                          <span className="ml-2">{jenis}</span>
-                        </label>
+                          <label className="flex items-center" key={index}>
+                              <TextInput
+                                  color="blue"
+                                  type="radio"
+                                  name={`jenis_surat_rt_masalah_${surat.id_pengajuan_surat}`}
+                                  value={jenis}
+                                  className="form-radio text-blue"
+                                  checked={surat.jenis_surat === jenis} 
+                                  readOnly
+                              />
+                              <span className="ml-2">{jenis}</span>
+                          </label>
                       ))}
                       <p className='ml-8'>{surat.deskripsi}</p>
                     </div>
@@ -287,26 +244,28 @@ const PengajuanMasalah = ({ idRT }) => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2 justify-end items-center w-full mt-6">
-                  <PrimaryButton
-                    color="red"
-                    rounded='full'
-                    disabled={loading[surat.id_pengajuan_surat]}
-                    onClick={() => handleApprovalPengajuan(surat.id_pengajuan_surat, 'rejected')}
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Tolak
-                  </PrimaryButton>
-                  <PrimaryButton
-                    color="green"
-                    rounded='full'
-                    disabled={loading[surat.id_pengajuan_surat]}
-                    onClick={() => handleApprovalPengajuan(surat.id_pengajuan_surat, 'approved')}
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    Setujui
-                  </PrimaryButton>
-                </div>
+                {(surat.status_rt === 'pending' && surat.status_warga === 'approved') && (
+                  <div className="flex gap-2 justify-end items-center w-full mt-4">
+                    <PrimaryButton
+                      color="red"
+                      rounded='full'
+                      disabled={isActionLoadingRT[surat.id_pengajuan_surat]}
+                      onClick={() => handleActionRT(surat.id_pengajuan_surat, 'rejected')}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      {isActionLoadingRT[surat.id_pengajuan_surat] ? 'Menolak...' : 'Tolak'}
+                    </PrimaryButton>
+                    <PrimaryButton
+                      color="green"
+                      rounded='full'
+                      disabled={isActionLoadingRT[surat.id_pengajuan_surat]}
+                      onClick={() => handleActionRT(surat.id_pengajuan_surat, 'approved')}
+                    >
+                      <Check className="w-4 h-4 mr-2" />
+                      {isActionLoadingRT[surat.id_pengajuan_surat] ? 'Menyetujui...' : 'Setujui'}
+                    </PrimaryButton>
+                  </div>
+                )}
               </CollapsibleContent>
             </div>
           </Collapsible>

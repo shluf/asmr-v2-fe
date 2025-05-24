@@ -8,7 +8,7 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import axios from "axios";
-import PrimaryButton from "@/Components/PrimaryButton";
+import PrimaryButton from "@/Components/Atoms/PrimaryButton";
 import { useState } from "react";
 import { DataField } from "@/Components/partials/dataField";
 import { AlertWrapper, showAlert } from "@/Components/partials/Alert";

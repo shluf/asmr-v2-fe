@@ -1,32 +1,41 @@
 const pageAdminRoutes = [
     { name: 'Dashboard', route: ''},
-    { name: 'Biodata User', route: 'biodataUser'},
-    { name: 'Rekapitulasi Pengajuan Surat', route: 'rekapPengajuan'},
-    { name: 'Approval Role', route: 'approvalRole'},
-    { name: 'Tambah RT/RW', route: 'tambahRTRW'}
+    { name: 'Biodata User', route: 'biodata-user'},
+    { name: 'Rekapitulasi Pengajuan Surat', route: 'rekap-pengajuan'},
+    { name: 'Approval Role', route: 'approval-role'},
+    { name: 'Tambah RT/RW', route: 'tambah-rtrw'}
 ]
 
 const pageRTRWRoutes = [
     { name: 'Dashboard', route: ''},
-    { name: 'Pengajuan Warga', route: 'pengajuanMasalah'},
-    { name: 'Rekap Pengajuan', route: 'rekapPengajuan'},
+    { name: 'Pengajuan Warga', route: 'pengajuan-masalah'},
+    { name: 'Rekap Pengajuan', route: 'rekap-pengajuan'},
     { name: 'Bantuan', route: 'bantuan'}
 ]
 
 const pageWargaRoutes = [
     { name: 'Dashboard', route: ''},
-    { name: 'Pengajuan', route: 'pengajuan'},
-    { name: 'Histori Pengajuan', route: 'histori' },
+    { name: 'Pengajuan Surat', route: 'pengajuan'},
+    { name: 'Histori Pengajuan', route: 'histori'},
     { name: 'Akun', route: 'akun'},
     { name: 'Bantuan', route: 'bantuan'}
 ]
 
 export const renderHeader = (setHeader, user) => {
     const pathname = window.location.pathname;
-    const userRole = user?.role?.toLowerCase() || "";
+    const actualUserRole = user?.role;
+    let userDisplayRole;
+
+    if (actualUserRole === "PejabatRT") {
+        userDisplayRole = "RT";
+    } else if (actualUserRole === "PejabatRW") {
+        userDisplayRole = "RW";
+    } else {
+        userDisplayRole = actualUserRole;
+    }
     
-    if (pathname === `/${userRole}` || pathname === '/') {
-        setHeader("Dashboard " + (user?.role || ""));
+    if (userDisplayRole && (pathname === `/${userDisplayRole.toLowerCase()}` || pathname === '/')) {
+        setHeader("Dashboard " + userDisplayRole);
         return;
     }
     
@@ -37,7 +46,7 @@ export const renderHeader = (setHeader, user) => {
         return pathname === `/${role}/${route}` || pathname.startsWith(`/${role}/${route}/`);
     };
     
-    switch (user?.role) {
+    switch (actualUserRole) {
         case "Admin":
             for (const data of pageAdminRoutes) {
                 if (checkRouteMatch(data.route, "admin")) {
@@ -50,7 +59,7 @@ export const renderHeader = (setHeader, user) => {
         case "PejabatRT":
         case "PejabatRW":
             for (const data of pageRTRWRoutes) {
-                if (checkRouteMatch(data.route, userRole)) {
+                if (checkRouteMatch(data.route, userDisplayRole.toLowerCase())) {
                     setHeader(data.name);
                     return;
                 }
@@ -70,6 +79,4 @@ export const renderHeader = (setHeader, user) => {
             setHeader("Aplikasi Surat Menyurat");
             break;
     }
-    
-    setHeader("Aplikasi Surat Menyurat");
 }

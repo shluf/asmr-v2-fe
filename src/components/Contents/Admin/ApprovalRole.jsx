@@ -11,10 +11,10 @@ import {
 import { Skeleton } from "@/Components/ui/skeleton";
 import { AlertWrapper, showAlert } from "@/Components/partials/Alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
-import PrimaryButton from "@/Components/PrimaryButton";
+import PrimaryButton from "@/Components/Atoms/PrimaryButton";
 import { Check, Loader2, X } from "lucide-react";
 import { DataField } from "@/Components/partials/dataField";
-import { fetchApprovalRoleData } from "@/hooks/Admin";
+import { fetchApprovalRoleData } from "@/hooks/admin";
 
 const ApprovalRole = () => {
     const [dataWarga, setDataWarga] = useState([]);

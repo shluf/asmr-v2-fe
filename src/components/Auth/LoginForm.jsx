@@ -54,11 +54,12 @@ const LoginForm = () => {
     }, [status, errors])
 
     const redirectBasedOnRole = (userRole) => {
+        
         const roleRedirectMap = {
             admin: '/admin',
             warga: '/warga',
-            rt: '/rt',
-            rw: '/rw'
+            pejabatrt: '/rt',
+            pejabatrw: '/rw'
         }
         
         // Jika ada redirect parameter dari query, gunakan itu
@@ -73,8 +74,7 @@ const LoginForm = () => {
             return
         }
         
-        // Fallback ke home page jika tidak ada role yang cocok
-        router.push('/')
+        router.push('/dashboard')
     }
 
     const submitForm = async event => {

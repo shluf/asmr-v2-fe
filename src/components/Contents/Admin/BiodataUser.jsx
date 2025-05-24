@@ -3,7 +3,7 @@ import DataTable from "@/Components/partials/DataTable";
 import { columnsRT } from "./data/columnsRT";
 import { columnsRW } from "./data/columnsRW";
 import { columnsWarga } from "./data/columnsWarga";
-import { fetchBiodataUserData } from "@/hooks/Admin";
+import { fetchBiodataUserData } from "@/hooks/admin";
 
 const BiodataUser = () => {
     const [dataRT, setDataRT] = useState([]);
