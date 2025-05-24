@@ -1,91 +1,103 @@
-# Laravel Breeze - Next.js Edition ▲
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/shluf/asmr/fe1c7f44a7214c6dbbc6108b031a22b9e584fe1f/public/logo.svg" width="200" alt="Laravel Logo"></a></p>
 
-## Introduction
+## Aplikasi Surat Menyurat RT/RW V2
 
-This repository is an implementation of the [Laravel Breeze](https://laravel.com/docs/starter-kits) application / authentication starter kit frontend in [Next.js](https://nextjs.org). All of the authentication boilerplate is already written for you - powered by [Laravel Sanctum](https://laravel.com/docs/sanctum), allowing you to quickly begin pairing your beautiful Next.js frontend with a powerful Laravel backend.
+Selamat datang di **Aplikasi Surat Menyurat RT/RW V2**! Versi terbaru ini adalah evolusi dari [proyek ASMR sebelumnya](https://github.com/shluf/asmr), kini dibangun dengan teknologi modern Next.js dan arsitektur berbasis API. Peningkatan ini bertujuan untuk menghadirkan interoperabilitas sistem yang lebih baik dan kemudahan pemeliharaan jangka panjang.
 
-## Official Documentation
+Aplikasi ini dirancang untuk merevolusi administrasi surat-menyurat di tingkat RT/RW. Kami menyediakan platform digital yang intuitif bagi warga untuk mengajukan berbagai jenis surat secara online, sekaligus menyederhanakan proses verifikasi dan persetujuan bagi pengurus RT/RW.
 
-### Installation
+Lebih dari sekadar pengajuan surat, warga yang terdaftar dapat memantau progres program kerja RW (yang telah, sedang, dan akan dilaksanakan) secara transparan. Seluruh alur kerja—mulai dari pengajuan, verifikasi, hingga pengarsipan dokumen—kini sepenuhnya digital, aman, dan dapat diakses kapan pun, di mana pun.
 
-First, create a Next.js compatible Laravel backend by installing Laravel Breeze into a [fresh Laravel application](https://laravel.com/docs/installation) and installing Breeze's API scaffolding:
+## Instalasi Aplikasi Surat Menyurat RT/RW
 
+### Prasyarat
+* **MySql:** Pastikan MySql sudah terinstal.
+* **NodeJs:** Pastikan NodeJs sudah terinstal.
+* **PHP:** Pastikan PHP versi 8.0 atau lebih tinggi sudah terinstal.
+* **Composer:** Pastikan Composer sudah terinstal secara global.
+
+### Menjalankan Frontend
+#### Langkah 1: Clone Proyek Frontend
 ```bash
-# Create the Laravel application...
-laravel new next-backend
+git clone https://github.com/shluf/asmr-v2-fe.git
+```
+#### Langkah 2: Masuk ke Direktori Proyek Frontend
+```bash
+cd asmr-v2-fe
+```
+#### Langkah 3: Instal Dependensi Frontend
+```bash
+npm install
+```
+Atau jika Anda menggunakan yarn:
+```bash
+yarn install
+```
+#### Langkah 4: Konfigurasi Environment Frontend
+Salin file `.env.example` menjadi `.env.local`:
+```bash
+cp .env.example .env.local
+```
+Kemudian, buka file `.env.local` dan sesuaikan environtment variable sesuai dengan kebutuhan.
 
-cd next-backend
+```
+#### Langkah 5: Jalankan Aplikasi Frontend
+```bash
+npm run dev
+```
+Atau jika Anda menggunakan yarn:
+```bash
+yarn dev
+```
+Aplikasi frontend akan tersedia di `http://localhost:3000`.
 
-# Install Breeze and dependencies...
-composer require laravel/breeze --dev
+### Menjalankan Backend
 
-php artisan breeze:install api
+#### Langkah 1: Clone Proyek Backend
+```bash
+git clone https://github.com/Asyfdzaky/ASMR-BACKEND-API.git
+```
 
-# Run database migrations...
+#### Langkah 2: Masuk ke Direktori Proyek Backend
+```bash
+cd ASMR-BACKEND-API
+```
+
+#### Langkah 3: Instal Dependensi
+```bash
+composer install
+```
+
+#### Langkah 4: Konfigurasi Environment
+Salin file `.env.example` menjadi `.env.local`:
+```bash
+cp .env.example .env
+```
+Kemudian, buka file `.env` dan sesuaikan environtment variable sesuai dengan kebutuhan.
+
+#### Langkah 5: Generate Key Aplikasi
+```bash
+php artisan key:generate
+```
+
+#### Langkah 6: Migrate database
+Mulai database server kemudian jalan perintah berikut 
+```bash
 php artisan migrate
 ```
 
-Next, ensure that your application's `APP_URL` and `FRONTEND_URL` environment variables are set to `http://localhost:8000` and `http://localhost:3000`, respectively.
-
-After defining the appropriate environment variables, you may serve the Laravel application using the `serve` Artisan command:
-
+#### Langkah 7: (Opsional) Isi database dengan Seeder
+Mulai database server kemudian jalan perintah berikut 
 ```bash
-# Serve the application...
+php artisan db:seed
+```
+
+#### Langkah 8: Jalankan Aplikasi Backend
+```bash
 php artisan serve
 ```
-
-Next, clone this repository and install its dependencies with `yarn install` or `npm install`. Then, copy the `.env.example` file to `.env.local` and supply the URL of your backend:
-
-```
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
-```
-
-Finally, run the application via `npm run dev`. The application will be available at `http://localhost:3000`:
-
-```
-npm run dev
-```
-
-> Note: Currently, we recommend using `localhost` during local development of your backend and frontend to avoid CORS "Same-Origin" issues.
-
-### Authentication Hook
-
-This Next.js application contains a custom `useAuth` React hook, designed to abstract all authentication logic away from your pages. In addition, the hook can be used to access the currently authenticated user:
-
-```js
-const ExamplePage = () => {
-    const { logout, user } = useAuth({ middleware: 'auth' })
-
-    return (
-        <>
-            <p>{user?.name}</p>
-
-            <button onClick={logout}>Sign out</button>
-        </>
-    )
-}
-
-export default ExamplePage
-```
-
-> Note: You will need to use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) (`user?.name` instead of `user.name`) when accessing properties on the user object to account for Next.js's initial server-side render.
-
-### Named Routes
-
-For convenience, [Ziggy](https://github.com/tighten/ziggy#spas-or-separate-repos) may be used to reference your Laravel application's named route URLs from your React application.
-
-## Contributing
-
-Thank you for considering contributing to Breeze Next! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-Please review [our security policy](https://github.com/laravel/breeze-next/security/policy) on how to report security vulnerabilities.
+Aplikasi backend akan tersedia di `http://localhost:8000` (atau port lain jika dikonfigurasi berbeda).
 
 ## License
 
-Laravel Breeze Next is open-sourced software licensed under the [MIT license](LICENSE.md).
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
