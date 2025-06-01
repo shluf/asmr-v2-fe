@@ -15,7 +15,7 @@ import {
 import FileUpload from '@/components/ui/file-upload';
 import axios from 'axios';
 import InputField from '@/components/partials/InputFields';
-import { AlertWrapper, showAlert } from '@/components/partials/Alert';
+import { showAlert } from '@/components/partials/Alert';
 
 const TambahRTRW = () => {
   const [rwOptions, setRwOptions] = useState([]);
@@ -103,7 +103,7 @@ const TambahRTRW = () => {
         title: "Akun gagal ditambahkan",
         desc: error.response?.data?.error || "Terjadi kesalahan",
         message: `Silahkan masukan kembali data ${data.jabatan} dengan benar`,
-        succes: false,
+        success: false,
         color: "red",
       });
       setIsLoading(false);
@@ -118,7 +118,7 @@ const TambahRTRW = () => {
           title: "Gagal Mengupload Gambar",
           desc: "File terlalu besar",
           message: "Maksimal ukuran file adalah 2MB",
-          succes: false,
+          success: false,
           color: "red",
         });
         e.target.value = '';
@@ -129,7 +129,7 @@ const TambahRTRW = () => {
           title: "Gagal Mengupload Gambar",
           desc: "Format file tidak didukung",
           message: "Gunakan format JPG atau PNG",
-          succes: false,
+          success: false,
           color: "red",
         });
         e.target.value = '';
@@ -157,9 +157,6 @@ const TambahRTRW = () => {
 
   return (
     <div className="w-full p-10 mb-8">
-      <div>
-        <AlertWrapper />
-      </div>
       <Tabs defaultValue="rtTab" className="max-w-2xl mx-auto">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="rtTab">RT</TabsTrigger>

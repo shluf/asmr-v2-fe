@@ -79,7 +79,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             const response = await axios.post('/api/login', {
                 email: props.email,
                 password: props.password,
-                remember: props.remember ? 1 : 0  // Kirim sebagai 1/0 bukan boolean
+                remember: props.remember ? 1 : 0 
             }, {
                 headers: {
                     'Accept': 'application/json',
@@ -147,7 +147,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             setStatus(null)
 
             const response = await axios.post('/api/reset-password', { token: params.token, ...props })
-            // Gunakan router.push untuk Next.js App Router
+            // Router.push untuk Next.js App Router
             router.push('/login?reset=' + btoa(response.data.status))
         } catch (error) {
             if (error.response?.status !== 422) throw error

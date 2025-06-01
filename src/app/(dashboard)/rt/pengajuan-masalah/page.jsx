@@ -13,7 +13,7 @@ export default function PengajuanMasalahPage() {
     useEffect(() => {
         if (user) {
             setIsLoading(false);
-            if (user.role !== 'RT') {
+            if (user.role !== 'PejabatRT') {
                 router.push('/dashboard');
             }
         }
@@ -23,14 +23,13 @@ export default function PengajuanMasalahPage() {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
     }
 
-    if (user.role !== 'RT') {
+    if (user.role !== 'PejabatRT') {
         return null;
     }
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6">Pengajuan Masalah</h1>
-            <PengajuanMasalah idRT={user?.id_rt} />
+            <PengajuanMasalah />
         </div>
     );
 } 

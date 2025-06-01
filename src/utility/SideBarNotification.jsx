@@ -93,7 +93,8 @@ export const useNotificationPolling = (role) => {
     pollNotifications();
     const interval = setInterval(pollNotifications, 20000);
     return () => clearInterval(interval);
-  }, [role, updateNotifications]);
+  // }, [role, updateNotifications]);
+  }, [role]);
 
   return useNotificationStore(state => state[`page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`] || []);
 };

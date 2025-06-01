@@ -7,9 +7,9 @@ import TextInput from '@/components/Atoms/TextInput'
 import InputError from '@/components/Atoms/InputError'
 import InputLabel from '@/components/Atoms/InputLabel'
 import PrimaryButton from '@/components/Atoms/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { AlertWrapper, showAlert } from '../partials/Alert'
 
 const ForgotPasswordForm = () => {
     const router = useRouter()
@@ -39,7 +39,7 @@ const ForgotPasswordForm = () => {
                 title: "Gagal Reset Password",
                 desc: "Captcha belum terselesaikan",
                 message: "Silakan selesaikan CAPTCHA",
-                succes: false,
+                success: false,
                 color: "red",
             })
             setProcessing(false)
@@ -61,7 +61,7 @@ const ForgotPasswordForm = () => {
                 title: "Berhasil",
                 desc: "Link untuk mereset password telah terkirim",
                 message: "Silakan cek email anda untuk melanjutkan",
-                succes: true,
+                success: true,
                 color: "green",
             })
         } catch (error) {
@@ -70,7 +70,7 @@ const ForgotPasswordForm = () => {
                 title: "Gagal",
                 desc: "Gagal mengirim link reset password",
                 message: "Silakan coba lagi",
-                succes: false,
+                success: false,
                 color: "red",
             })
         }

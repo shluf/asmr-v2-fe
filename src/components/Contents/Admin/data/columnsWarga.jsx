@@ -1,220 +1,199 @@
-import { Button } from "@/Components/ui/button";
-import { ArrowUpDown, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown, Eye, XCircle, UserCog, UserX, Info } from "lucide-react";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Components/ui/dialog";
-import axios from "axios";
-import PrimaryButton from "@/Components/Atoms/PrimaryButton";
-import { useState } from "react";
-import { DataField } from "@/Components/partials/dataField";
-import { AlertWrapper, showAlert } from "@/Components/partials/Alert";
+} from "@/components/ui/dialog";
+import axios from "@/lib/axios";
+import { useState, useEffect } from "react";
+import { DataField } from "@/components/partials/dataField";
+import { AlertWrapper, showAlert } from "@/components/partials/Alert";
+import { useAuthTokenClient } from "@/lib/jwt";
+import { format, parseISO } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+
+// Helper to format date strings or return placeholder
+const formatDateSafe = (dateString, formatStr = 'dd MMM yyyy') => {
+  if (!dateString) return 'N/A';
+  try {
+    return format(parseISO(dateString), formatStr, { locale: idLocale });
+  } catch (error) {
+    return dateString; 
+  }
+};
 
 export const columnsWarga = (fetchData) => [
     {
-        accessorKey: "nomer_kk",
-        name: "Nomor KK",
-        header: () => <div className="text-center">Nomor KK</div>,
-        cell: ({ row }) => {
-            return <div className="text-left font-medium">{row.getValue("nomer_kk")}</div>;
-        },
+        accessorKey: "no_kk",
+        header: () => <div className="text-left">Nomor KK</div>,
+        cell: ({ row }) => <div className="text-left font-medium">{row.original.nomor_kk || 'N/A'}</div>,
     },
     {
         accessorKey: "nama",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
-                    Nama
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("nama")}</div>
+        header: ({ column }) => (
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                Nama <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
         ),
+        cell: ({ row }) => <div className="capitalize">{row.original.nama || 'N/A'}</div>,
     },
     {
         accessorKey: "jenis_kelamin",
-        name: "Jenis Kelamin",
         header: () => <div className="text-center">Jenis Kelamin</div>,
         cell: ({ row }) => {
-            return <div className="text-left font-medium">{row.getValue("jenis_kelamin") === "L" ? "Laki-laki" : "Perempuan"}</div>;
+            const jk = row.original.jenis_kelamin;
+            return <div className="text-left font-medium">{jk === "Pria" ? "Laki-laki" : jk === "Perempuan" ? "Perempuan" : jk || 'N/A'}</div>;
         },
     },
     {
-        accessorKey: "nik_warga",
-        name: "NIK",
+        accessorKey: "nik",
         header: () => <div className="text-center">NIK</div>,
-        cell: ({ row }) => {
-            return <div className="text-right font-medium">{row.getValue("nik_warga")}</div>;
-        },
+        cell: ({ row }) => <div className="text-center font-medium">{row.original.nik || 'N/A'}</div>,
     },
     {
-        accessorKey: "no_rt",
-        name: "RT",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
-                    RT
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            return <div className="text-center font-medium">{row.getValue("no_rt")}</div>;
-        },
+        accessorFn: row => row.rt?.no_rt,
+        id: "no_rt_warga",
+        header: ({ column }) => (
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                RT <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => <div className="text-center font-medium">{row.original.no_rt || 'N/A'}</div>,
     },
     {
-        accessorKey: "no_rw",
-        name: "RW",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
-                    RW
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            return <div className="text-center font-medium">{row.getValue("no_rw")}</div>;
-        },
+        accessorFn: row => row.rt?.rw?.no_rw,
+        id: "no_rw_warga",
+        header: ({ column }) => (
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                RW <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => <div className="text-center font-medium">{row.original.no_rw || 'N/A'}</div>,
     },
     {
-        accessorKey: "phone",
-        name: "No Telp",
+        accessorKey: "no_telp",
         header: () => <div className="text-left">Nomor Telp</div>,
-        cell: ({ row }) => {
-            return <div className="text-right font-medium">{row.getValue("phone")}</div>;
-        },
+        cell: ({ row }) => <div className="text-left font-medium">{row.original.phone || 'N/A'}</div>,
     },
-    {
-        accessorKey: "approved",
-        header: () => null,
-        cell: () => null,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "tempat_dan_tanggal_lahir",
-        header: () => null,
-        cell: () => null,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "alamat",
-        header: () => null,
-        cell: () => null,
-        enableHiding: false,
-    },
-
+ 
     {
         id: "actions",
         enableHiding: false,
-        header: () => <div className="text-center">Action</div>,
+        header: () => <div className="text-center">Aksi</div>,
         cell: ({ row }) => {
-            const nikWarga = row.getValue("nik_warga");
-            const [loading, setLoading] = useState({});
+            const warga = row.original;
+            const wargaId = warga.id;
+            const isUserActive = warga.user?.status_akun === 1;
 
-            const handleDisapprove = async (nik_warga) => {
-                setLoading((prev) => ({ ...prev, [nik_warga]: true }));
+            const [isSubmitting, setIsSubmitting] = useState(false);
+            const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+            const [isConfirmDeactivateDialogOpen, setIsConfirmDeactivateDialogOpen] = useState(false);
+
+            const handleToggleUserStatus = async () => {
+
+                setIsSubmitting(true);
                 try {
-                    await axios.post(`/approvalRole/disapprove/${nik_warga}`);
-
-                    setLoading((prev) => ({ ...prev, [nik_warga]: false }));
+                    const response = await axios.put(`/api/approval-role/warga/${wargaId}/${isUserActive ? "reject" : "approve"}`);
+                    const newStatus = response.data.status;
 
                     showAlert({
                         title: "Berhasil!",
-                        desc: "Akun ini telah dinonaktifkan",
-                        message: "Akun berhasil dinonaktifkan",
+                        desc: `Akun pengguna untuk ${warga.nama} telah di-${newStatus === 1 ? 'aktifkan' : 'nonaktifkan'}.`,
                         success: true,
+                        message: `Berhasil mengubah status akun warga.`,
                         color: "green",
-                        onConfirm: () => {
-                            fetchData();
-                          },
+                        onConfirm: () => fetchData(),
                     });
-
+                    setIsConfirmDeactivateDialogOpen(false);
                 } catch (error) {
-                    console.error("Error disapproving user:", error);
+                    console.error("Error toggling user status:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
-                        desc: "Akun gagal dinonaktifkan",
-                        message: "Terjadi kesalahan saat mendisapprove warga",
+                        desc: error.response?.data?.message || "Gagal mengubah status akun warga.",
                         success: false,
+                        message: error.response?.data?.message || "Gagal mengubah status akun warga.",
                         color: "red",
+                        errors: error.response?.data?.errors
                     });
-                    setLoading((prev) => ({ ...prev, [nik_warga]: false }));
+                } finally {
+                    setIsSubmitting(false);
                 }
             };
 
             return (
-                <>
-                <AlertWrapper />
-                <div className="text-center">
-                    <Dialog>
+                <div className="flex items-center justify-center gap-2">
+                    <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
                         <DialogTrigger asChild>
-                            <button 
-                                className="text-nowrap border border-blue-500 text-blue-500 px-4 py-2 rounded-full hover:bg-blue-500 hover:text-white transition"
-                            >
-                                Lihat data
-                            </button>
+                            <Button variant="outline" size="sm" className="h-8 px-3" onClick={() => setIsDetailDialogOpen(true)}>
+                                <Eye className="h-4 w-4" /> Lihat Detail
+                            </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[600px]">
+                        <DialogContent className="sm:max-w-2xl">
                             <DialogHeader>
-                                <DialogTitle>Data Lengkap Warga</DialogTitle>
+                                <DialogTitle>Detail Data Warga: {warga.nama}</DialogTitle>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <DataField label="Nama" value={row.getValue("nama")} />
-                                <DataField label="No KK" value={row.getValue("nomer_kk")} />
-                                <DataField label="NIK" value={row.getValue("nik_warga")} />
-                                <DataField label="RT" value={row.getValue("no_rt")} />
-                                <DataField label="RW" value={row.getValue("no_rw")} />
-                                <DataField 
-                                    label="Status" 
-                                    value={row.getValue("approved") === 1 ? "Disetujui" : "Ditolak"} 
-                                />
-                                <DataField label="Alamat" value={row.getValue("alamat")} />
-                                <DataField 
-                                    label="Tanggal Lahir" 
-                                    value={row.getValue("tempat_dan_tanggal_lahir")} 
-                                />
-                                <DataField 
-                                    label="Jenis Kelamin" 
-                                    value={row.getValue("jenis_kelamin") === "L" ? "Laki-Laki" : "Perempuan"} 
-                                />
-                                <div className="flex gap-2 justify-end items-center w-full">
-                                    <PrimaryButton
-                                        color="red"
-                                        rounded='full'
-                                        disabled={loading[nikWarga]}
-                                        onClick={() => handleDisapprove(nikWarga)}
-                                    >
-                                        <X className="w-4 h-4 mr-2" />
-                                        Nonaktifkan Akun
-                                    </PrimaryButton>
-                                </div>
+                            <div className="grid gap-y-2 gap-x-4 py-4 text-sm max-h-[70vh] w-full overflow-y-auto pr-2">
+                                <DataField className="md:col-span-2" label="Nama Lengkap" value={warga.nama || 'N/A'} />
+                                <DataField label="Email" value={warga.email || 'N/A'} />
+                                <DataField label="Alamat" textarea value={warga.alamat.alamat ? `${warga.alamat.alamat}, Kab. ${warga.alamat.kabupaten}, Prov. ${warga.alamat.provinsi}` : 'N/A'} />
+                                <DataField label="Tempat, Tanggal Lahir" value={`${warga.tempat_lahir}, ${formatDateSafe(warga.tanggal_lahir)}`} />
+                                <DataField label="Agama" value={warga.agama || 'N/A'} />
+                                <DataField label="NIK" value={warga.nik || 'N/A'} />
+                                <DataField label="No. KK" value={warga.nomor_kk || 'N/A'} />
+                                <DataField label="Jenis Kelamin" value={warga.jenis_kelamin === "Pria" ? "Laki-laki" : warga.jenis_kelamin === "Perempuan" ? "Perempuan" : warga.jenis_kelamin || 'N/A'} />
+                                <DataField label="No. Telepon" value={warga.phone || 'N/A'} />
+                                <DataField label="RT" value={warga.no_rt || 'N/A'} />
+                                <DataField label="RW" value={warga.no_rw || 'N/A'} />
+                                <DataField className="md:col-span-2" label="Status Akun Pengguna" value={warga.user?.status_akun || (warga.user ? 'Data Tidak Lengkap' : 'Tidak Ada Akun')} />
                             </div>
+                            <DialogFooter className="mt-4">
+                                <DialogClose asChild>
+                                    <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>Tutup</Button>
+                                </DialogClose>
+                            </DialogFooter>
                         </DialogContent>
                     </Dialog>
+
+                    {warga.user && (
+                         <Dialog open={isConfirmDeactivateDialogOpen} onOpenChange={setIsConfirmDeactivateDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant={isUserActive ? "destructive" : "outline"} size="icon" className="h-8 w-8" onClick={() => setIsConfirmDeactivateDialogOpen(true)} title={isUserActive ? "Nonaktifkan Akun" : "Aktifkan Akun"}>
+                                    {isUserActive ? <UserX className="h-4 w-4" /> : <UserCog className="h-4 w-4" />}
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>Konfirmasi: {isUserActive ? "Nonaktifkan" : "Aktifkan"} Akun Pengguna</DialogTitle>
+                                    <DialogDescription>
+                                        Apakah Anda yakin ingin {isUserActive ? "menonaktifkan" : "mengaktifkan"} akun pengguna untuk <strong>{warga.nama}</strong>?
+                                        {isUserActive ? " Pengguna tidak akan bisa login.": " Pengguna akan bisa login kembali."}
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="mt-6">
+                                    <DialogClose asChild>
+                                        <Button variant="outline" onClick={() => setIsConfirmDeactivateDialogOpen(false)}>Batal</Button>
+                                    </DialogClose>
+                                    <Button variant={isUserActive ? "destructive" : "default"} onClick={handleToggleUserStatus} disabled={isSubmitting}>
+                                        {isSubmitting ? "Memproses..." : `Ya, ${isUserActive ? "Nonaktifkan" : "Aktifkan"}`}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                    {!warga.user && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8" title="Warga ini tidak memiliki akun pengguna">
+                            <Info className="h-4 w-4 text-gray-400" />
+                        </Button>
+                    )}
                 </div>
-                </>
             );
         },
     },
 ];
+

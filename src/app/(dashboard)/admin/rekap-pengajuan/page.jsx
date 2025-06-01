@@ -29,7 +29,6 @@ export default function RekapPengajuanPage() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6">Rekap Pengajuan</h1>
             <RekapPengajuan />
         </div>
     );

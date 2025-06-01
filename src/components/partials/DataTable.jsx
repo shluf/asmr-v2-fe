@@ -77,7 +77,7 @@ const DataTable = ({
 
     return (
         <div>
-            <div className="flex items-center py-4 gap-3">
+            <div className="flex items-center py-4 gap-3 mx-4">
                 <Input
                     placeholder="Cari nama..."
                     value={table.getColumn("nama")?.getFilterValue() ?? ""}
@@ -190,7 +190,7 @@ const DataTable = ({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-center md:justify-between space-x-2 py-4">
+            <div className="flex items-center justify-center md:justify-between space-x-2 py-4 mx-4">
                 <div className="flex-1 text-sm text-muted-foreground md:block hidden">
                     {isLoading ? (
                         <Skeleton className="h-4 w-[100px]" />

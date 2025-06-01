@@ -30,14 +30,14 @@ const DashboardContent = () => {
         { label: "Populasi Warga", value: "···" },
         { label: "Total Pengajuan Surat", value: "···" },
         { label: "Total Pengajuan Dalam Proses", value: "···" },
-        { label: "Total Pengajuan Menunggu Tindakan", value: "···" },
+        { label: "Total Pengajuan Selesai", value: "···" },
     ]);
 
     const [RtRwStats, setRtRwStats] = useState([
-        { label: "Populasi Staff", value: "···" },
+        { label: "Populasi Staff (Pejabat)", value: "···" },
         { label: "Total Pengajuan Surat", value: "···" },
         { label: "Total Pengajuan Dalam Proses", value: "···" },
-        { label: "Total Pengajuan Menunggu Tindakan", value: "···" },
+        { label: "Total Pengajuan Selesai", value: "···" },
     ]);
 
     useEffect(() => {
@@ -191,7 +191,6 @@ const DashboardContent = () => {
                 </div>
             </div>
 
-            {/* Approval Section - Enhanced UI */}
             <div className="container mx-auto p-6 md:mb-0 mb-8">
                 <div className="p-4 bg-white">
                     <h2 className="text-2xl font-bold mb-4">
@@ -239,21 +238,21 @@ const DashboardContent = () => {
                             dataWarga.map((warga, index) => (
                                 <Card key={index} className="shadow-sm">
                                     <CardContent className="p-4">
-                                        <div className="flex items-center">
-                                            <div className="w-16 h-16 rounded-md flex items-center justify-center mr-6">
-                                            <div className="w-12 h-12 bg-green-3 rounded-[12px] flex items-center justify-center text-2xl">
-                                        <UserFilled size={6} />
-                                    </div>
+                                        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                                            <div className="flex justify-center md:justify-start w-full md:w-auto md:mr-6">
+                                                <div className="w-12 h-12 bg-green-3 rounded-[12px] flex items-center justify-center text-2xl">
+                                                    <UserFilled size={6} />
+                                                </div>
                                             </div>
                                             
-                                            <div className="grid grid-cols-5 flex-1 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full md:flex-1 gap-4">
                                                 <div>
                                                     <div className="text-sm text-gray-500">Nama</div>
                                                     <div>{warga.nama}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm text-gray-500">NIK</div>
-                                                    <div>{warga.nik_warga}</div>
+                                                    <div className="text-ellipsis">{warga.nik}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm text-gray-500">RT</div>
@@ -263,29 +262,30 @@ const DashboardContent = () => {
                                                     <div className="text-sm text-gray-500">RW</div>
                                                     <div>{warga.no_rw}</div>
                                                 </div>
-                                                <div>
-                                                    <div className="text-sm text-gray-500">Status</div>
-                                                    <div className="bg-[#FFC107] text-white px-3 py-1 rounded-full text-sm inline-block">
-                                                        {warga.approved === null
-                                                            ? "Dalam proses" 
-                                                            : warga.approved === 1 
+                                                <div className="flex-row items-center justify-center">
+                                                    <div className="text-sm text-center text-gray-500">Status</div>
+                                                    <div className="bg-[#FFC107] text-white px-3 py-1 rounded-full text-sm text-center">
+                                                        {warga.user.status_akun === 0
+                                                            ? "Pending" 
+                                                            : warga.user.status_akun === 1 
                                                                 ? "Approved"
                                                                 : "Not Approved"}
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            <div className="flex items-center space-x-2 ml-4">
-                                                <Button variant="destructive" className="bg-[#FF3B30] hover:bg-[#FF3B30]/90">
+                                            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                                                <Button variant="destructive" className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 w-full sm:w-auto">
                                                     Tolak
                                                 </Button>
-                                                <Button className="bg-[#4CAF50] hover:bg-[#4CAF50]/90">
+                                                <Button className="bg-[#4CAF50] hover:bg-[#4CAF50]/90 w-full sm:w-auto">
                                                     Setujui
                                                 </Button>
                                                 <Link
-                                                    href="/dashboard/approvalRole"
+                                                    href={`/admin/approval-role`}
+                                                    className="w-full sm:w-auto flex justify-center"
                                                 >
-                                                    <Button variant="ghost" className="rounded-full p-2">
+                                                    <Button variant="ghost" className="rounded-full p-2 w-full sm:w-auto">
                                                         <ChevronRight className="h-5 w-5" />
                                                     </Button>
                                                 </Link>

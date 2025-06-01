@@ -11,6 +11,7 @@ import { CollapsibleContent } from "@radix-ui/react-collapsible";
 import { fetchHistoryPengajuan } from "@/hooks/warga";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "@/lib/axios";
+import { useAuthTokenClient } from "@/lib/jwt";
 
 const getStatusIcon = (status) => {
   switch (status) {
@@ -38,16 +39,17 @@ const getStatusColor = (status) => {
   }
 };
 
-const HistoriPengajuan = ({ nikWarga }) => {
+const HistoriPengajuan = () => {
   const [dataPengajuan, setDataPengajuan] = useState([]);
   const [openItems, setOpenItems] = useState({});
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [isDownloadLoading, setIsDownloadLoading] = useState(false);
+  const {payload} = useAuthTokenClient();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchHistoryPengajuan(nikWarga);
+        const result = await fetchHistoryPengajuan(payload.id_warga);
         if (result.success) {
           setDataPengajuan(result.data);
         } else {
@@ -59,11 +61,11 @@ const HistoriPengajuan = ({ nikWarga }) => {
         setIsHistoryLoading(false);
       }
     };
-    
-    if (nikWarga) {
+
+    if (payload) {
       fetchData();
     }
-  }, [nikWarga]);
+  }, []);
 
   const handleDownloadSurat = async (id) => {
     try {
@@ -165,7 +167,7 @@ const HistoriPengajuan = ({ nikWarga }) => {
                         </div>
                         <div>
                           <p className="font-medium mb-1">Status Tindak Lanjut</p>
-                          <p className="text-sm text-blue-600">{submission?.status_pengajuan || "Status tidak tersedia"}</p>
+                          <p className="text-sm text-blue-600">{submission?.status.replace(/_/g, ' ') || "Status tidak tersedia"}</p>
                         </div>
                       </div>
                       <div className="flex gap-2">

@@ -12,15 +12,17 @@ import ProgramKerja from "@/components/partials/ProgramKerja"
 import Link from "next/link"
 import { useProgramKerjaRT, usePengajuanTerbaruRT } from "@/hooks/rt"
 import { AlertWrapper } from "@/components/partials/Alert"
+import { useAuthTokenClient } from "@/lib/jwt";
 
-const DashboardContent = ({ idRT }) => {
+const DashboardContent = () => {
+    const { payload } = useAuthTokenClient();
     const { dataProkerRT, prokerIsLoadingRT } = useProgramKerjaRT()
     const {
         pengajuanTerakhirRT,
         isLoadingPengajuanRT,
         handleActionPengajuan,
         isActionLoadingRT,
-    } = usePengajuanTerbaruRT(idRT)
+    } = usePengajuanTerbaruRT(payload.id_rt)
 
     return (
         <>
@@ -61,12 +63,12 @@ const DashboardContent = ({ idRT }) => {
                                     </Card>
                                 ))}
                             </>
-                        ) : !pengajuanTerakhirRT.data || pengajuanTerakhirRT.data.length === 0 ? (
+                        ) : !pengajuanTerakhirRT || pengajuanTerakhirRT.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">
                                 Tidak ada pengajuan surat yang tersedia
                             </div>
                         ) : (
-                            pengajuanTerakhirRT.data.map((submission) => (
+                            pengajuanTerakhirRT.map((submission) => (
                                 <Card key={submission.id_pengajuan_surat} className="overflow-hidden">
                                     <CardContent className="p-0">
                                         <div className="flex flex-col md:flex-row h-auto md:h-28">
@@ -95,7 +97,7 @@ const DashboardContent = ({ idRT }) => {
                                                         Nama Warga
                                                     </p>
                                                     <p className="font-medium">
-                                                        {submission.nama_pemohon ||
+                                                        {submission.warga.nama ||
                                                             "Undefined"}
                                                     </p>
                                                 </div>
@@ -112,47 +114,47 @@ const DashboardContent = ({ idRT }) => {
                                                         NIK
                                                     </p>
                                                     <p className="font-medium">
-                                                        {submission.nik ||
+                                                        {submission.warga.nik ||
                                                             "-"}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="flex md:flex-col p-4 gap-2 bg-gray-50 md:w-32 justify-center items-center">
-                                                {submission.status_rt === "pending" && submission.status_warga === "approved" ? (
+                                                {submission.approval_surat.status_approval === "Pending_RT" ? (
                                                     <>
                                                         <Button
                                                             variant="destructive"
-                                                            className="rounded-md w-full md:w-auto"
-                                                            onClick={() => handleActionPengajuan(submission.id_pengajuan_surat, 'rejected')}
-                                                            disabled={isActionLoadingRT[submission.id_pengajuan_surat]}
+                                                            className="rounded-md w-full"
+                                                            onClick={() => handleActionPengajuan(submission.id, 'rejected')}
+                                                            disabled={isActionLoadingRT[submission.id]}
                                                         >
-                                                            {isActionLoadingRT[submission.id_pengajuan_surat] ? 'Menolak...' : 'Tolak'}
+                                                            {isActionLoadingRT[submission.id] ? 'Menolak...' : 'Tolak'}
                                                         </Button>
                                                         <Button
                                                             variant="default"
-                                                            className="rounded-md bg-green-600 hover:bg-green-700 w-full md:w-auto"
-                                                            onClick={() => handleActionPengajuan(submission.id_pengajuan_surat, 'approved')}
-                                                            disabled={isActionLoadingRT[submission.id_pengajuan_surat]}
+                                                            className="rounded-md bg-green-600 hover:bg-green-700 w-full"
+                                                            onClick={() => handleActionPengajuan(submission.id, 'approved')}
+                                                            disabled={isActionLoadingRT[submission.id]}
                                                         >
-                                                            {isActionLoadingRT[submission.id_pengajuan_surat] ? 'Menyetujui...' : 'Setujui'}
+                                                            {isActionLoadingRT[submission.id] ? 'Menyetujui...' : 'Setujui'}
                                                         </Button>
                                                     </>
                                                 ) : (
                                                     <Button
                                                         variant="default"
                                                         disabled
-                                                        className={`rounded-md w-full md:w-auto ${
-                                                            submission.status_rt === "approved"
+                                                        className={`rounded-md w-full ${
+                                                            submission.approval_surat.status_approval === "Disetujui_RT"
                                                                 ? "bg-green-600 hover:bg-green-700"
-                                                                : submission.status_rt === "rejected" ? "bg-red-600 hover:bg-red-700"
+                                                                : submission.approval_surat.status_approval === "Ditolak_RT" ? "bg-red-600 hover:bg-red-700"
                                                                 : "bg-gray-400"
                                                         }`}
                                                     >
-                                                        {submission.status_rt}
+                                                        {submission.approval_surat.status_approval === "Disetujui_RT" ? "Disetujui" : submission.approval_surat.status_approval === "Ditolak_RT" ? "Ditolak" : submission.approval_surat.status_approval?.replace(/_/g, ' ')}
                                                     </Button>
                                                 )}
                                             </div>
-                                            <Link href={`/dashboard/rekapPengajuan?select=${submission.id_pengajuan_surat}`} className="flex items-center justify-center p-4 bg-gray-200 hover:bg-gray-300">
+                                            <Link href={`/rt/rekap-pengajuan/${submission.id}`} className="flex items-center justify-center p-4 bg-gray-200 hover:bg-gray-300">
                                                 <Button
                                                     variant="ghost"
                                                     className="rounded-full h-10 w-10 p-0"

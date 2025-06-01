@@ -4,7 +4,7 @@ import TextInput from '@/components/Atoms/TextInput'
 import InputError from '@/components/Atoms/InputError'
 import { useAuth } from '@/hooks/auth'
 import { useState, useEffect } from 'react'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import { AlertWrapper, showAlert } from '@/components/partials/Alert'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
     Select,
@@ -251,8 +251,8 @@ const RegisterForm = () => {
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="laki-laki">Laki-laki</SelectItem>
-                                    <SelectItem value="perempuan">Perempuan</SelectItem>
+                                    <SelectItem value="Laki-Laki">Laki-laki</SelectItem>
+                                    <SelectItem value="Perempuan">Perempuan</SelectItem>
                                 </SelectContent>
                             </Select>
                             <InputError

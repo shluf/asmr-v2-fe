@@ -17,10 +17,11 @@ import {
 import PrimaryButton from '@/components/Atoms/PrimaryButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import TextInput from '@/components/Atoms/TextInput';
-import { AlertWrapper } from '@/components/partials/Alert';
 import { usePengajuanMasalahRT } from '@/hooks/rt';
+import { useAuthTokenClient } from '@/lib/jwt';
 
-const PengajuanMasalah = ({ idRT }) => {
+const PengajuanMasalah = () => {
+  const { payload } = useAuthTokenClient();
   const {
     pengajuanMasalahDataRT,
     isLoadingDataRT,
@@ -28,11 +29,10 @@ const PengajuanMasalah = ({ idRT }) => {
     setOpenItemsRT,
     handleActionRT,
     isActionLoadingRT,
-  } = usePengajuanMasalahRT(idRT);
+  } = usePengajuanMasalahRT(payload.id_rt);
 
   return (
     <>
-    <AlertWrapper />
     <div className="w-full space-y-4">
       <Card>
         <CardHeader>
@@ -59,7 +59,7 @@ const PengajuanMasalah = ({ idRT }) => {
                 </Card>
               ))}
             </>
-          ) : !pengajuanMasalahDataRT.data || pengajuanMasalahDataRT.data.length === 0 ? (
+          ) : !pengajuanMasalahDataRT || pengajuanMasalahDataRT.length === 0 ? (
             <Card>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -74,16 +74,16 @@ const PengajuanMasalah = ({ idRT }) => {
             </CardContent>
           </Card>
           ) : (
-            pengajuanMasalahDataRT.data.map((surat) => (
+            pengajuanMasalahDataRT.map((surat) => (
           <Collapsible
-            key={surat.id_pengajuan_surat}
-            open={openItemsRT[surat.id_pengajuan_surat] || false}
+            key={surat.id}
+            open={openItemsRT[surat.id] || false}
             onOpenChange={(isOpen) => 
-              setOpenItemsRT((prev) => ({ ...prev, [surat.id_pengajuan_surat]: isOpen }))
+              setOpenItemsRT((prev) => ({ ...prev, [surat.id]: isOpen }))
             }
           >
-            <div className="relative">
-              <Card className="shadow-md">
+              <Card className="shadow-md mt-6 sticky top-0 z-10">
+                <div className='absolute -top-[25px] w-full h-6 bg-white'></div>
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
 
@@ -97,15 +97,15 @@ const PengajuanMasalah = ({ idRT }) => {
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">Nama Warga</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.nama}</p>
+                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nama}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.status_approval}</p>
+                        <p className="text-sm flex h-1/2 text-blue-600">{surat.status === 'Diajukan' ? 'Diajukan' : surat.status === 'Diproses_RT' ? 'Diproses RT' : surat.status === 'Diproses_RW' ? 'Diproses RW' : surat.status === 'Disetujui' ? 'Disetujui' : 'Ditolak'}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">Penanggung Jawab</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.penanggung_jawab_rt}, {surat.penanggung_jawab_rw}</p>
+                        <p className="text-sm flex h-1/2 text-blue-600">{surat.rt.nama_rt}, {surat.rw.nama_rw}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">Keperluan</p>
@@ -113,111 +113,66 @@ const PengajuanMasalah = ({ idRT }) => {
                       </div>
                       <div className="flex flex-col h-full justify-between">
                         <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.nik_warga}</p>
+                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nik}</p>
                       </div>
                     </div>
 
                     <CollapsibleTrigger asChild>
                       <Button variant="outline" className="rounded-full">
-                        {openItemsRT[surat.id_pengajuan_surat] ? "Sembunyikan" : "Detail Surat"}
+                        {openItemsRT[surat.id] ? "Sembunyikan" : "Detail Surat"}
                       </Button>
                     </CollapsibleTrigger>
                   </div>
                 </CardContent>
               </Card>
 
-              <CollapsibleContent className='mx-2 rounded-b-lg px-8 md:px-16 bg-[#d9d9d926] p-5 shadow-inner'>
-                {openItemsRT[surat.id_pengajuan_surat] && (
-                  <div className="sticky top-0 z-10 mb-6" style={{ marginTop: "-1rem" }}>
-                    <Card className="shadow-md">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                          {/* Surat Info - Duplicate Header for sticky scroll */}
-                          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">
-                                {format(new Date(surat.created_at), "EEEE, dd MMMM yyyy", { locale: idLocale })}
-                              </p>
-                            </div>
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">Nama Warga</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">{surat.nama}</p>
-                            </div>
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">{surat.status_approval}</p>
-                            </div>
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">Penanggung Jawab</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">{surat.penanggung_jawab_rt}, {surat.penanggung_jawab_rw}</p>
-                            </div>
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">Keperluan</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">{surat.jenis_surat}</p>
-                            </div>
-                            <div className="flex flex-col h-full justify-between">
-                              <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                              <p className="text-sm flex h-1/2 text-blue-600">{surat.nik_warga}</p>
-                            </div>
-                          </div>
-
-                          <Button variant="outline" className="rounded-full invisible">
-                            {/* This button is invisible, likely a spacer or for layout consistency */}
-                            Detail Surat
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                <div id={`collapsible-content-${surat.id_pengajuan_surat}`} className="mt-6 space-y-4 md:text-base text-sm">
+              <CollapsibleContent className='mb-7 mx-2 rounded-b-lg px-8 md:px-16 bg-[#d9d9d926] p-5 shadow-inner'>
+                <div id={`collapsible-content-${surat.id}`} className="mt-6 space-y-4 md:text-base text-sm">
                   <p className="text-gray-600">
-                    Yang bertanda tangan di bawah ini Ketua {surat.penanggung_jawab_rt} {surat.penanggung_jawab_rw} {surat.alamat},
+                    Yang bertanda tangan di bawah ini Ketua {surat.rt.nama_rt} {surat.rw.nama_rw} {surat.detail_pemohon.alamat_pemohon},
                     memberikan keterangan kepada:
                   </p>
                   <div className="text-gray-800 space-y-2">
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Nama</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.nama_pemohon}</span>
+                      <span className="flex-1">{surat.detail_pemohon.nama_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">NIK</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.nik_pemohon}</span>
+                      <span className="flex-1">{surat.detail_pemohon.nik_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">NO.KK</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.nomer_kk}</span>
+                      <span className="flex-1">{surat.detail_pemohon.no_kk_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Jenis Kelamin</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.jenis_kelamin_pemohon === 'L' ? 'Laki-laki' : 'Perempuan'}</span>
+                      <span className="flex-1">{surat.detail_pemohon.jenis_kelamin_pemohon === 'L' ? 'Laki-laki' : 'Perempuan'}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Agama</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.agama_pemohon}</span>
+                      <span className="flex-1">{surat.detail_pemohon.agama_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Tempat, tanggal lahir</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.tempat_tanggal_lahir_pemohon}</span>
+                      <span className="flex-1">{surat.detail_pemohon.tempat_tanggal_lahir_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Alamat</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.alamat_pemohon}</span>
+                      <span className="flex-1">{surat.detail_pemohon.alamat_pemohon}</span>
                     </p>
                   </div>
 
                   <div className="mt-4">
                     <p className="mb-2 text-gray-600">Benar bahwa yang bersangkutan adalah warga {surat.penanggung_jawab_rt} {surat.penanggung_jawab_rw} yang beralamat di{" "}
-                    {surat.alamat_warga}, dan bermaksud untuk mengurus surat:</p>
+                    {surat.detail_pemohon.alamat_pemohon}, dan bermaksud untuk mengurus surat:</p>
                     <div className="mt-4 ml-6 space-y-2">
                       {[
                           "Pengantar KTP", "Pengantar KK", "Pengantar Akta Kelahiran",
@@ -229,7 +184,7 @@ const PengajuanMasalah = ({ idRT }) => {
                               <TextInput
                                   color="blue"
                                   type="radio"
-                                  name={`jenis_surat_rt_masalah_${surat.id_pengajuan_surat}`}
+                                  name={`jenis_surat_rt_masalah_${surat.id}`}
                                   value={jenis}
                                   className="form-radio text-blue"
                                   checked={surat.jenis_surat === jenis} 
@@ -238,36 +193,55 @@ const PengajuanMasalah = ({ idRT }) => {
                               <span className="ml-2">{jenis}</span>
                           </label>
                       ))}
-                      <p className='ml-8'>{surat.deskripsi}</p>
+                      <p className='ml-8'>{surat.detail_pemohon.deskripsi}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                {(surat.status_rt === 'pending' && surat.status_warga === 'approved') && (
+                {(surat.approval_surat.status_approval === 'Pending_RT') ? (
                   <div className="flex gap-2 justify-end items-center w-full mt-4">
                     <PrimaryButton
                       color="red"
                       rounded='full'
-                      disabled={isActionLoadingRT[surat.id_pengajuan_surat]}
-                      onClick={() => handleActionRT(surat.id_pengajuan_surat, 'rejected')}
+                      disabled={isActionLoadingRT[surat.id]}
+                      onClick={() => handleActionRT(surat.id, 'rejected')}
                     >
                       <X className="w-4 h-4 mr-2" />
-                      {isActionLoadingRT[surat.id_pengajuan_surat] ? 'Menolak...' : 'Tolak'}
+                      {isActionLoadingRT[surat.id] ? 'Menolak...' : 'Tolak'}
                     </PrimaryButton>
                     <PrimaryButton
                       color="green"
                       rounded='full'
-                      disabled={isActionLoadingRT[surat.id_pengajuan_surat]}
-                      onClick={() => handleActionRT(surat.id_pengajuan_surat, 'approved')}
+                      disabled={isActionLoadingRT[surat.id]}
+                      onClick={() => handleActionRT(surat.id, 'approved')}
                     >
                       <Check className="w-4 h-4 mr-2" />
-                      {isActionLoadingRT[surat.id_pengajuan_surat] ? 'Menyetujui...' : 'Setujui'}
+                      {isActionLoadingRT[surat.id] ? 'Menyetujui...' : 'Setujui'}
                     </PrimaryButton>
+                  </div>
+                ) : surat.approval_surat.status_approval === "Disetujui_RT" ? (
+                  <div className="flex gap-2 justify-end items-center w-full mt-4">
+                  <PrimaryButton 
+                    color="green"
+                    rounded='full'
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Disetujui
+                  </PrimaryButton>
+                  </div>
+                ) : (
+                  <div className="flex gap-2 justify-end items-center w-full mt-4">
+                  <PrimaryButton 
+                    color="red"
+                    rounded='full'
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Ditolak
+                  </PrimaryButton>
                   </div>
                 )}
               </CollapsibleContent>
-            </div>
           </Collapsible>
             ))
           )}

@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/auth'
 import { useState } from 'react'
 import PrimaryButton from '@/components/Atoms/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import { AlertWrapper, showAlert } from '@/components/partials/Alert'
 
 const VerifyEmailForm = () => {
     const { logout, resendEmailVerification } = useAuth({
@@ -23,7 +23,7 @@ const VerifyEmailForm = () => {
                 title: "Berhasil",
                 desc: "Email verifikasi telah dikirim",
                 message: "Silakan cek email Anda untuk melanjutkan verifikasi",
-                succes: true,
+                success: true,
                 color: "green",
             })
         } catch (error) {
@@ -31,7 +31,7 @@ const VerifyEmailForm = () => {
                 title: "Gagal",
                 desc: "Gagal mengirim email verifikasi",
                 message: "Silakan coba lagi",
-                succes: false,
+                success: false,
                 color: "red",
             })
         }

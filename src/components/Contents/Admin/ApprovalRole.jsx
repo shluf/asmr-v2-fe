@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "@/lib/axios";
 import {
     Table,
     TableBody,
@@ -8,227 +8,232 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/Components/ui/skeleton";
-import { AlertWrapper, showAlert } from "@/Components/partials/Alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
-import PrimaryButton from "@/Components/Atoms/PrimaryButton";
-import { Check, Loader2, X } from "lucide-react";
-import { DataField } from "@/Components/partials/dataField";
+import { Skeleton } from "@/components/ui/skeleton";
+import { showAlert } from "@/components/partials/Alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Check, Loader2, X, Eye } from "lucide-react";
+import { DataField } from "@/components/partials/dataField";
 import { fetchApprovalRoleData } from "@/hooks/admin";
+import { format, parseISO } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+
+const formatDateSafe = (dateString, formatStr = 'EEEE, dd MMMM yyyy') => {
+  if (!dateString) return 'N/A';
+  try {
+    return format(parseISO(dateString), formatStr, { locale: idLocale });
+  } catch (error) {
+    return dateString; 
+  }
+};
 
 const ApprovalRole = () => {
-    const [dataWarga, setDataWarga] = useState([]);
+    const [dataWargaPending, setDataWargaPending] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedWarga, setSelectedWarga] = useState(null);
-    const [loading, setLoading] = useState({});
-    const [show, setShow] = useState({});
+    const [selectedWargaPending, setSelectedWargaPending] = useState(null);
+    const [actionLoading, setActionLoading] = useState({});
+    const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+
+    const loadData = () => {
+        fetchApprovalRoleData(setIsLoading, setDataWargaPending);
+
+    };
 
     useEffect(() => {
-        fetchApprovalRoleData(setIsLoading, setDataWarga);
+        loadData();
     }, []);
 
-    const handleApprove = async (nik_warga) => {
+    const handleApprovalAction = async (pendingId, newStatus) => {
+
+        setActionLoading(prev => ({ ...prev, [pendingId]: true }));
+        const status = newStatus === 'approved' ? 'approve' : 'reject';
         try {
-            setLoading((prev) => ({ ...prev, [nik_warga]: true, ['main']: true }));
-            await axios.post(`/approvalRole/approve/${nik_warga}`);
+            await axios.put(`/api/approval-role/warga/${pendingId}/${status}`);
             showAlert({
-                title: "Berhasil!!!",
-                desc: "Approval diterima",
-                message: "Status approval user telah diperbarui",
+                title: "Berhasil!",
+                desc: `Permintaan berhasil di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+                success: true,
                 color: "green",
-                });
-            fetchApprovalRoleData(setIsLoading, setDataWarga);
-            setLoading((prev) => ({ ...prev, [nik_warga]: false, ['main']: false }));
+            });
+            loadData();
+            if (selectedWargaPending && selectedWargaPending.user.id === pendingId) {
+                setIsDetailDialogOpen(false);
+                setSelectedWargaPending(null);
+            }
         } catch (error) {
-            console.error("Error approving user:", error);
+            console.error(`Error ${newStatus === 'approved' ? 'approving' : 'rejecting'} user:`, error.response?.data || error.message);
             showAlert({
-                title: "Terjadi Kesalahan",
-                desc: error,
-                message: "Status approval user gagal diperbarui",
-                succes: false,
+                title: "Gagal!",
+                desc: error.response?.data?.message || `Gagal ${newStatus === 'approved' ? 'menyetujui' : 'menolak'} permintaan.`,
+                success: false,
                 color: "red",
-                });
+                errors: error.response?.data?.errors
+            });
+        } finally {
+            setActionLoading(prev => ({ ...prev, [pendingId]: false }));
         }
     };
 
-    const handleDisapprove = async (nik_warga) => {
-        try {
-            setLoading((prev) => ({ ...prev, [nik_warga]: true,  ['main']: true }));
-            await axios.post(`/approvalRole/disapprove/${nik_warga}`);
-            showAlert({
-                title: "Berhasil!!!",
-                desc: "Approval ditolak",
-                message: "Status approval user telah diperbarui",
-                color: "green",
-                });
-            fetchApprovalRoleData(setIsLoading, setDataWarga); 
-            setLoading((prev) => ({ ...prev, [nik_warga]: false,  ['main']: false }));
-        } catch (error) {
-            console.error("Error disapproving user:", error);
-            showAlert({
-                title: "Terjadi Kesalahan",
-                desc: error,
-                message: "Status approval user gagal diperbarui",
-                succes: false,
-                color: "red",
-                });
-        }
+    const openDetailDialog = (wargaPending) => {
+        setSelectedWargaPending(wargaPending);
+        setIsDetailDialogOpen(true);
     };
 
     return (
         <div className="w-full p-6">
-            <AlertWrapper />
             <div>
-                <h2 className="font-semibold text-lg mb-4">
-                    Permintaan Role
+                <h2 className="font-semibold text-lg mb-4 text-gray-800">
+                    Permintaan Persetujuan Akun Warga
                 </h2>
-                <Table className="relative">                        
-                    {loading['main'] && 
-                            <div className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
-                                <div className="flex flex-col items-center justify-center">
-                                <Loader2 
-                                    className="h-12 w-12 animate-spin text-green" 
-                                    strokeWidth={2} 
-                                />
-                                <p className="mt-4 text-gray-700 font-semibold">
-                                    Sistem sedang bekerja, mohon tunggu sebentar...
-                                </p>
-                                </div>
-                            </div>
-                        }
+                <div className="rounded-md border">
+                <Table className="relative">
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nomor KK</TableHead>
-                            <TableHead>NIK Warga</TableHead>
-                            <TableHead>Nama Warga</TableHead>
-                            <TableHead>Jenis Kelamin</TableHead>
-                            <TableHead>Nomor Telepon</TableHead>
-                            <TableHead>Tempat dan Tanggal Lahir</TableHead>
-                            <TableHead>Alamat</TableHead>
-                            <TableHead>Approval</TableHead>
-                            <TableHead className="text-center">Aksi</TableHead>
-                            <TableHead className="text-center">Detail</TableHead>
+                            <TableHead className="text-gray-600">Tanggal</TableHead>
+                            <TableHead className="text-gray-600">Nama Warga</TableHead>
+                            <TableHead className="text-gray-600">NIK</TableHead>
+                            <TableHead className="text-gray-600">RT</TableHead>
+                            <TableHead className="text-gray-600">RW</TableHead>
+                            <TableHead className="text-center text-gray-600">Status Permintaan</TableHead>
+                            <TableHead className="text-center text-gray-600">Detail</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-
                         {isLoading ? (
                             Array(5).fill(null).map((_, index) => (
                                 <TableRow key={index}>
-                                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                                    <TableCell>
-                                        <div className="flex space-x-2">
-                                            <Skeleton className="h-6 w-6 rounded-full" />
-                                            <Skeleton className="h-6 w-6 rounded-full" />
-                                        </div>
-                                    </TableCell>
+                                    <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                                    <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                                    <TableCell><Skeleton className="h-5 w-40" /></TableCell>
+                                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                                    <TableCell className="text-center"><Skeleton className="h-8 w-20 mx-auto" /></TableCell>
+                                    <TableCell className="text-center"><Skeleton className="h-8 w-20 mx-auto" /></TableCell>
                                 </TableRow>
                             ))
+                        ) : dataWargaPending.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center text-gray-500 py-8">
+                                    Tidak ada permintaan persetujuan akun saat ini.
+                                </TableCell>
+                            </TableRow>
                         ) : (
-                            dataWarga.map((warga) => (
-                                <TableRow key={warga.nik_warga}>
-                                    <TableCell className="font-medium">{warga.nomer_kk}</TableCell>
-                                    <TableCell>{warga.nik_warga}</TableCell>
-                                    <TableCell>{warga.nama}</TableCell>
-                                    <TableCell>{warga.jenis_kelamin}</TableCell>
-                                    <TableCell>{warga.phone}</TableCell>
-                                    <TableCell>{warga.tempat_dan_tanggal_lahir}</TableCell>
-                                    <TableCell>
-                                        <div className={`cursor-pointer ${show[warga.nik_warga] ? "" : "line-clamp-3"}`} 
-                                            onClick={() => setShow(prev => ({
-                                                ...prev, 
-                                                [warga.nik_warga]: !prev[warga.nik_warga]
-                                            }))}>
-                                                {warga.alamat}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{warga.approved ? "Disetujui" : warga.approved === 0 ? "Ditolak" : "Pending"}</TableCell>
-                                    <TableCell>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleApprove(warga.nik_warga)}
-                                                aria-label="Approve Warga"
-                                                className="w-10 h-10"
-                                            >
-                                                <img className="w-6 h-6" src="/img/check-circle.svg" alt="Approve" />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleDisapprove(warga.nik_warga)}
-                                                aria-label="Disapprove Warga"
-                                                className="w-10 h-10"
-                                            >
-                                                <img className="w-6 h-6" src="/img/x-circle.svg" alt="Disapprove" />
-                                            </button>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <button 
-                                                    onClick={() => setSelectedWarga(warga)}
-                                                    className="text-nowrap border border-blue-500 text-blue-500 px-4 py-2 rounded-full hover:bg-blue-500 hover:text-white transition"
+                            dataWargaPending.sort((a, b) => a.user.status_akun - b.user.status_akun).map((wp) => {
+                                const isItemLoading = actionLoading[wp.id];
+                                return (
+                                <TableRow key={wp.id}>
+                                    <TableCell className="font-medium py-3">{formatDateSafe(wp.created_at)}</TableCell>
+                                    <TableCell className="font-medium py-3">{wp.nama || 'N/A'}</TableCell>
+                                    <TableCell className="font-medium py-3">{wp.nik || 'N/A'}</TableCell>
+                                    <TableCell className="font-medium py-3">{wp.rt?.nama_rt || 'N/A'}</TableCell>
+                                    <TableCell className="font-medium py-3">{wp.rt?.rw?.nama_rw || 'N/A'}</TableCell>
+                                    <TableCell className="text-center py-2">
+                                        {wp.user.status_akun == 0 ? (
+                                            <div className="flex space-x-2 justify-center">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 px-3 border-red-500 text-red-500 hover:bg-red-500 hover:text-white disabled:opacity-50"
+                                                    onClick={() => handleApprovalAction(wp.id, 'rejected')}
+                                                    disabled={isItemLoading}
+                                                    title="Tolak Permintaan"
                                                 >
-                                                    Lihat data
-                                                </button>
-                                            </DialogTrigger>
-                                            {selectedWarga && (
-                                                <DialogContent aria-describedby="dialog-description" className="sm:max-w-[600px]">
-                                                    <DialogHeader>
-                                                        <DialogTitle>Data Lengkap Warga</DialogTitle>
-                                                    </DialogHeader>
-                                                    {/* <p id="dialog-description" className="text-sm text-gray-500">
-                                                        Berikut adalah data lengkap warga yang dapat Anda tinjau atau ubah statusnya.
-                                                    </p> */}
-                                                    <div className="grid gap-4 py-4 text-sm">
-                                                        <DataField label="Nama" value={selectedWarga.nama} />
-                                                        <DataField label="No KK" value={selectedWarga.nomer_kk} />
-                                                        <DataField label="NIK" value={selectedWarga.nik_warga} />
-                                                        <DataField label="RT" value={selectedWarga.no_rt} />
-                                                        <DataField label="RW" value={selectedWarga.no_rw} />
-                                                        <DataField label="Status" value={selectedWarga.approved ? "Disetujui" : selectedWarga.approved === 0 ? "Ditolak" : "Pending"} />
-                                                        <DataField label="Alamat" value={selectedWarga.alamat} />
-                                                        <DataField label="Tanggal Lahir" value={selectedWarga.tempat_dan_tanggal_lahir} />
-                                                        <DataField label="Jenis Kelamin" value={selectedWarga.jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"} />
-                                                    </div>
-                                                    <div className="flex gap-2 justify-end items-center w-full">
-                                                        <PrimaryButton
-                                                            color="red"
-                                                            rounded='full'
-                                                            disabled={loading[selectedWarga.nik_warga]}
-                                                            onClick={() => handleDisapprove(selectedWarga.nik_warga)}
-                                                        >
-                                                            <X className="w-4 h-4 mr-2" />
-                                                            Tolak
-                                                        </PrimaryButton>
-                                                        <PrimaryButton
-                                                            color="green"
-                                                            rounded='full'
-                                                            disabled={loading[selectedWarga.nik_warga]}
-                                                            onClick={() => handleApprove(selectedWarga.nik_warga)}
-                                                        >
-                                                            <Check className="w-4 h-4 mr-2" />
-                                                            Setujui
-                                                        </PrimaryButton>
-                                                    </div>
-                                                </DialogContent>
-                                            )}
-                                        </Dialog>
+                                                    {isItemLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />} Tolak
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 px-3 border-green-500 text-green-500 hover:bg-green-500 hover:text-white disabled:opacity-50"
+                                                    onClick={() => handleApprovalAction(wp.id, 'approved')}
+                                                    disabled={isItemLoading}
+                                                    title="Setujui Permintaan"
+                                                >
+                                                    {isItemLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Setujui
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full 
+                                                ${wp.user.status_akun == 1 ? 'bg-green-100 text-green-700' : 
+                                                 wp.user.status_akun == 2 ? 'bg-red-100 text-red-700' : 
+                                                 'bg-yellow-100 text-yellow-700'}`}>
+                                                {wp.user.status_akun == 1 ? 'Disetujui' : 
+                                                 wp.user.status_akun == 2 ? 'Ditolak' : 'Pending'}
+                                            </span>
+                                        )
+                                    }
+                                    </TableCell>
+                                    <TableCell className="text-center py-2">
+                                        <Button 
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => openDetailDialog(wp)}
+                                            className="h-8 px-3"
+                                        >
+                                            <Eye className="h-4 w-4 mr-2" /> Lihat
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))
+                                );
+                            })
                         )}
                     </TableBody>
                 </Table>
+                </div>
             </div>
+
+            {selectedWargaPending && (
+                <Dialog open={isDetailDialogOpen} onOpenChange={(isOpen) => { if(!isOpen) setSelectedWargaPending(null); setIsDetailDialogOpen(isOpen);}}>
+                    <DialogContent className="sm:max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Detail Permintaan Persetujuan: {selectedWargaPending.user.nama}</DialogTitle>
+                            <DialogDescription>
+                                Tinjau detail data warga yang mengajukan persetujuan akun.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-y-2 gap-x-4 py-4 text-sm max-h-[60vh] overflow-y-auto pr-2 md:grid-cols-2">
+                            <DataField className="md:col-span-2 bg-slate-50 p-2 rounded-md" label="Nama Lengkap" value={selectedWargaPending.user.nama || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="NIK" value={selectedWargaPending.user.nik || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="No. KK" value={selectedWargaPending.user.no_kk || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="Jenis Kelamin" value={selectedWargaPending.user.jenis_kelamin === "Pria" ? "Laki-laki" : selectedWargaPending.user.jenis_kelamin === "Perempuan" ? "Perempuan" : selectedWargaPending.user.jenis_kelamin || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="Tempat Lahir" value={selectedWargaPending.user.tempat_lahir || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="Tanggal Lahir" value={formatDateSafe(selectedWargaPending.user.tanggal_lahir)} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="Agama" value={selectedWargaPending.user.agama || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="Pendidikan" value={selectedWargaPending.user.pendidikan_terakhir || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="RT" value={selectedWargaPending.user.rt?.no_rt || 'N/A'} />
+                            <DataField className="bg-slate-50 p-2 rounded-md" label="RW" value={selectedWargaPending.user.rt?.rw?.no_rw || 'N/A'} />
+                            <DataField className="md:col-span-2 bg-slate-50 p-2 rounded-md" label="Alamat KTP" value={selectedWargaPending.user.alamat_ktp || (selectedWargaPending.user.alamat ? `${selectedWargaPending.user.alamat.nama_jalan}` : 'N/A')} /> 
+                            <DataField className="md:col-span-2 bg-blue-50 p-2 rounded-md ring-1 ring-blue-200" label="Status Permintaan Saat Ini" value={selectedWargaPending.user.status_akun == 1 ? 'Disetujui' : selectedWargaPending.user.status_akun == 2 ? 'Ditolak' : 'Pending'} />
+                            {selectedWargaPending.catatan && <DataField className="md:col-span-2 bg-yellow-50 p-2 rounded-md ring-1 ring-yellow-200" label="Catatan Sebelumnya" value={selectedWargaPending.catatan} />}
+                        </div>
+                        <DialogFooter className="mt-4 pt-4 border-t">
+                            {selectedWargaPending.user.status_akun == 0 ? (
+                                <div className="flex gap-2 justify-end items-center w-full">
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => handleApprovalAction(selectedWargaPending.id, 'rejected')}
+                                        disabled={actionLoading[selectedWargaPending.id]}
+                                    >
+                                        {actionLoading[selectedWargaPending.id] ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <X className="w-4 h-4 mr-2" />} Tolak
+                                    </Button>
+                                    <Button
+                                        variant="default"
+                                        className="bg-green-600 hover:bg-green-700"
+                                        onClick={() => handleApprovalAction(selectedWargaPending.id, 'approved')}
+                                        disabled={actionLoading[selectedWargaPending.id]}
+                                    >
+                                        {actionLoading[selectedWargaPending.id] ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />} Setujui
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="flex gap-2 justify-end items-center w-full">
+                                    <DialogClose asChild>
+                                        <Button variant="outline">Tutup</Button>
+                                    </DialogClose>
+                                </div>
+                            )}
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
     );
 };

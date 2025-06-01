@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
+import { extractJwtPayload } from './lib/jwt';
 
 export function middleware(request) {
+  // Get the auth token from cookies
   const authToken = request.cookies.get('auth_token')?.value;
   const isAuthenticated = !!authToken;
   
   let userRole = null;
   if (authToken) {
     try {
-      const tokenParts = authToken.split('.');
-      if (tokenParts.length > 1) {
-        const payload = JSON.parse(atob(tokenParts[1]));
+      const payload = extractJwtPayload(authToken);
+      if (payload) {
         userRole = payload.role.toLowerCase();
       }
     } catch (error) {
-      console.error('Error parsing token:', error);
+      console.error('Error getting user role:', error);
     }
   }
   
@@ -75,7 +76,7 @@ export function middleware(request) {
         return NextResponse.redirect(new URL(rolePathMap[userRole][0], request.url));
       }
       // Fallback ke homepage
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 

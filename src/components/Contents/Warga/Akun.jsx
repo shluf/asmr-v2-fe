@@ -8,13 +8,18 @@ import { PenSquare, User2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { fetchAkunData } from '@/hooks/warga'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import { showAlert } from '@/components/partials/Alert'
 
 const Akun = ({ nikWarga }) => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [jenisKelamin, setJenisKelamin] = useState(null);
+  const [ttLahir, setTtLahir] = useState(null);
   const [profileWarga, setProfileWarga] = useState({
-    user: {}
+    user: {},
+    warga: {
+      rt: {
+        rw: {}
+      },
+    }
   });
   
   const [data, setData] = useState({
@@ -28,8 +33,8 @@ const Akun = ({ nikWarga }) => {
   const [processing, setProcessing] = useState(false);
 
   const fetchData = async () => {
-    const gender = await fetchAkunData(setProfileWarga, setData, nikWarga);
-    setJenisKelamin(gender === "P" ? "Perempuan" : "Laki-Laki");
+    const ttl = await fetchAkunData(setProfileWarga, setData, nikWarga);
+    setTtLahir(ttl);
   };
 
   useEffect( () => {
@@ -45,17 +50,18 @@ const Akun = ({ nikWarga }) => {
     e.preventDefault();
     setProcessing(true);
     try {
-        const response = await axios.put(`/api/profile-warga/${nikWarga}`, data);
-        if (response.data.status === 'success') {
+        const response = await axios.put(`/api/surat/data-warga/`, data);
+        if (response.data.user) {
+            console.log(response.data.warga);
             setProfileWarga((prevState) => ({
                 ...prevState,
                 user: {
                     ...prevState.user,
-                    phone: response.data.data.phone,
-                    alamat: response.data.data.alamat,
-                    kabupaten: response.data.data.kabupaten,
-                    provinsi: response.data.data.provinsi,
-                    agama: response.data.data.agama,
+                    phone: response.data.warga.phone,
+                    alamat: response.data.warga.alamat,
+                    kabupaten: response.data.warga.kabupaten,
+                    provinsi: response.data.warga.provinsi,
+                    agama: response.data.warga.agama,
                 },
             }));
 
@@ -63,7 +69,7 @@ const Akun = ({ nikWarga }) => {
                 title: "Berhasil!",
                 desc: "Profil warga berhasil diperbarui.",
                 message: "Data profil telah diperbarui dengan sukses.",
-                succes: true,
+                success: true,
                 color: "green",
             });
 
@@ -74,7 +80,7 @@ const Akun = ({ nikWarga }) => {
             title: "Terjadi Kesalahan",
             desc: error.message,
             message: "Gagal memperbarui profil warga.",
-            succes: false,
+            success: false,
             color: "red",
         });
         console.error('Error updating profile:', error);
@@ -88,7 +94,6 @@ const Akun = ({ nikWarga }) => {
 
   return (
       <>
-          <AlertWrapper />
           <div className="w-full max-w-5xl mx-auto p-4 mb-4">
               <div className="flex flex-col justify-center items-center md:items-start md:flex-row gap-8">
                   <div className="flex-shrink-0">
@@ -116,7 +121,7 @@ const Akun = ({ nikWarga }) => {
                                   <Input
                                       className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                       id="nama"
-                                      defaultValue={profileWarga.nama}
+                                      defaultValue={profileWarga.warga.nama}
                                       readOnly={!isEditMode}
                                   />
                               </div>
@@ -125,7 +130,7 @@ const Akun = ({ nikWarga }) => {
                                   <Input
                                       className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                       id="nik"
-                                      defaultValue={profileWarga.nomer_kk}
+                                      defaultValue={profileWarga.warga.nik}
                                       disabled={isEditMode}
                                       readOnly={true}
                                   />
@@ -162,7 +167,7 @@ const Akun = ({ nikWarga }) => {
                                       className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                       id="birthplace"
                                       defaultValue={
-                                          profileWarga.tempat_dan_tanggal_lahir
+                                          ttLahir
                                       }
                                       disabled={isEditMode}
                                       readOnly={true}
@@ -217,7 +222,7 @@ const Akun = ({ nikWarga }) => {
                                   <Input
                                       className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                       id="gender"
-                                      defaultValue={jenisKelamin}
+                                      defaultValue={profileWarga.warga.jenis_kelamin}
                                       disabled={isEditMode}
                                       readOnly={true}
                                   />
@@ -228,7 +233,7 @@ const Akun = ({ nikWarga }) => {
                                       <Input
                                           className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                           id="rt"
-                                          defaultValue={profileWarga.nomor_rt}
+                                          defaultValue={profileWarga.warga.rt.nama_rt}
                                           disabled={isEditMode}
                                           readOnly={true}
                                       />
@@ -238,7 +243,7 @@ const Akun = ({ nikWarga }) => {
                                       <Input
                                           className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                           id="rw"
-                                          defaultValue={profileWarga.nomor_rw}
+                                          defaultValue={profileWarga.warga.rt.rw.nama_rw}
                                           disabled={isEditMode}
                                           readOnly={true}
                                       />
@@ -249,7 +254,7 @@ const Akun = ({ nikWarga }) => {
                                   <Input
                                       className="focus:ring-green focus:border-green active:ring-green focus:ring-2"
                                       id="kk"
-                                      defaultValue={profileWarga.nomer_kk}
+                                      defaultValue={profileWarga.warga.nomor_kk}
                                       disabled={isEditMode}
                                       readOnly={true}
                                   />
@@ -262,7 +267,7 @@ const Akun = ({ nikWarga }) => {
                                       onChange={(id, value) =>
                                           setData(id, value)
                                       }
-                                      defaultValue={profileWarga.agama}
+                                      defaultValue={profileWarga.warga.agama}
                                       disabled={isEditMode}
                                       readOnly={true}
                                   />

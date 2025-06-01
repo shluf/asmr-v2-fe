@@ -3,7 +3,7 @@
 import Checkbox from '@/components/Atoms/Checkbox'
 import InputError from '@/components/Atoms/InputError'
 import InputLabel from '@/components/Atoms/InputLabel'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import { AlertWrapper, showAlert } from '@/components/partials/Alert'
 import PrimaryButton from '@/components/Atoms/PrimaryButton'
 import TextInput from '@/components/Atoms/TextInput'
 import Link from 'next/link'
@@ -37,7 +37,7 @@ const LoginForm = () => {
                 title: "Berhasil",
                 desc: "Login berhasil",
                 message: "Anda akan diarahkan ke halaman dashboard",
-                succes: true,
+                success: true,
                 color: "green",
             });
         }
@@ -47,7 +47,7 @@ const LoginForm = () => {
                 title: "Gagal",
                 desc: errors.general[0],
                 message: "Silahkan coba lagi",
-                succes: false,
+                success: false,
                 color: "red",
             });
         }

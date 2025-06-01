@@ -1,5 +1,6 @@
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
+import { showAlert } from "@/components/partials/Alert";
 
 export const useRtRw = () => {
     const [rwList, setRwList] = useState([])
@@ -10,12 +11,34 @@ export const useRtRw = () => {
     useEffect(() => {
         const fetchRw = async () => {
             setIsRwLoading(true)
+            setRwError(null)
             try {
                 const response = await axios.get('/api/wilayah/rw')
-                setRwList(response.data || [])
+                if (response.status === 200 && response.data && response.data.success) {
+                    setRwList(response.data.data || [])
+                } else {
+                    setRwList([])
+                    const errorMsg = response.data?.message || "Gagal mengambil data RW atau format salah."
+                    setRwError({ message: errorMsg })
+                    showAlert({
+                        title: "Gagal Ambil Data RW",
+                        desc: errorMsg,
+                        message: "Tidak dapat memuat daftar RW.",
+                        success: false,
+                        color: "orange",
+                    })
+                }
             } catch (error) {
+                const errorMsg = error.response?.data?.message || error.message
                 setRwError(error)
                 setRwList([])
+                showAlert({
+                    title: "Kesalahan Server (RW)",
+                    desc: errorMsg,
+                    message: "Terjadi kesalahan saat mengambil data RW.",
+                    success: false,
+                    color: "red",
+                })
             } finally {
                 setIsRwLoading(false)
             }
@@ -28,12 +51,32 @@ export const useRtRw = () => {
         setIsRtLoading(true)
         try {
             const response = await axios.get(`/api/wilayah/rt/${rwId}`)
-            const result = response.data || []
-            setIsRtLoading(false)
-            return result
+            if (response.status === 200 && response.data && response.data.success) {
+                setIsRtLoading(false)
+                return response.data.data || []
+            } else {
+                setIsRtLoading(false)
+                const errorMsg = response.data?.message || `Gagal mengambil data RT untuk RW ${rwId}.`
+                showAlert({
+                    title: "Gagal Ambil Data RT",
+                    desc: errorMsg,
+                    message: "Tidak dapat memuat daftar RT.",
+                    success: false,
+                    color: "orange",
+                })
+                return []
+            }
         } catch (error) {
             setIsRtLoading(false)
-            throw error
+            const errorMsg = error.response?.data?.message || error.message
+            showAlert({
+                title: `Kesalahan Server (RT untuk RW ${rwId})`,
+                desc: errorMsg,
+                message: "Terjadi kesalahan saat mengambil data RT.",
+                success: false,
+                color: "red",
+            })
+            return []
         }
     }
 

@@ -29,7 +29,6 @@ export default function HistoriPage() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6">Histori Pengajuan</h1>
             <HistoriPengajuan nikWarga={user?.nik} />
         </div>
     );

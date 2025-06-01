@@ -24,23 +24,23 @@ const BiodataUser = () => {
     }, []);
 
     return (
-        <div className="w-full p-6">
-            <div id="rw-data" >
-                <h2 className="font-semibold text-xl mb-4 text-blue-5">
+        <div className="w-full">
+            <div id="rw-data" className="mt-10 border border-gray-200 rounded-2xl pt-10">
+                <h2 className="mx-4 font-semibold text-xl mb-4 text-blue-5">
                     Data anggota RW
                 </h2>
                 <DataTable data={dataRW} columns={rwColumns} pageSize={4} isLoading={loading} />
             </div>
 
-            <div id="rt-data"  className="mt-10">
-                <h2  className="font-semibold text-xl mb-4 text-blue-5">
+            <div id="rt-data"  className="mt-10 border border-gray-200 rounded-2xl pt-10">
+                <h2  className="mx-4 font-semibold text-xl mb-4 text-blue-5">
                     Data anggota RT
                 </h2>
                 <DataTable data={dataRT} columns={rtColumns} pageSize={4} isLoading={loading} />
             </div>
 
-            <div id="warga-data" className="mt-10">
-                <h2 className="font-semibold text-xl mb-4 text-blue-5">
+            <div id="warga-data" className="mt-10 border border-gray-200 rounded-2xl pt-10">
+                <h2 className="mx-4 font-semibold text-xl mb-4 text-blue-5">
                     Data Warga
                 </h2>
                 <DataTable data={dataWarga} columns={wargaColumns} pageSize={10} isLoading={loading} />

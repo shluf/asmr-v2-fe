@@ -29,7 +29,6 @@ export default function AkunPage() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6">Pengaturan Akun</h1>
             <Akun nikWarga={user?.nik} />
         </div>
     );

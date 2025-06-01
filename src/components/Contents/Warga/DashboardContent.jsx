@@ -11,33 +11,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldCheck } from "lucide-react";
 import ProgramKerja from "@/components/partials/ProgramKerja";
 import axios from "@/lib/axios";
+import { useProgramKerjaWarga } from "@/hooks/warga";
 
 const DashboardContent = () => {
-    const [dataProker, setDataProker] = useState([]);
     const [dataPengajuan, setDataPengajuan] = useState([]);
-    const [prokerIsLoading, setProkerIsLoading] = useState(true);
     const [pengajuanIsLoading, setPengajuanIsLoading] = useState(true);
 
-    useEffect(() => {
-        // Fetch program kerja dan data pengajuan
-        const fetchProker = async () => {
-            try {
-                const response = await axios.get('/api/proker');
-                if (response.data.status === 'success') {
-                    setDataProker(response.data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching proker data:', error);
-            } finally {
-                setProkerIsLoading(false);
-            }
-        };
-        
+    const { dataProkerWarga, 
+        prokerIsLoadingWarga,
+    } = useProgramKerjaWarga();
+
+    useEffect(() => {   
         const fetchPengajuan = async () => {
             try {
-                const response = await axios.get('/api/pengajuan-terbaru');
+                const response = await axios.get('/api/surat/riwayat-pengajuan');
                 if (response.data.status === 'success') {
-                    setDataPengajuan(response.data.data);
+                    setDataPengajuan(response.data.pengajuan);
                 }
             } catch (error) {
                 console.error('Error fetching pengajuan data:', error);
@@ -46,15 +35,14 @@ const DashboardContent = () => {
             }
         };
         
-        fetchProker();
         fetchPengajuan();
     }, []);
 
     return (
         <div className="space-y-8 overflow-hidden w-full mb-4">
             <ProgramKerja
-                dataProker={dataProker}
-                loading={prokerIsLoading}
+                dataProker={dataProkerWarga}
+                loading={prokerIsLoadingWarga}
             />
 
             <Card>
@@ -142,11 +130,11 @@ const DashboardContent = () => {
                                                 Status tindak lanjut
                                             </p>
                                             
-                                            <div className={`${dataPengajuan.status_pengajuan === "Selesai" ? "bg-green" : dataPengajuan.status_pengajuan === "Surat ditolak RT" ? "bg-red" : "bg-orange"} rounded-full font-medium text-sm text-slate-100 text-center py-1`}>
-                                                {dataPengajuan.status_pengajuan}
+                                            <div className={`${dataPengajuan.approval_surat?.status_approval === "Selesai" ? "bg-green" : dataPengajuan.approval_surat?.status_approval === "Ditolak_RT" || dataPengajuan.approval_surat?.status_approval === "Ditolak_RW" ? "bg-red" : "bg-orange"} rounded-full font-medium text-sm text-slate-100 text-center py-1`}>
+                                                {dataPengajuan.approval_surat?.status_approval.replace(/_/g, ' ')}
                                             </div>
                                         </div>
-                                        <Link href="/dashboard/histori">
+                                        <Link href="/warga/histori">
                                             <Button
                                                 variant="outline"
                                                 className="rounded-full mt-2"

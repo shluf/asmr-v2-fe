@@ -1,302 +1,306 @@
-import { AlertWrapper, showAlert } from "@/Components/partials/Alert";
-import { DataField } from "@/Components/partials/dataField";
-import PrimaryButton from "@/Components/Atoms/PrimaryButton";
-import { Button } from "@/Components/ui/button";
+import { AlertWrapper, showAlert } from "@/components/partials/Alert";
+import { DataField } from "@/components/partials/dataField";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Components/ui/dialog";
-import axios from "axios";
-import { ArrowUpDown, Trash2 } from "lucide-react";
-import { useState } from "react";
+    DialogClose
+} from "@/components/ui/dialog";
+import axios from "@/lib/axios";
+import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuthTokenClient } from "@/lib/jwt";
+import { format, parseISO } from 'date-fns';
+
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+        return format(parseISO(dateString), 'dd MMM yyyy');
+    } catch (error) {
+        return dateString;
+    }
+};
 
 export const columnsRW = (fetchData) => [
     {
-        accessorKey: "nama",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
-                    Nama
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("nama")}</div>
+        accessorFn: row => row.data?.warga?.nama,
+        id: "nama_pejabat_rw",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Nama
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
         ),
+        cell: ({ row }) => <div className="capitalize">{row.original.data?.warga?.nama || <p className="text-red-500 text-xs">---</p>}</div>,
     },
     {
-        accessorKey: "penanggung_jawab_rw",
-        name: "Jabatan",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
-                    Jabatan
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            return (
-                <div className="text-right font-medium text-nowrap">
-                    {row.getValue("penanggung_jawab_rw")}
-                </div>
-            );
-        },
+        accessorKey: "jabatan",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Jabatan
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => <div className="text-left font-medium text-nowrap">{row.original.nama_rw || <p className="text-red-500 text-xs">---</p>}</div>,
     },
     {
-        accessorKey: "email",
+        accessorFn: row => row.data?.user?.email,
+        id: "email_pejabat_rw",
         header: "Email",
+        cell: ({ row }) => <div className="lowercase">{row.original.data?.user?.email || <p className="text-red-500 text-xs">---</p>}</div>,
+    },
+    {
+        accessorFn: row => `${formatDate(row.data?.pejabat?.periode_mulai)} - ${formatDate(row.data?.pejabat?.periode_selesai)}`,
+        id: "periode_pejabat_rw",
+        header: () => <div className="text-left">Periode</div>,
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("email")}</div>
+            <div className="text-left font-medium text-nowrap">
+                { row.original.data?.pejabat.periode_mulai && row.original.data?.pejabat.periode_selesai ? `${formatDate(row.original.data?.pejabat.periode_mulai)} - ${formatDate(row.original.data?.pejabat.periode_selesai)}` : <p className="text-red-500 text-xs">---</p>}
+            </div>
         ),
     },
     {
-        accessorKey: "periode",
-        header: () => <div className="text-center">Periode</div>,
-        cell: ({ row }) => {
-            return (
-                <div className="text-right font-medium">
-                    {row.getValue("periode")}
-                </div>
-            );
-        },
-    },
-    {
-        accessorKey: "alamat",
-        header: () => <div className="text-right">Alamat</div>,
+        accessorFn: row => row.data?.warga?.alamat?.alamat ? `${row.original.data.warga.alamat.alamat}, ${row.original.data.warga.alamat.kabupaten}, ${row.original.data.warga.alamat.provinsi}` : (row.original.data?.warga?.alamat_ktp || 'N/A'),
+        id: "alamat_pejabat_rw",
+        header: () => <div className="text-left">Alamat</div>,
         cell: ({ row }) => {
             const [show, setShow] = useState(false);
+            const alamat = row.original.data?.warga?.alamat ? `${row.original.data.warga.alamat.alamat}, ${row.original.data.warga.alamat.kabupaten}, ${row.original.data.warga.alamat.provinsi}` : (row.original.data?.warga?.alamat_ktp || null);
             return (
-                <div className="text-right font-medium">
+                <div className="text-left font-medium">
                     <div
-                        className={`cursor-pointer ${
-                            show ? "" : "line-clamp-3"
-                        }`}
+                        className={`cursor-pointer ${show ? "" : "line-clamp-1"}`}
                         onClick={() => setShow(!show)}
+                        title={alamat}
                     >
-                        {row.getValue("alamat")}
+                        {alamat ? alamat : <p className="text-red-500 text-xs">---</p>}
                     </div>
                 </div>
             );
         },
     },
     {
-        accessorKey: "id_rw",
+        accessorKey: "id",
         header: () => null,
         cell: () => null,
         enableHiding: false,
     },
     {
         id: "actions",
-        enableHiding: false,
-        header: () => <div className="text-center">Action</div>,
+        enableHiding: true,
+        header: () => <div className="text-center">Aksi</div>,
         cell: ({ row }) => {
-            const idRW = row.getValue("id_rw");
-            const [formData, setFormData] = useState(() => ({
-                [idRW]: {
-                    nama: row.getValue("nama"),
-                    email: row.getValue("email"),
-                    periode: row.getValue("periode"),
-                    penanggung_jawab_rw: row.getValue("penanggung_jawab_rw"),
-                    alamat: row.getValue("alamat"),
-                },
-            }));
-            const [loading, setLoading] = useState({});
+            const pejabat = row.original;
+            const pejabatId = pejabat.id;
+
+            const initialFormState = {
+                nama: pejabat.data?.warga?.nama || "",
+                nama_rw: pejabat.nama_rw || "",
+                email: pejabat.data?.user?.email || "",
+                periode_mulai: pejabat.data?.pejabat?.periode_mulai,
+                periode_selesai: pejabat.data?.pejabat?.periode_selesai,
+                ttd: pejabat.ttd || "",
+            };
+
+            const [formData, setFormData] = useState(initialFormState);
+            const [fileTTD, setFileTTD] = useState(null);
+            const [isSubmitting, setIsSubmitting] = useState(false);
             const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+            useEffect(() => {
+                if (isDialogOpen) {
+                    setFormData({
+                        nama: pejabat.data?.warga?.nama || "",
+                        nama_rw: pejabat.nama_rw || "",
+                        email: pejabat.data?.user?.email || "",
+                        periode_mulai: pejabat.data?.pejabat?.periode_mulai,
+                        periode_selesai: pejabat.data?.pejabat?.periode_selesai,
+                        ttd: pejabat.ttd || "",
+                    });
+                    setFileTTD(null);
+                }
+            }, [isDialogOpen, pejabat]);
+
             const handleInputChange = (e) => {
-                const { name, value } = e.target;
+                const { name, value, type, checked } = e.target;
                 setFormData((prev) => ({
                     ...prev,
-                    [idRW]: {
-                        ...prev[idRW],
-                        [name]: value,
-                    },
+                    [name]: type === 'checkbox' ? checked : value,
                 }));
             };
 
-            const handleUpdate = async (id_rw, updatedData) => {
-                setLoading((prev) => ({ ...prev, [id_rw]: true }));
+            const handleFileChange = (e) => {
+                setFileTTD(e.target.files[0]);
+            };
+
+            const handleUpdate = async () => {
+                setIsSubmitting(true);
+                const payload = new FormData();
+                payload.append("nama", formData.nama);
+                payload.append("nama_rw", formData.nama_rw);
+                payload.append("email", formData.email);
+                payload.append("periode_mulai", formData.periode_mulai);
+                payload.append("periode_selesai", formData.periode_selesai);
+                if (fileTTD) {
+                    payload.append("ttd", fileTTD);
+                }
+                payload.append("_method", "PUT");
+
                 try {
-                    await axios.put(
-                        `/biodatasUser/store-rw/${id_rw}`,
-                        updatedData
-                    );
-
-                    setIsDialogOpen(false);
-
-                    showAlert({
-                        title: "Berhasil!",
-                        desc: `Data ${row.getValue("penanggung_jawab_rw")} telah diperbarui  `,
-                        message: "Data berhasil diperbarui",
-                        success: true,
-                        color: "green",
-                        onConfirm: () => {
-                            fetchData();
-                          },
+                    const response = await axios.post(`/api/pejabat/rw/${pejabatId}`, payload, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
                     });
+                    if (response.status === 200) {
+                        showAlert({
+                            title: "Berhasil!",
+                            desc: `Data Pejabat ${formData.nama_rw} telah diperbarui.`,
+                            success: true,
+                            color: "green",
+                            onConfirm: () => fetchData(),
+                        });
+                    } else {
+                        showAlert({
+                            title: "Gagal!",
+                            desc: response.data.message || "Terjadi kesalahan saat memperbarui data.",
+                            success: false,
+                            color: "red",
+                        });
+                    }
+                    setIsDialogOpen(false);
                 } catch (error) {
-                    console.error("Error updating RW data:", error);
                     showAlert({
                         title: "Gagal!",
-                        desc: "Terjadi kesalahan saat memperbarui data warga",
-                        message: "Gagal memperbarui data",
+                        desc: error.response?.data?.message || "Terjadi kesalahan saat memperbarui data.",
                         success: false,
                         color: "red",
+                        errors: error.response?.data?.errors
                     });
                 } finally {
-                    setLoading((prev) => ({ ...prev, [id_rw]: false }));
+                    setIsSubmitting(false);
                 }
             };
 
-            const handleDelete = async (id_rw) => {
-                setLoading((prev) => ({ ...prev, [id_rw]: true }));
+            const handleDelete = async () => {
+                setIsSubmitting(true);
                 try {
-                    await axios.delete(route('biodataUser.delete.rw', id_rw));
-
+                    await axios.delete(`/api/pejabat/rw/${pejabatId}`);
                     showAlert({
                         title: "Berhasil!",
-                        desc: "Data RW telah dihapus",
-                        message: "Data berhasil dihapus",
+                        desc: "Data Pejabat RW telah dihapus",
                         success: true,
                         color: "green",
-                        onConfirm: () => {
-                            fetchData();
-                          },
+                        onConfirm: () => fetchData(),
                     });
-                    
                 } catch (error) {
-                    console.error("Error menghapus data RW:", error);
+                    console.error("Error deleting Pejabat RW:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
-                        desc: "Terjadi kesalahan saat menghapus data RW",
-                        message: "Gagal menghapus data",
+                        desc: error.response?.data?.message || "Terjadi kesalahan saat menghapus data.",
                         success: false,
                         color: "red",
                     });
                 } finally {
-                    setLoading((prev) => ({ ...prev, [id_rw]: false }));
+                    setIsSubmitting(false);
                 }
             };
 
             return (
-                <>
-                <AlertWrapper />
-                <div className="flex">
-                <button
-                    type="button"
-                    className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-primary-foreground focus:outline-none bg-red rounded-full border border-gray-200 hover:bg-red-600 hover:text-gray-300 focus:z-10 focus:ring-4 focus:ring-gray-100"
-                    disabled={loading[idRW]}
-                    onClick={() =>
-                        handleDelete(idRW)
-                    }
-                >
-                    <Trash2 width={'16px'} height={'16px'} />
-                </button>
-                <div className="text-center">
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setFormData({
-                                        [idRW]: {
-                                            nama: row.getValue("nama"),
-                                            email: row.getValue("email"),
-                                            periode: row.getValue("periode"),
-                                            penanggung_jawab_rw: row.getValue(
-                                                "penanggung_jawab_rw"
-                                            ),
-                                            alamat: row.getValue("alamat"),
-                                        },
-                                    })
-                                }
-                                className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-pencil-fill"
-                                    viewBox="0 0 16 16"
-                                >
-                                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                </svg>
-                            </button>
+                <div className="flex items-center justify-center gap-2">
+                    {pejabat.data?.warga ? (
+                        <>
+                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-8 px-3">
+                                    <Edit3 className="h-4 w-4" /> Edit
+                                </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[600px]">
+                        <DialogContent className="sm:max-w-md">
                             <DialogHeader>
-                                <DialogTitle>
-                                    Edit {row.getValue("penanggung_jawab_rw")}
-                                </DialogTitle>
+                                <DialogTitle>Edit Data Pejabat RW: {formData.nama} ({formData.nama_rw})</DialogTitle>
+                                <DialogDescription>
+                                    Pastikan data yang dimasukkan sudah benar.
+                                </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <DataField
-                                    label="Nama"
-                                    value={formData[idRW]?.nama || ""}
-                                    name="nama"
-                                    onChange={handleInputChange}
-                                />
-                                <DataField
-                                    label="Email"
-                                    value={formData[idRW]?.email || ""}
-                                    name="email"
-                                    onChange={handleInputChange}
-                                />
-                                <DataField
-                                    label="Periode"
-                                    value={formData[idRW]?.periode || ""}
-                                    name="periode"
-                                    onChange={handleInputChange}
-                                />
-                                <DataField
-                                    label="jabatan"
-                                    value={
-                                        formData[idRW]?.penanggung_jawab_rw ||
-                                        ""
-                                    }
-                                    name="penanggung_jawab_rw"
-                                    onChange={handleInputChange}
-                                />
-                                <DataField
-                                    label="Alamat"
-                                    value={formData[idRW]?.alamat || ""}
-                                    name="alamat"
-                                    textarea
-                                    onChange={handleInputChange}
-                                />
-                                <div className="flex gap-2 justify-end items-center w-full">
-                                    <PrimaryButton
-                                        color="green"
-                                        rounded="full"
-                                        disabled={loading[idRW]}
-                                        onClick={() =>
-                                            handleUpdate(idRW, formData[idRW])
-                                        }
-                                    >
-                                        Simpan
-                                    </PrimaryButton>
-                                </div>
+                            <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                                <DataField label="Nama Warga" id="nama" name="nama" value={formData.nama} onChange={handleInputChange} />
+                                <DataField label="Nama RW" id="nama_rw" name="nama_rw" value={formData.nama_rw} onChange={handleInputChange} placeholder="Contoh: Ketua RW" />
+                                <DataField label="Email" id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Contoh: email@example.com" />
+                                <DataField label="Periode" name={{mulai: "periode_mulai", selesai: "periode_selesai"}} value={{mulai: formData.periode_mulai, selesai: formData.periode_selesai}} onChange={handleInputChange} period={true} />
+                                <DataField label="Tanda Tangan" id="ttd" name="ttd" type="file" onChange={handleFileChange} accept=".png,.jpg,.jpeg" file={true}/>
+                                {pejabat.ttd && (
+                                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md border border-blue-200 mt-2">
+                                        <div className="text-sm flex items-center">
+                                            <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            <span className="font-medium">File TTD saat ini:</span>
+                                            <a 
+                                                href={pejabat.ttd}
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="ml-2 text-blue-600 hover:text-blue-800 hover:underline transition-colors flex items-center"
+                                            >
+                                                Lihat File
+                                                <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            <DialogFooter className="mt-4">
+                                <DialogClose asChild>
+                                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Batal</Button>
+                                </DialogClose>
+                                <Button onClick={handleUpdate} disabled={isSubmitting}>
+                                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menyimpan...</> : <><Save className="mr-2 h-4 w-4" /> Simpan Perubahan</>}
+                                </Button>
+                            </DialogFooter>
                         </DialogContent>
                     </Dialog>
+                    
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="destructive" size="icon" className="h-8 w-8">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                            <DialogHeader>
+                                <DialogTitle>Konfirmasi Hapus</DialogTitle>
+                                <DialogDescription>
+                                    Apakah Anda yakin ingin menghapus data pejabat RW: <strong>{pejabat.data?.warga?.nama || pejabat.nama_rw}</strong> ({pejabat.nama_rw})? Tindakan ini tidak dapat diurungkan.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter className="mt-6">
+                                <DialogClose asChild>
+                                    <Button variant="outline">Batal</Button>
+                                </DialogClose>
+                                <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
+                                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menghapus...</> : <><XCircle className="mr-2 h-4 w-4" /> Ya, Hapus</>}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog> 
+                    </>
+                    ) : (
+                        <Button variant="outline" size="icon" className="h-8 w-full">
+                            <UserX2 className="h-4 w-4" />
+                        </Button>
+                    )}
                 </div>
-                </div>
-                </>
             );
         },
     },

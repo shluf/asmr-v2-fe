@@ -8,7 +8,7 @@ import TextInput from '@/components/Atoms/TextInput'
 import InputError from '@/components/Atoms/InputError'
 import InputLabel from '@/components/Atoms/InputLabel'
 import PrimaryButton from '@/components/Atoms/PrimaryButton'
-import { AlertWrapper, showAlert } from '@/components/Atoms/Alert'
+import { AlertWrapper, showAlert } from '@/components/partials/Alert'
 
 const PasswordResetForm = () => {
     const searchParams = useSearchParams()
@@ -38,7 +38,7 @@ const PasswordResetForm = () => {
                 title: "Berhasil",
                 desc: "Password berhasil direset",
                 message: "Silakan login dengan password baru Anda",
-                succes: true,
+                success: true,
                 color: "green",
             })
         } catch (error) {
@@ -46,7 +46,7 @@ const PasswordResetForm = () => {
                 title: "Gagal",
                 desc: "Gagal mereset password",
                 message: "Silakan coba lagi",
-                succes: false,
+                success: false,
                 color: "red",
             })
         }

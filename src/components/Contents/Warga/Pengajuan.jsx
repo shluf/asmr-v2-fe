@@ -1,36 +1,49 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import axios from "@/lib/axios";
-import { submitPengajuan } from "@/hooks/warga";
+import { submitPengajuan, fetchPengajuanAkunData } from "@/hooks/warga";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TextInput from "@/components/Atoms/TextInput";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertWrapper, showAlert } from "@/components/Atoms/Alert";
+import { showAlert } from "@/components/partials/Alert";
+import { useAuthTokenClient } from "@/lib/jwt";
 
 const Pengajuan = () => {
     const [dataWarga, setDataWarga] = useState({});
     const [selectedJenisSurat, setSelectedJenisSurat] = useState("");
     const [description, setDescription] = useState("");
-    const [loading, setLoading] = useState(true);
     const [isLainnya, setIsLainnya] = useState(false)
+    const { payload } = useAuthTokenClient();
+    const [isLoading, setIsLoading] = useState(false);
+    const initialPengajuanState = {
+        nama_pemohon: "",
+        nik_pemohon: "",
+        nomor_kk_pemohon: "",
+        jenis_kelamin_pemohon: "",
+        tempat_tanggal_lahir_pemohon: "",
+        alamat_pemohon: "",
+        agama_pemohon: "",
+        phone_pemohon: "",
+    };
+
+    const [pengajuan, setPengajuan] = useState(initialPengajuanState);
 
     useEffect(() => {
-        // Gunakan useAuth atau metode lain untuk mendapatkan data warga
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('/api/warga/data');
-                if (response.data.status === 'success') {
-                    setDataWarga(response.data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching warga data:', error);
-            } finally {
-                setLoading(false);
-            }
+        if (payload && payload.no_kk) {
+            setPengajuan(prev => ({ ...prev, nomor_kk_pemohon: payload.no_kk }));
+        }
+
+        const loadInitialData = async () => {
+            const result = await fetchPengajuanAkunData(setDataWarga, (akunData) => {
+                setPengajuan(prev => ({
+                    ...prev,
+                    nomor_kk_pemohon: akunData.no_kk || prev.nomor_kk_pemohon,
+                    alamat_pemohon: akunData.alamat || prev.alamat_pemohon,
+                }));
+            });
         };
-        
-        fetchData();
+
+        loadInitialData();
     }, []);
 
     const handleJenisSuratChange = (event) => {
@@ -50,87 +63,60 @@ const Pengajuan = () => {
         }));
     };
 
-    const [pengajuan, setPengajuan] = useState({
-        id_warga: "",
-        nama_pemohon: "",
-        nik_pemohon: "",
-        jenis_kelamin_pemohon: "",
-        tempat_tanggal_lahir_pemohon: "",
-        alamat_pemohon: "",
-        agama_pemohon: "",
-        id_rt: "",
-        id_rw: "",
-        jenis_surat: "",
-        status_pengajuan: "pending",
-        deskripsi: "",
-    });
-
     const handleSubmit = async () => {
+        setIsLoading(true);
         try {
-            const formData = {
-                ...pengajuan,
-                id_warga: dataWarga.nik_warga,
-                id_rt: dataWarga.id_rt,
-                id_rw: dataWarga.id_rw,
+            const { nomor_kk_pemohon, ...restOfPengajuanState } = pengajuan;
+            const formDataToSubmit = {
+                ...restOfPengajuanState,
+                no_kk_pemohon: nomor_kk_pemohon,
                 jenis_surat: selectedJenisSurat,
                 deskripsi: description,
             };
             
-            const result = await submitPengajuan(formData);
+            const result = await submitPengajuan(formDataToSubmit);
             
             if (result.success) {
                 showAlert({
                     title: "Berhasil",
-                    desc: "Surat berhasil diajukan",
-                    message: "Silahkan tunggu status selanjutnya di laman histori pengajuan",
+                    desc: result.message || "Surat berhasil diajukan",
                     success: true,
                     color: "green",
                 });
                 
-                // Reset form
                 setSelectedJenisSurat("");
                 setDescription("");
-                setPengajuan({
-                    id_warga: "",
-                    nama_pemohon: "",
-                    nik_pemohon: "",
-                    jenis_kelamin_pemohon: "",
-                    tempat_tanggal_lahir_pemohon: "",
-                    alamat_pemohon: "",
-                    agama_pemohon: "",
-                    id_rt: "",
-                    id_rw: "",
-                    jenis_surat: "",
-                    status_pengajuan: "pending",
-                    deskripsi: "",
-                });
+                setPengajuan(initialPengajuanState);
+                if (payload && payload.no_kk) {
+                    setPengajuan(prev => ({ ...initialPengajuanState, nomor_kk_pemohon: payload.no_kk }));
+                }
             } else {
                 showAlert({
                     title: "Gagal",
-                    desc: result.message,
-                    message: "Silahkan periksa kembali data yang anda berikan",
+                    desc: result.message || "Pengajuan gagal.",
                     success: false,
+                    message: "Pengajuan gagal, mohon periksa kembali data yang Anda masukkan",
                     color: "red",
+                    errors: result.errors
                 });
             }
         } catch (error) {
-            console.error("Error submitting pengajuan:", error);
+            console.error("Error submitting pengajuan in component:", error);
             showAlert({
-                title: "Gagal",
-                desc: error.response?.data?.message || "Terjadi kesalahan",
-                message: "Silahkan periksa kembali data yang anda berikan",
+                title: "Gagal Submit",
+                desc: "Terjadi kesalahan teknis saat mengirim pengajuan.",
+                message: "Terjadi kesalahan teknis saat mengirim pengajuan, mohon coba lagi nanti",
                 success: false,
                 color: "red",
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="w-full  flex justify-center items-start p-3 mb-4">
-            <div>
-                <AlertWrapper />
-            </div>
-            <div className="bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 border rounded-lg w-full h-full  p-8">
+            <form className="bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 border rounded-lg w-full h-full  p-8">
                 <h2 className="text-2xl font-bold text-blue-900 mb-6">
                     Form Pengajuan
                 </h2>
@@ -140,7 +126,7 @@ const Pengajuan = () => {
                     Layanan Anda
                 </div>
                 <div className="text-gray-600 mt-2 md:text-base text-sm">
-                    Yang bertanda tangan di bawah ini Ketua {dataWarga.nomor_rt} {dataWarga.nomor_rw} {dataWarga.alamat},
+                    Yang bertanda tangan di bawah ini Ketua {dataWarga?.rt?.nama_rt || '[RT]'} {dataWarga?.rt?.rw?.nama_rw || '[RW]'} {(dataWarga.alamat && dataWarga.alamat.alamat) || '[Alamat Warga]'}, {dataWarga?.alamat?.kabupaten || '[Kota Warga]'}, {dataWarga?.alamat?.provinsi || '[Provinsi Warga]'},
                     memberikan keterangan kepada :
                 </div>
                 <div className="text-gray-800 mx-2 md:mx-8 mt-4 md:text-base text-sm space-y-1">
@@ -176,9 +162,8 @@ const Pengajuan = () => {
                         <TextInput
                             color="green"
                             type="text"
-                            name="nomer_kk"
-                            value={dataWarga.nomer_kk || ""}
-                            
+                            name="nomor_kk_pemohon"
+                            value={pengajuan.nomor_kk_pemohon}
                             disabled
                             className="flex-1 min-w-60 sm:min-w-80 p-2 text-zinc-500 border rounded w-full "
                         />
@@ -186,7 +171,7 @@ const Pengajuan = () => {
                     <div className="flex md:flex-row flex-col md:items-center items-start">
                         <label className="font-semibold w-60">Jenis Kelamin <span className="w-5 md:hidden">:</span></label>
                             <span className="w-5 md:block hidden">:</span>
-                        <div className="flex-1 min-w-60 sm:min-w-80 w-full">
+                        <div className="flex-1 min-w-60 sm:max-w-80 sm:min-w-80 w-full">
                         <Select 
                             onValueChange={(value) => 
                                 setPengajuan((prev) => ({ ...prev, jenis_kelamin_pemohon: value }))}
@@ -211,7 +196,7 @@ const Pengajuan = () => {
                     <div className="flex md:flex-row flex-col md:items-center items-start">
                         <label className="font-semibold w-60">Agama <span className="w-5 md:hidden">:</span></label>
                         <span className="w-5 md:block hidden">:</span>
-                        <div className="flex-1 min-w-60 sm:min-w-80 w-full">
+                        <div className="flex-1 min-w-60 sm:max-w-80 sm:min-w-80 w-full">
                         <Select 
                             onValueChange={(value) => 
                                 setPengajuan((prev) => ({ ...prev, agama_pemohon: value }))}
@@ -247,7 +232,24 @@ const Pengajuan = () => {
                             name="tempat_tanggal_lahir_pemohon"
                             value={pengajuan.tempat_tanggal_lahir_pemohon}
                             onChange={handleInputChange}
+                            placeholder="Contoh: Jakarta, 01/01/2000"
                             className="flex-1 min-w-60 sm:min-w-80 p-2 border rounded w-full "
+                            required
+                        />
+                    </div>
+                    <div className="flex md:flex-row flex-col md:items-center items-start">
+                        <label className="font-semibold w-60">
+                            Nomor Telepon <span className="w-5 md:hidden">:</span>
+                        </label>
+                        <span className="w-5 md:block hidden">:</span>
+                        <TextInput
+                            color="green"
+                            type="tel"
+                            name="phone_pemohon"
+                            value={pengajuan.phone_pemohon}
+                            onChange={handleInputChange}
+                            className="flex-1 p-2 min-w-60 sm:min-w-80 border rounded w-full "
+                            placeholder="Contoh: 081234567890"
                             required
                         />
                     </div>
@@ -270,8 +272,8 @@ const Pengajuan = () => {
 
                 <div className="mb-6 mt-4 md:text-base text-sm">
                     <div className="text-gray-700">
-                        Benar bahwa yang bersangkutan adalah warga {dataWarga.nomor_rt} {dataWarga.nomor_rw} yang beralamat di{" "}
-                        {dataWarga.alamat}, dan bermaksud untuk mengurus surat:
+                        Benar bahwa yang bersangkutan adalah warga {dataWarga?.rt?.nama_rt || '[RT]'} {dataWarga?.rt?.rw?.nama_rw || '[RW]'} yang beralamat di{" "}
+                        {(dataWarga.alamat && dataWarga.alamat.alamat) || '[Alamat Warga]'}, {dataWarga?.alamat?.kabupaten || '[Kota Warga]'}, {dataWarga?.alamat?.provinsi || '[Provinsi Warga]'}, dan bermaksud untuk mengurus surat:
                     </div>
                     <div className="mt-4 ml-6 space-y-2">
                         {[
@@ -304,7 +306,6 @@ const Pengajuan = () => {
                     </div>
                 </div>
 
-                {/* Deskripsi Keluhan */}
                 <div className="mb-6">
                     <Textarea
                         className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green"
@@ -316,14 +317,15 @@ const Pengajuan = () => {
                     />
                 </div>
 
-                {/* Button Ajukan */}
                 <button
+                    type="submit"
                     className="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition duration-300"
                     onClick={handleSubmit}
+                    disabled={isLoading}
                 >
                     Ajukan
                 </button>
-            </div>
+            </form>
         </div>
     );
 };

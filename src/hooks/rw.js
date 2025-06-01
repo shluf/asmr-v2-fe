@@ -2,23 +2,27 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "@/lib/axios";
 import { showAlert } from "@/components/partials/Alert";
 
-export const useProgramKerjaRW = () => {
+export const useProgramKerjaRW = (idRW) => {
     const [dataProker, setDataProker] = useState([]);
     const [prokerIsLoading, setProkerIsLoading] = useState(true);
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [showAddDialog, setShowAddDialog] = useState(false);
     const [editProker, setEditProker] = useState({
         id_program_kerja: null,
-        tanggal: "",
-        waktu: "",
-        jenis_kegiatan: "",
+        nama_program_kerja: "",
+        tanggal_mulai: "",
+        tanggal_selesai: "",
+        waktu_mulai: "",
+        waktu_selesai: "",
         tempat: "",
         penanggung_jawab: "",
     });
     const [tambahProker, setTambahProker] = useState({
-        tanggal: "",
-        waktu: "",
-        jenis_kegiatan: "",
+        nama_program_kerja: "",
+        tanggal_mulai: "",
+        tanggal_selesai: "",
+        waktu_mulai: "",
+        waktu_selesai: "",
         tempat: "",
         penanggung_jawab: "",
     });
@@ -31,16 +35,27 @@ export const useProgramKerjaRW = () => {
     const fetchProkerData = useCallback(async () => {
         setProkerIsLoading(true);
         try {
-            const response = await axios.get("/program-kerja");
-            setDataProker(response.data.proker || response.data || []);
+            const response = await axios.get(`/api/proker/`);
+            if (response.status === 200 && response.data && response.data.success) {
+                setDataProker(response.data.data || []);
+            } else {
+                setDataProker([]);
+                showAlert({
+                    title: "Gagal Memuat Program Kerja",
+                    desc: response.data?.message || "Data program kerja tidak ditemukan atau format salah.",
+                    message: "Tidak dapat memuat program kerja.",
+                    success: false,
+                    color: "orange",
+                });
+            }
         } catch (error) {
             console.error("Error fetching program kerja data:", error);
-            setDataProker([]); // Set to empty on error
+            setDataProker([]);
             showAlert({
                 title: "Gagal Memuat Data",
-                desc: error.message,
+                desc: error.response?.data?.message || error.message,
                 message: "Tidak dapat memuat program kerja.",
-                succes: false,
+                success: false,
                 color: "red",
             });
         } finally {
@@ -49,32 +64,52 @@ export const useProgramKerjaRW = () => {
     }, []);
 
     useEffect(() => {
+        // console.log("idRW", idRW); // idRW might not be used directly here if proker are general
         fetchProkerData();
-    }, [fetchProkerData]);
+    }, [fetchProkerData]); // Added fetchProkerData to dependency array
 
-    const handleEdit = (proker) => {
-        setEditProker(proker);
+    const handleEdit = (prokerItem) => {
+        setEditProker({
+            id_program_kerja: prokerItem.id,
+            nama_program_kerja: prokerItem.nama_program_kerja || "",
+            tanggal_mulai: prokerItem.tanggal_mulai || "",
+            tanggal_selesai: prokerItem.tanggal_selesai || "",
+            waktu_mulai: prokerItem.waktu_mulai || "",
+            waktu_selesai: prokerItem.waktu_selesai || "",
+            tempat: prokerItem.tempat || "",
+            penanggung_jawab: prokerItem.penanggung_jawab || "",
+        });
         setShowEditDialog(true);
     };
 
     const handleDelete = async (id) => {
         setIsProcessing((prev) => ({ ...prev, delete: true }));
         try {
-            await axios.delete(`/program-kerja/delete/${id}`);
-            await fetchProkerData(); // Refetch using the memoized function
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil dihapus.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
+            const response = await axios.delete(`/api/proker/${id}`);
+            if (response.status === 200 && response.data && response.data.success){
+                await fetchProkerData();
+                showAlert({
+                    title: "Berhasil!",
+                    desc: response.data.message || "Program kerja berhasil dihapus.",
+                    message: "Data telah diperbarui.",
+                    success: true,
+                    color: "green",
+                });
+            } else {
+                 showAlert({
+                    title: "Gagal Hapus",
+                    desc: response.data?.message || "Tidak dapat menghapus program kerja.",
+                    message: "Gagal menghapus program kerja.",
+                    success: false,
+                    color: "orange",
+                });
+            }
         } catch (error) {
             showAlert({
                 title: "Terjadi Kesalahan",
-                desc: error.message,
+                desc: error.response?.data?.message || error.message,
                 message: "Gagal menghapus program kerja.",
-                succes: false,
+                success: false,
                 color: "red",
             });
         } finally {
@@ -84,9 +119,11 @@ export const useProgramKerjaRW = () => {
 
     const handleAdd = () => {
         setTambahProker({
-            tanggal: "",
-            waktu: "",
-            jenis_kegiatan: "",
+            nama_program_kerja: "",
+            tanggal_mulai: "",
+            tanggal_selesai: "",
+            waktu_mulai: "",
+            waktu_selesai: "",
             tempat: "",
             penanggung_jawab: "",
         });
@@ -96,28 +133,49 @@ export const useProgramKerjaRW = () => {
     const handleSubmitEdit = async () => {
         setIsProcessing((prev) => ({ ...prev, edit: true }));
         try {
-            await axios.put(
-                `/program-kerja/update/${editProker.id_program_kerja}`,
-                editProker
+            const idToUpdate = editProker.id_program_kerja;
+            const payload = {
+                nama_program_kerja: editProker.nama_program_kerja,
+                tanggal_mulai: editProker.tanggal_mulai,
+                tanggal_selesai: editProker.tanggal_selesai,
+                waktu_mulai: editProker.waktu_mulai,
+                waktu_selesai: editProker.waktu_selesai,
+                tempat: editProker.tempat,
+                penanggung_jawab: editProker.penanggung_jawab,
+            };
+
+            const response = await axios.put(
+                `/api/proker/${idToUpdate}`,
+                payload
             );
-            await fetchProkerData(); // Refetch
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil diperbarui.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
-            setShowEditDialog(false);
+            if (response.status === 200 && response.data && response.data.success){
+                await fetchProkerData();
+                showAlert({
+                    title: "Berhasil!",
+                    desc: response.data.message || "Program kerja berhasil diperbarui.",
+                    message: "Data telah diperbarui.",
+                    success: true,
+                    color: "green",
+                });
+                setShowEditDialog(false);
+            } else {
+                showAlert({
+                    title: "Gagal Update",
+                    desc: response.data?.message || "Tidak dapat memperbarui program kerja.",
+                    message: "Gagal memperbarui program kerja.",
+                    success: false,
+                    color: "orange",
+                });
+            }
         } catch (error) {
             showAlert({
                 title: "Terjadi Kesalahan",
-                desc: error.message,
+                desc: error.response?.data?.errors?.message || error.response?.data?.message || error.message,
                 message: "Gagal memperbarui program kerja.",
-                succes: false,
+                success: false,
                 color: "red",
             });
-            console.error("Error updating data:", error);
+            console.error("Error updating data:", error.response?.data || error);
         } finally {
             setIsProcessing((prev) => ({ ...prev, edit: false }));
         }
@@ -126,32 +184,46 @@ export const useProgramKerjaRW = () => {
     const handleSubmitTambah = async () => {
         setIsProcessing((prev) => ({ ...prev, add: true }));
         try {
-            await axios.post(`/program-kerja/store`, tambahProker);
-            await fetchProkerData(); // Refetch
-            showAlert({
-                title: "Berhasil!",
-                desc: "Program kerja berhasil ditambahkan.",
-                message: "Data telah diperbarui.",
-                succes: true,
-                color: "green",
-            });
-            setTambahProker({ 
-                tanggal: "",
-                waktu: "",
-                jenis_kegiatan: "",
-                tempat: "",
-                penanggung_jawab: "",
-            });
-            setShowAddDialog(false);
+            const payload = { ...tambahProker }; // id_rw might be needed if API requires it: id_rw: idRW
+            
+            const response = await axios.post(`/api/proker/`, payload); // Ensure endpoint is correct if RW specific
+            if ((response.status === 201 || response.status === 200) && response.data && response.data.success){
+                await fetchProkerData();
+                showAlert({
+                    title: "Berhasil!",
+                    desc: response.data.message || "Program kerja berhasil ditambahkan.",
+                    message: "Data telah diperbarui.",
+                    success: true,
+                    color: "green",
+                });
+                setTambahProker({ 
+                    nama_program_kerja: "",
+                    tanggal_mulai: "",
+                    tanggal_selesai: "",
+                    waktu_mulai: "",
+                    waktu_selesai: "",
+                    tempat: "",
+                    penanggung_jawab: "",
+                });
+                setShowAddDialog(false);
+            } else {
+                showAlert({
+                    title: "Gagal Tambah",
+                    desc: response.data?.message || "Tidak dapat menambahkan program kerja.",
+                    message: "Gagal menambahkan program kerja.",
+                    success: false,
+                    color: "orange",
+                });
+            }
         } catch (error) {
             showAlert({
                 title: "Terjadi Kesalahan",
-                desc: error.message,
+                desc: error.response?.data?.errors?.message || error.response?.data?.message || error.message,
                 message: "Gagal menambahkan program kerja.",
-                succes: false,
+                success: false,
                 color: "red",
             });
-            console.error("Error adding data:", error);
+            console.error("Error adding data:", error.response?.data || error);
         } finally {
             setIsProcessing((prev) => ({ ...prev, add: false }));
         }
@@ -178,204 +250,274 @@ export const useProgramKerjaRW = () => {
     };
 };
 
-export const usePengajuanRW = (idRW) => {
-    const [pengajuanTerakhir, setPengajuanTerakhir] = useState([]);
-    const [isLoadingPengajuan, setIsLoadingPengajuan] = useState(true);
+export const usePengajuanTerbaruRW = (idRW) => {
+    const [pengajuanTerakhirRW, setPengajuanTerakhirRW] = useState([]);
+    const [isLoadingPengajuanRW, setIsLoadingPengajuanRW] = useState(true);
+    const [isActionLoadingRW, setIsActionLoadingRW] = useState({});
 
-    useEffect(() => {
-        const actualFetchPengajuan = async () => {
-            if (!idRW) {
-                setPengajuanTerakhir([]); 
-                setIsLoadingPengajuan(false);
-                return;
-            }
-            setIsLoadingPengajuan(true);
-            try {
-                const response = await axios.get(
-                    `/surat/pengajuan/?id_rw=${idRW}&length=2`
-                );
-                setPengajuanTerakhir(response.data || []); // Ensure it's an array
-            } catch (error) {
-                console.error("Error fetching data pengajuan terbaru:", error);
-                setPengajuanTerakhir([]); // Set to empty on error
+    const fetchPengajuanDataRW = useCallback(async () => {
+        if (!idRW) {
+            setPengajuanTerakhirRW([]);
+            setIsLoadingPengajuanRW(false);
+            return;
+        }
+        setIsLoadingPengajuanRW(true);
+        try {
+            const response = await axios.get(`/api/surat/pending/rw/${idRW}`, { params: { limit: 2 } });
+            if (response.status === 200 && response.data && response.data.status === 'success') {
+                setPengajuanTerakhirRW(response.data.data);
+            } else {
+                setPengajuanTerakhirRW([]);
                 showAlert({
-                    title: "Gagal Memuat Data",
-                    desc: error.message,
-                    message: "Tidak dapat memuat data pengajuan terbaru.",
-                    succes: false,
-                    color: "red",
+                    title: "Gagal Memuat Pengajuan Terbaru RW",
+                    desc: response.data?.message || "Data pengajuan tidak ditemukan atau format salah.",
+                    message: "Tidak dapat memuat pengajuan terbaru.",
+                    success: false,
+                    color: "orange",
                 });
-            } finally {
-                setIsLoadingPengajuan(false);
-            }
-        };
-
-        actualFetchPengajuan();
-    }, [idRW]); // Rerun when idRW changes
-
-    // Function to allow manual refetching if needed from component
-    const refetchPengajuan = useCallback(async () => {
-        if (!idRW) {
-            setPengajuanTerakhir([]);
-            setIsLoadingPengajuan(false);
-            return;
-        }
-        setIsLoadingPengajuan(true);
-        try {
-            const response = await axios.get(
-                `/surat/pengajuan/?id_rw=${idRW}&length=2`
-            );
-            setPengajuanTerakhir(response.data || []);
-        } catch (error) {
-            console.error("Error refetching data pengajuan terbaru:", error);
-            setPengajuanTerakhir([]);
-            showAlert({
-                title: "Gagal Memuat Ulang Data",
-                desc: error.message,
-                message: "Tidak dapat memuat ulang data pengajuan terbaru.",
-                succes: false,
-                color: "red",
-            });
-        } finally {
-            setIsLoadingPengajuan(false);
-        }
-    }, [idRW]);
-
-    return { pengajuanTerakhir, isLoadingPengajuan, refetchPengajuan };
-};
-
-export const useRekapPengajuanRW = (idRW, selectInitial) => {
-    const [rekapPengajuanData, setRekapPengajuanData] = useState([]);
-    const [isLoadingRekap, setIsLoadingRekap] = useState(true);
-    const [openItems, setOpenItems] = useState({});
-
-    const fetchRekapData = useCallback(async () => {
-        if (!idRW) {
-            setRekapPengajuanData([]);
-            setIsLoadingRekap(false);
-            return;
-        }
-        setIsLoadingRekap(true);
-        try {
-            // Assuming the endpoint for rekap data is something like this.
-            // The original component had `fetchRekapRWData` but its implementation wasn't visible.
-            // Adjust the endpoint as necessary.
-            const response = await axios.get(`/surat/rekap-pengajuan/?id_rw=${idRW}`); 
-            setRekapPengajuanData(response.data || []);
-            if (selectInitial && response.data && response.data.data) {
-                 // Assuming response.data.data is the array of submissions
-                const initialItem = response.data.data.find(item => item.id_pengajuan_surat === selectInitial);
-                if (initialItem) {
-                    setOpenItems({ [selectInitial]: true });
-                }
             }
         } catch (error) {
-            console.error("Error fetching rekap pengajuan data:", error);
-            setRekapPengajuanData([]);
+            console.error("Error fetching recent pengajuan for RW:", error);
+            setPengajuanTerakhirRW([]);
             showAlert({
                 title: "Gagal Memuat Data",
-                desc: error.message,
-                message: "Tidak dapat memuat data rekapitulasi pengajuan.",
-                succes: false,
+                desc: error.response?.data?.message || error.message,
+                message: "Tidak dapat memuat pengajuan terbaru.",
+                success: false,
                 color: "red",
             });
         } finally {
-            setIsLoadingRekap(false);
-        }
-    }, [idRW, selectInitial]);
-
-    useEffect(() => {
-        fetchRekapData();
-    }, [fetchRekapData]);
-
-    // Effect to handle initial selection if data loads after `selectInitial` is set
-    useEffect(() => {
-        if (selectInitial && rekapPengajuanData && rekapPengajuanData.data && !openItems[selectInitial]) {
-            const initialItemExists = rekapPengajuanData.data.some(item => item.id_pengajuan_surat === selectInitial);
-            if (initialItemExists) {
-                setOpenItems(prev => ({ ...prev, [selectInitial]: true }));
-            }
-        }
-    }, [selectInitial, rekapPengajuanData, openItems]);
-
-
-    return { rekapPengajuanData, isLoadingRekap, openItems, setOpenItems, refetchRekapPengajuan: fetchRekapData };
-};
-
-export const usePengajuanMasalahRW = (idRW) => {
-    const [pengajuanMasalahData, setPengajuanMasalahData] = useState([]);
-    const [isLoadingData, setIsLoadingData] = useState(true);
-    const [openItems, setOpenItems] = useState({});
-    const [isActionLoading, setIsActionLoading] = useState({}); // Tracks loading state for individual item actions
-
-    const fetchData = useCallback(async () => {
-        if (!idRW) {
-            setPengajuanMasalahData([]);
-            setIsLoadingData(false);
-            return;
-        }
-        setIsLoadingData(true);
-        try {
-            // Assuming endpoint for fetching pengajuan masalah specifically for RW approval
-            // The original component had `fetchPengajuanMasalahData`
-            const response = await axios.get(`/surat/rw-approval-list/?id_rw=${idRW}`); 
-            setPengajuanMasalahData(response.data || []);
-        } catch (error) {
-            console.error("Error fetching pengajuan masalah data:", error);
-            setPengajuanMasalahData([]);
-            showAlert({
-                title: "Gagal Memuat Data",
-                desc: error.message,
-                message: "Tidak dapat memuat data pengajuan masalah.",
-                succes: false,
-                color: "red",
-            });
-        } finally {
-            setIsLoadingData(false);
+            setIsLoadingPengajuanRW(false);
         }
     }, [idRW]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        if (idRW) fetchPengajuanDataRW(); // Fetch only if idRW is available
+    }, [idRW, fetchPengajuanDataRW]);
 
-    const handleAction = async (id_pengajuan_surat, status) => {
-        setIsActionLoading(prev => ({ ...prev, [id_pengajuan_surat]: true }));
+    const handleActionPengajuanRW = async (id_pengajuan_surat, approvalStatus, catatan = null) => {
+        setIsActionLoadingRW(prev => ({ ...prev, [id_pengajuan_surat]: true }));
         try {
-            await axios.put(`/surat/approval/${id_pengajuan_surat}`, {
-                status_approval: status,
-                approver_type: 'rw',
-                id_approver: idRW
-            });
-            showAlert({
-                title: "Berhasil!",
-                desc: `Surat ini telah di ${status === 'approved' ? 'setujui' : 'tolak'} oleh Anda.`,
-                message: "Status approval surat berhasil diperbarui",
-                succes: true,
-                color: "green",
-            });
-            await fetchData(); // Refetch data after action
+            const payload = {
+                status_approval: approvalStatus === 'approved' ? 'Disetujui_RW' : 'Ditolak_RW',
+                id_pejabat_rw: idRW, 
+            };
+            if (catatan) {
+                payload.catatan = catatan;
+            }
+
+            const response = await axios.put(`/api/surat/${id_pengajuan_surat}/approval`, payload);
+            
+            if (response.status === 200 && response.data && response.data.status === 'success'){
+                showAlert({
+                    title: "Berhasil!",
+                    desc: response.data.message || `Surat ini telah di ${approvalStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+                    message: "Status approval surat berhasil diperbarui.",
+                    success: true,
+                    color: "green",
+                });
+                await fetchPengajuanDataRW();
+            } else {
+                 showAlert({
+                    title: "Gagal Update Status",
+                    desc: response.data?.message || "Tidak dapat memperbarui status approval surat.",
+                    message: "Gagal memperbarui status approval surat.",
+                    success: false,
+                    color: "orange",
+                });
+            }
         } catch (error) {
+            console.error("Error updating submission status for RW:", error);
             showAlert({
                 title: "Terjadi Kesalahan",
-                desc: error.message, // error.message is better than just error object
-                message: "Status approval surat gagal diperbarui",
-                succes: false,
+                desc: error.response?.data?.message || error.message,
+                message: "Gagal memperbarui status approval surat.",
+                success: false,
                 color: "red",
             });
-            console.error('Error updating status:', error);
         } finally {
-            setIsActionLoading(prev => ({ ...prev, [id_pengajuan_surat]: false }));
+            setIsActionLoadingRW(prev => ({ ...prev, [id_pengajuan_surat]: false }));
         }
     };
 
     return {
-        pengajuanMasalahData,
-        isLoadingData,
-        openItems,
-        setOpenItems,
-        handleAction,
-        isActionLoading,
-        refetchPengajuanMasalah: fetchData
+        pengajuanTerakhirRW,
+        isLoadingPengajuanRW,
+        handleActionPengajuanRW,
+        isActionLoadingRW,
+        refetchPengajuanRW: fetchPengajuanDataRW
     };
-}; 
+};
+
+export const useRekapPengajuanRW = (idRW, selectInitial) => {
+    const [rekapPengajuanDataRW, setRekapPengajuanDataRW] = useState([]);
+    const [isLoadingRekapRW, setIsLoadingRekapRW] = useState(true);
+    const [openItemsRW, setOpenItemsRW] = useState({});
+
+    const fetchRekapDataRW = useCallback(async () => {
+        if (!idRW) {
+            setRekapPengajuanDataRW([]);
+            setIsLoadingRekapRW(false);
+            return;
+        }
+        setIsLoadingRekapRW(true);
+        try {
+            const response = await axios.get(`/api/surat/pending/rw/${idRW}`, { params : { all : true } }); 
+            if (response.status === 200 && response.data && response.data.status === 'success') {
+
+                setRekapPengajuanDataRW(response.data.data);
+            
+                if (selectInitial && response.data.data.length > 0) {
+                    const initialItem = response.data.data.find(item => item.id === selectInitial);
+                    if (initialItem) {
+                        setOpenItemsRW({ [selectInitial]: true });
+                    }
+                }
+            } else {
+                setRekapPengajuanDataRW([]);
+                showAlert({
+                    title: "Gagal Memuat Rekap RW",
+                    desc: response.data?.message || "Data rekap pengajuan RW tidak ditemukan atau format salah.",
+                    message: "Tidak dapat memuat data rekapitulasi pengajuan untuk RW.",
+                    success: false,
+                    color: "orange",
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching rekap pengajuan data for RW:", error);
+            setRekapPengajuanDataRW([]);
+            showAlert({
+                title: "Gagal Memuat Data",
+                desc: error.response?.data?.message || error.message,
+                message: "Tidak dapat memuat data rekapitulasi pengajuan untuk RW.",
+                success: false,
+                color: "red",
+            });
+        } finally {
+            setIsLoadingRekapRW(false);
+        }
+    }, [idRW, selectInitial]);
+
+    useEffect(() => {
+        if (idRW) fetchRekapDataRW(); // Fetch only if idRW is available
+    }, [idRW, fetchRekapDataRW, selectInitial]); // Added selectInitial and fetchRekapDataRW dependency
+
+    useEffect(() => {
+        if (selectInitial && Array.isArray(rekapPengajuanDataRW) && rekapPengajuanDataRW.length > 0 && !openItemsRW[selectInitial]) {
+            const initialItemExists = rekapPengajuanDataRW.some(item => item.id === selectInitial);
+            if (initialItemExists) {
+                setOpenItemsRW(prev => ({ ...prev, [selectInitial]: true }));
+            }
+        }
+    }, [selectInitial, rekapPengajuanDataRW, openItemsRW]); // openItemsRW added to dep array
+
+    return { 
+        rekapPengajuanDataRW, 
+        isLoadingRekapRW, 
+        openItemsRW, 
+        setOpenItemsRW, 
+        refetchRekapPengajuanRW: fetchRekapDataRW 
+    };
+};
+
+export const usePengajuanMasalahRW = (idRW) => {
+    const [pengajuanMasalahDataRW, setPengajuanMasalahDataRW] = useState([]);
+    const [isLoadingDataRW, setIsLoadingDataRW] = useState(true);
+    const [openItemsRW, setOpenItemsRW] = useState({}); 
+    const [isActionLoadingRW, setIsActionLoadingRW] = useState({});
+
+    const fetchMasalahDataRW = useCallback(async () => {
+        if (!idRW) {
+            setPengajuanMasalahDataRW([]);
+            setIsLoadingDataRW(false);
+            return;
+        }
+        setIsLoadingDataRW(true);
+        try {
+            const response = await axios.get(`/api/surat/pending/rw/${idRW}`); 
+            if (response.status === 200 && response.data && response.data.status === 'success') {
+                setPengajuanMasalahDataRW(response.data.data);
+            } else {
+                setPengajuanMasalahDataRW([]);
+                 showAlert({
+                    title: "Gagal Memuat Pengajuan Masalah RW",
+                    desc: response.data?.message || "Data pengajuan masalah RW tidak ditemukan atau format salah.",
+                    message: "Tidak dapat memuat data pengajuan masalah untuk RW.",
+                    success: false,
+                    color: "orange",
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching pengajuan masalah data for RW:", error);
+            setPengajuanMasalahDataRW([]);
+            showAlert({
+                title: "Gagal Memuat Data",
+                desc: error.response?.data?.message || error.message,
+                message: "Tidak dapat memuat data pengajuan masalah untuk RW.",
+                success: false,
+                color: "red",
+            });
+        } finally {
+            setIsLoadingDataRW(false);
+        }
+    }, [idRW]);
+
+    useEffect(() => {
+        if (idRW) fetchMasalahDataRW(); // Fetch only if idRW is available
+    }, [idRW, fetchMasalahDataRW]);
+
+    const handleActionRW = async (id_pengajuan_surat, approvalStatus, catatan = null) => {
+        setIsActionLoadingRW(prev => ({ ...prev, [id_pengajuan_surat]: true }));
+        try {
+            const payload = {
+                status_approval: approvalStatus === 'approved' ? 'Disetujui_RW' : 'Ditolak_RW',
+                id_pejabat_rw: idRW,
+            };
+            if (catatan) {
+                payload.catatan = catatan;
+            }
+
+            const response = await axios.put(`/api/surat/${id_pengajuan_surat}/approval`, payload);
+            
+            if (response.status === 200 && response.data && response.data.status === 'success'){
+                showAlert({
+                    title: "Berhasil!",
+                    desc: response.data.message || `Surat ini telah di ${approvalStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+                    message: "Status approval surat berhasil diperbarui.",
+                    success: true,
+                    color: "green",
+                });
+                await fetchMasalahDataRW();
+            } else {
+                showAlert({
+                    title: "Gagal Update Status",
+                    desc: response.data?.message || "Gagal memperbarui status approval surat.",
+                    message: "Gagal memperbarui status approval surat.",
+                    success: false,
+                    color: "orange",
+                });
+            }
+        } catch (error) {
+            console.error("Error updating status for RW:", error);
+            showAlert({
+                title: "Terjadi Kesalahan",
+                desc: error.response?.data?.message || error.message,
+                message: "Gagal memperbarui status approval surat.",
+                success: false,
+                color: "red",
+            });
+        } finally {
+            setIsActionLoadingRW(prev => ({ ...prev, [id_pengajuan_surat]: false }));
+        }
+    };
+
+    return {
+        pengajuanMasalahDataRW,
+        isLoadingDataRW,
+        openItemsRW,
+        setOpenItemsRW,
+        handleActionRW,
+        isActionLoadingRW,
+        refetchPengajuanMasalahRW: fetchMasalahDataRW
+    };
+};

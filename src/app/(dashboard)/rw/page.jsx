@@ -32,7 +32,6 @@ export default function RWDashboard() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6">Dashboard RW</h1>
             <DashboardContent idRW={user?.id_rw} />
         </div>
     );

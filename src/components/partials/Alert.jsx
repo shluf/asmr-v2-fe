@@ -11,15 +11,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import PrimaryButton from "@/components/Atoms/PrimaryButton";
-import Link from "next/link";
 
 function Alert({
   isOpen,
   onClose,
   title = "Berhasil!!",
   desc = '',
-  message = "Pengajuan surat berhasil, silahkan tunggu status selanjutnya di laman histori pengajuan",
-  succes = true,
+  message = "Proses berhasil, tutup untuk melanjutkan",
+  success = true,
   customButton = false,
   color = "green",
   onConfirm,
@@ -41,8 +40,8 @@ function Alert({
             {title}
           </AlertDialogTitle>
           <div className="flex justify-center">
-            <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full border-4 border-${color}${succes? "" : "-600"}`}>
-              { succes ?
+            <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full border-4 border-${color}${success ? "" : "-600"}`}>
+              { success ?
                 <Check className={`w-14 h-14   text-${color}`} />
                 : <TriangleAlert className={`w-14 h-14 text-${color}-600`} />
               }
@@ -85,9 +84,9 @@ function Alert({
 
 let showAlertHelper = null;
 
-export function showAlert({ title, succes=true, message, desc, customButton, color, onConfirm, confirmButtonText }) {
+export function showAlert({ title, success=true, message, desc, customButton, color, onConfirm, confirmButtonText }) {
   if (showAlertHelper) {
-    showAlertHelper({ title, message, desc, succes, customButton, color, onConfirm, confirmButtonText });
+    showAlertHelper({ title, message, desc, success, customButton, color, onConfirm, confirmButtonText });
   }
 }
 
@@ -97,19 +96,19 @@ export function AlertWrapper() {
     title: "Berhasil!!",
     message: "Pengajuan surat berhasil.",
     desc: "",
-    succes: true,
+    success: true,
     customButton: false,
     color: "green",
     onConfirm: null,
     confirmButtonText: "Lanjutkan"
   });
 
-  showAlertHelper = ({ title, message, desc, succes, customButton, color, onConfirm, confirmButtonText }) => {
+  showAlertHelper = ({ title, message, desc, success, customButton, color, onConfirm, confirmButtonText }) => {
     setAlertProps({ 
       title, 
       message, 
       desc, 
-      succes, 
+      success, 
       customButton, 
       color, 
       onConfirm, 
@@ -125,7 +124,7 @@ export function AlertWrapper() {
       title={alertProps.title}
       desc={alertProps.desc}
       message={alertProps.message}
-      succes={alertProps.succes}
+      success={alertProps.success}
       customButton={alertProps.customButton}
       color={alertProps.color}
       onConfirm={alertProps.onConfirm}
