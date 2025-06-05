@@ -1,5 +1,5 @@
-import TextInput from "@/Components/Atoms/TextInput"
-import { Textarea } from "@/Components/ui/textarea"
+import TextInput from '@/components/Atoms/TextInput'
+import { Textarea } from '@/components/ui/textarea'
 
 export const DataField = ({
     label,

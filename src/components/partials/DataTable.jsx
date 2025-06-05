@@ -5,7 +5,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table"
+} from "@/components/ui/table"
 import {
     flexRender,
     getCoreRowModel,
@@ -19,13 +19,13 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 import { useState } from "react"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
-import { Skeleton } from "../ui/skeleton"
-import { Input } from "../ui/input"
-import PrimaryButton from "../Atoms/PrimaryButton"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Input } from "@/components/ui/input"
+import PrimaryButton from "@/components/Atoms/PrimaryButton"
 
 const DataTable = ({
     data,

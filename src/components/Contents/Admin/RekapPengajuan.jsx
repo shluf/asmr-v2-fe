@@ -14,7 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { Skeleton } from '@/Components/ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
 import { fetchRekapPengajuanData } from '@/hooks/admin'
 
 const RekapPengajuan = ({ select }) => {

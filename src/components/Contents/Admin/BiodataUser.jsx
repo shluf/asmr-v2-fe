@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import DataTable from "@/Components/partials/DataTable"
+import DataTable from "@/components/partials/DataTable"
 import { columnsRT } from "./data/columnsRT"
 import { columnsRW } from "./data/columnsRW"
 import { columnsWarga } from "./data/columnsWarga"
