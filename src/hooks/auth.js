@@ -164,7 +164,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const logout = async () => {
         try {
             if (!error) {
-                const response = await axios.post('/logout')
+                const response = await axios.post('/api/logout')
                 
                 if (response.data.status === 'success') {
                     document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
