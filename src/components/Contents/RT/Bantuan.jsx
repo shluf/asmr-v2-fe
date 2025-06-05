@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PhoneCall } from "lucide-react";
+import React from 'react'
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { PhoneCall } from "lucide-react"
 
 const Bantuan = () => {
   return (
@@ -43,7 +43,7 @@ const Bantuan = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default Bantuan; 
+export default Bantuan 

@@ -45,7 +45,6 @@ const RtRwSelects = ({ data, setData, errors }) => {
             const rtData = await getRtList(selectedRw)
             setRtOptions(rtData.sort((a, b) => a - b))
         } catch (error) {
-            console.error('Error fetching RT data:', error)
             setRtOptions([])
         }
     }

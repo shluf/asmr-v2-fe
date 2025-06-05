@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import React from "react";
+import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { UserFilled } from "@/utility/svg-icons"
@@ -12,10 +12,10 @@ import ProgramKerja from "@/components/partials/ProgramKerja"
 import Link from "next/link"
 import { useProgramKerjaRT, usePengajuanTerbaruRT } from "@/hooks/rt"
 import { AlertWrapper } from "@/components/partials/Alert"
-import { useAuthTokenClient } from "@/lib/jwt";
+import { useAuthTokenClient } from "@/lib/jwt"
 
 const DashboardContent = () => {
-    const { payload } = useAuthTokenClient();
+    const { payload } = useAuthTokenClient()
     const { dataProkerRT, prokerIsLoadingRT } = useProgramKerjaRT()
     const {
         pengajuanTerakhirRT,

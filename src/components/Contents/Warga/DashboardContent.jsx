@@ -1,42 +1,42 @@
 'use client'
 
-import { useState, useEffect } from "react";
-import { format } from "date-fns";
-import idLocale from "date-fns/locale/id";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { UserFilled } from "@/utility/svg-icons";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ShieldCheck } from "lucide-react";
-import ProgramKerja from "@/components/partials/ProgramKerja";
-import axios from "@/lib/axios";
-import { useProgramKerjaWarga } from "@/hooks/warga";
+import { useState, useEffect } from "react"
+import { format } from "date-fns"
+import idLocale from "date-fns/locale/id"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { UserFilled } from "@/utility/svg-icons"
+import Link from "next/link"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ShieldCheck } from "lucide-react"
+import ProgramKerja from "@/components/partials/ProgramKerja"
+import axios from "@/lib/axios"
+import { useProgramKerjaWarga } from "@/hooks/warga"
 
 const DashboardContent = () => {
-    const [dataPengajuan, setDataPengajuan] = useState([]);
-    const [pengajuanIsLoading, setPengajuanIsLoading] = useState(true);
+    const [dataPengajuan, setDataPengajuan] = useState([])
+    const [pengajuanIsLoading, setPengajuanIsLoading] = useState(true)
 
     const { dataProkerWarga, 
         prokerIsLoadingWarga,
-    } = useProgramKerjaWarga();
+    } = useProgramKerjaWarga()
 
     useEffect(() => {   
         const fetchPengajuan = async () => {
             try {
-                const response = await axios.get('/api/surat/riwayat-pengajuan');
+                const response = await axios.get('/api/surat/riwayat-pengajuan')
                 if (response.data.status === 'success') {
-                    setDataPengajuan(response.data.pengajuan);
+                    setDataPengajuan(response.data.pengajuan)
                 }
             } catch (error) {
-                console.error('Error fetching pengajuan data:', error);
+                // console.error('Error fetching pengajuan data:', error)
             } finally {
-                setPengajuanIsLoading(false);
+                setPengajuanIsLoading(false)
             }
-        };
+        }
         
-        fetchPengajuan();
-    }, []);
+        fetchPengajuan()
+    }, [])
 
     return (
         <div className="space-y-8 overflow-hidden w-full mb-4">
@@ -150,7 +150,7 @@ const DashboardContent = () => {
                 </CardContent>
             </Card>
         </div>
-    );
-};
+    )
+}
 
-export default DashboardContent;
+export default DashboardContent

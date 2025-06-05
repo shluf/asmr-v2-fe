@@ -25,10 +25,10 @@ export default function PrimaryButton({
                 default: 'bg-red-600 hover:bg-red-700 focus:bg-red-700 active:bg-red-800 focus:ring-red-500',
                 outlined: 'border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500'
             }
-        };
+        }
 
-        return colorStyles[color][variant];
-    };
+        return colorStyles[color][variant]
+    }
 
     return (
         <button
@@ -58,5 +58,5 @@ export default function PrimaryButton({
         >
             {children}
         </button>
-    );
+    )
 }

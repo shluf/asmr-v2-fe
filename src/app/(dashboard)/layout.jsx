@@ -1,8 +1,8 @@
 'use client'
 
-import ApplicationLogo from "@/components/Atoms/ApplicationLogo";
-import SideBar from "@/components/partials/SideBar";
-import { Button } from "@/components/ui/button";
+import ApplicationLogo from "@/components/Atoms/ApplicationLogo"
+import SideBar from "@/components/partials/SideBar"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,42 +10,43 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { renderHeader } from "@/utility/renderHeader";
-import { useAuth } from "@/hooks/auth";
+} from "@/components/ui/dropdown-menu"
+import { renderHeader } from "@/utility/renderHeader"
+import { useAuth } from "@/hooks/auth"
 import {
     CircleUser,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAuthTokenClient } from "@/lib/jwt";
-import { AlertWrapper } from "@/components/partials/Alert";
+} from "lucide-react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useAuthTokenClient } from "@/lib/jwt"
+import { AlertWrapper } from "@/components/partials/Alert"
+import Loading from "@/components/partials/Loading"
 
 const DashboardLayout = ({
     children,
 }) => {
-    const { user, logout } = useAuth({ middleware: 'auth' });
-    const [header, setHeader] = useState("");
-    const [role, setRole] = useState("");
-    const [color, setColor] = useState("");
-    const pathname = usePathname();
-    const authTokenClient = useAuthTokenClient();
-    const payload = authTokenClient?.payload;
+    const { user, logout } = useAuth({ middleware: 'auth' })
+    const [header, setHeader] = useState("")
+    const [role, setRole] = useState("")
+    const [color, setColor] = useState("")
+    const pathname = usePathname()
+    const authTokenClient = useAuthTokenClient()
+    const payload = authTokenClient?.payload
     
     useEffect(() => {
         if (user) {
-            setRole(user.role || "");
-            setColor(user.role === "Warga" ? "green" : user.role === "PejabatRT" ? "yellow" : user.role === "PejabatRW" ? "orange" : "blue");
+            setRole(user.role || "")
+            setColor(user.role === "Warga" ? "green" : user.role === "PejabatRT" ? "yellow" : user.role === "PejabatRW" ? "orange" : "blue")
         }
-    }, [user]);
+    }, [user])
 
     useEffect(() => {
-        renderHeader(setHeader, user);
-    }, [pathname]);
+        renderHeader(setHeader, user)
+    }, [pathname])
 
     if (!user) {
-        return <div className="flex items-center justify-center h-screen">Memuat...</div>;
+        return <Loading />
     }
 
     return (
@@ -116,7 +117,7 @@ const DashboardLayout = ({
                 </div>
             </div>
         </>
-    );
-};
+    )
+}
 
-export default DashboardLayout;
+export default DashboardLayout

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const AboutSection = () => {
     return (
@@ -7,7 +7,7 @@ const AboutSection = () => {
                 <div className="flex flex-col-reverse gap-10 md:grid md:grid-cols-2">
                     <div className="flex flex-col justify-center items-start md:px-0 px-6">
                         <h1 data-aos="fade-up" className="text-m md:text-l font-bold text-gray-800 leading-tight relative flex items-center">
-                            <span className="absolute -left-[50px] block bg-gray-800 h-[2px] w-10 mr-2"></span>
+                            <span className="absolute -left-[50px] block bg-gray-800 h-[2px] w-10 mr-2" />
                             Tentang Kami
                         </h1>
                         <h2 data-aos="fade-right" data-aos-delay="750" className="mt-8 text-xl md:text-[2rem] font-bold text-gray-800 leading-tight">
@@ -31,7 +31,7 @@ const AboutSection = () => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
 
-export default AboutSection;
+export default AboutSection

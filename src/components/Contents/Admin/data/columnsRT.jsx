@@ -1,6 +1,6 @@
-import { showAlert } from "@/components/partials/Alert";
-import { DataField } from "@/components/partials/dataField";
-import { Button } from "@/components/ui/button";
+import { showAlert } from "@/components/partials/Alert"
+import { DataField } from "@/components/partials/dataField"
+import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
@@ -10,20 +10,20 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose
-} from "@/components/ui/dialog";
-import axios from "@/lib/axios";
-import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { format, parseISO } from 'date-fns';
+} from "@/components/ui/dialog"
+import axios from "@/lib/axios"
+import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { format, parseISO } from 'date-fns'
 
 const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return 'N/A'
     try {
-        return format(parseISO(dateString), 'dd MMM yyyy');
+        return format(parseISO(dateString), 'dd MMM yyyy')
     } catch (error) {
-        return dateString;
+        return dateString
     }
-};
+}
 
 export const columnsRT = (fetchData) => [
     {
@@ -80,8 +80,8 @@ export const columnsRT = (fetchData) => [
         id: "alamat pejabat",
         header: () => <div className="text-left">Alamat</div>,
         cell: ({ row }) => {
-            const [show, setShow] = useState(false);
-            const alamat = row.original.data?.warga?.alamat ? row.original.data?.warga?.alamat?.alamat + ', ' + row.original.data?.warga?.alamat?.kabupaten + ', ' + row.original.data?.warga?.alamat?.provinsi : null;
+            const [show, setShow] = useState(false)
+            const alamat = row.original.data?.warga?.alamat ? row.original.data?.warga?.alamat?.alamat + ', ' + row.original.data?.warga?.alamat?.kabupaten + ', ' + row.original.data?.warga?.alamat?.provinsi : null
             return (
                 <div className="text-left font-medium">
                     <div
@@ -92,7 +92,7 @@ export const columnsRT = (fetchData) => [
                         {alamat ? alamat : <p className="text-red-500 text-xs">---</p>}
                     </div>
                 </div>
-            );
+            )
         },
     },
     {
@@ -106,8 +106,8 @@ export const columnsRT = (fetchData) => [
         enableHiding: true,
         header: () => <div className="text-center">Aksi</div>,
         cell: ({ row }) => {
-            const pejabat = row.original;
-            const pejabatId = pejabat.id;
+            const pejabat = row.original
+            const pejabatId = pejabat.id
 
             const initialFormState = {
                 nama: pejabat.data?.warga?.nama || "",
@@ -115,12 +115,12 @@ export const columnsRT = (fetchData) => [
                 email: pejabat.data?.user?.email || "",
                 periode_mulai: pejabat.data?.pejabat.periode_mulai,
                 periode_selesai: pejabat.data?.pejabat.periode_selesai,
-            };
+            }
 
-            const [formData, setFormData] = useState(initialFormState);
-            const [fileTTD, setFileTTD] = useState(null);
-            const [isSubmitting, setIsSubmitting] = useState(false);
-            const [isDialogOpen, setIsDialogOpen] = useState(false);
+            const [formData, setFormData] = useState(initialFormState)
+            const [fileTTD, setFileTTD] = useState(null)
+            const [isSubmitting, setIsSubmitting] = useState(false)
+            const [isDialogOpen, setIsDialogOpen] = useState(false)
 
             useEffect(() => {
                 if (isDialogOpen) {
@@ -130,66 +130,65 @@ export const columnsRT = (fetchData) => [
                         email: pejabat.data?.user?.email || "",
                         periode_mulai: pejabat.data?.pejabat.periode_mulai,
                         periode_selesai: pejabat.data?.pejabat.periode_selesai,
-                    });
-                    setFileTTD(null);
+                    })
+                    setFileTTD(null)
                 }
-            }, [isDialogOpen, pejabat]);
+            }, [isDialogOpen, pejabat])
 
             const handleInputChange = (e) => {
-                const { name, value, type, checked } = e.target;
+                const { name, value, type, checked } = e.target
                 setFormData((prev) => ({
                     ...prev,
                     [name]: type === 'checkbox' ? checked : value,
-                }));
-            };
+                }))
+            }
 
             const handleFileChange = (e) => {
-                setFileTTD(e.target.files[0]);
-            };
+                setFileTTD(e.target.files[0])
+            }
 
             const handleUpdate = async () => {
-                setIsSubmitting(true);
-                const payload = new FormData();
-                payload.append("nama", formData.nama);
-                payload.append("nama_rt", formData.nama_rt);
-                payload.append("email", formData.email);
-                payload.append("periode_mulai", formData.periode_mulai);
-                payload.append("periode_selesai", formData.periode_selesai);
+                setIsSubmitting(true)
+                const payload = new FormData()
+                payload.append("nama", formData.nama)
+                payload.append("nama_rt", formData.nama_rt)
+                payload.append("email", formData.email)
+                payload.append("periode_mulai", formData.periode_mulai)
+                payload.append("periode_selesai", formData.periode_selesai)
                 if (fileTTD) {
-                    payload.append("ttd", fileTTD);
+                    payload.append("ttd", fileTTD)
                 }
-                payload.append("_method", "PUT");
+                payload.append("_method", "PUT")
 
                 try {
                     await axios.post(`/api/pejabat/rt/${pejabatId}`, payload, {
                         headers: { 'Content-Type': 'multipart/form-data' }
-                    });
+                    })
                     showAlert({
                         title: "Berhasil!",
                         desc: `Data RT ${formData.nama_rt} telah diperbarui.`,
                         success: true,
                         color: "green",
                         onConfirm: () => fetchData(),
-                    });
-                    setIsDialogOpen(false);
+                    })
+                    setIsDialogOpen(false)
                 } catch (error) {
-                    console.error("Error updating RT:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
                         desc: error.response?.data?.message || "Terjadi kesalahan saat memperbarui data.",
                         success: false,
                         color: "red",
                         errors: error.response?.data?.errors
-                    });
+                    })
                 } finally {
-                    setIsSubmitting(false);
+                    setIsSubmitting(false)
                 }
-            };
+            }
 
             const handleDelete = async () => {
-                setIsSubmitting(true);
+                setIsSubmitting(true)
                 try {
-                    const response = await axios.delete(`/api/pejabat/rt/${pejabatId}`);
+                    const response = await axios.delete(`/api/pejabat/rt/${pejabatId}`)
                     if (response.data.deleted) {
                         showAlert({
                             title: "Berhasil!",
@@ -197,20 +196,19 @@ export const columnsRT = (fetchData) => [
                             success: true,
                             color: "green",
                             onConfirm: () => fetchData(),
-                        });
+                        })
                     }
                 } catch (error) {
-                    console.error("Error deleting RT:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
                         desc: error.response?.data?.message || "Terjadi kesalahan saat menghapus data.",
                         success: false,
                         color: "red",
-                    });
+                    })
                 } finally {
-                    setIsSubmitting(false);
+                    setIsSubmitting(false)
                 }
-            };
+            }
 
             return (
                 <div className="flex items-center justify-center gap-2">
@@ -299,7 +297,7 @@ export const columnsRT = (fetchData) => [
                         </Button>
                     )}
                 </div>
-            );
+            )
         },
     },
-];
+]

@@ -11,8 +11,8 @@ import { fetchAkunData } from '@/hooks/warga'
 import { showAlert } from '@/components/partials/Alert'
 
 const Akun = ({ nikWarga }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [ttLahir, setTtLahir] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [ttLahir, setTtLahir] = useState(null)
   const [profileWarga, setProfileWarga] = useState({
     user: {},
     warga: {
@@ -20,7 +20,7 @@ const Akun = ({ nikWarga }) => {
         rw: {}
       },
     }
-  });
+  })
   
   const [data, setData] = useState({
     phone: "",
@@ -28,31 +28,30 @@ const Akun = ({ nikWarga }) => {
     kabupaten: "",
     provinsi: "",
     agama: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [processing, setProcessing] = useState(false);
+  })
+  const [, setErrors] = useState({})
+  const [processing, setProcessing] = useState(false)
 
   const fetchData = async () => {
-    const ttl = await fetchAkunData(setProfileWarga, setData, nikWarga);
-    setTtLahir(ttl);
-  };
+    const ttl = await fetchAkunData(setProfileWarga, setData, nikWarga)
+    setTtLahir(ttl)
+  }
 
   useEffect( () => {
-    fetchData();
-  }, [nikWarga]);
+    fetchData()
+  }, [nikWarga])
 
   const handleBack = () => {
-    fetchData();
-    setIsEditMode(false);
+    fetchData()
+    setIsEditMode(false)
   }
 
   const submit = async (e) => {
-    e.preventDefault();
-    setProcessing(true);
+    e.preventDefault()
+    setProcessing(true)
     try {
-        const response = await axios.put(`/api/profile/`, data);
+        const response = await axios.put(`/api/profile/`, data)
         if (response.data.user) {
-            console.log(response.data.warga);
             setProfileWarga((prevState) => ({
                 ...prevState,
                 user: {
@@ -63,7 +62,7 @@ const Akun = ({ nikWarga }) => {
                     provinsi: response.data.warga.provinsi,
                     agama: response.data.warga.agama,
                 },
-            }));
+            }))
 
             showAlert({
                 title: "Berhasil!",
@@ -71,9 +70,9 @@ const Akun = ({ nikWarga }) => {
                 message: "Data profil telah diperbarui dengan sukses.",
                 success: true,
                 color: "green",
-            });
+            })
 
-            setIsEditMode(false);
+            setIsEditMode(false)
         }
     } catch (error) {
         showAlert({
@@ -82,15 +81,14 @@ const Akun = ({ nikWarga }) => {
             message: "Gagal memperbarui profil warga.",
             success: false,
             color: "red",
-        });
-        console.error('Error updating profile:', error);
+        })
         if (error.response?.data?.errors) {
-            setErrors(error.response.data.errors);
+            setErrors(error.response.data.errors)
         }
     } finally {
-        setProcessing(false);
+        setProcessing(false)
     }
-};
+}
 
   return (
       <>
@@ -310,7 +308,7 @@ const Akun = ({ nikWarga }) => {
               </div>
           </div>
       </>
-  );
+  )
 }
 
-export default Akun;
+export default Akun

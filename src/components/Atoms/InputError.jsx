@@ -6,5 +6,5 @@ export default function InputError({ message, className = '', ...props }) {
         >
             {message}
         </p>
-    ) : null;
+    ) : null
 }

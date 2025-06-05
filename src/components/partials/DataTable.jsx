@@ -5,7 +5,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/Components/ui/table"
 import {
     flexRender,
     getCoreRowModel,
@@ -13,32 +13,31 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-} from "@tanstack/react-table";
+} from "@tanstack/react-table"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import { useState } from "react";
-import { Button } from "../ui/button";
-import { ChevronDown } from "lucide-react";
-import { Skeleton } from "../ui/skeleton";
-import { Input } from "../ui/input";
-import PrimaryButton from "../Atoms/PrimaryButton";
+} from "@/Components/ui/dropdown-menu"
+import { useState } from "react"
+import { Button } from "../ui/button"
+import { ChevronDown } from "lucide-react"
+import { Skeleton } from "../ui/skeleton"
+import { Input } from "../ui/input"
+import PrimaryButton from "../Atoms/PrimaryButton"
 
 const DataTable = ({
     data,
     columns,
     hide = {},
     pageSize = 5,
-    refresh,
     isLoading = false,
 }) => {
-    const [sorting, setSorting] = useState([]);
-    const [columnFilters, setColumnFilters] = useState([]);
-    const [columnVisibility, setColumnVisibility] = useState(hide);
-    const [rowSelection, setRowSelection] = useState({});
+    const [sorting, setSorting] = useState([])
+    const [columnFilters, setColumnFilters] = useState([])
+    const [columnVisibility, setColumnVisibility] = useState(hide)
+    const [rowSelection, setRowSelection] = useState({})
 
     const table = useReactTable({
         data,
@@ -63,7 +62,7 @@ const DataTable = ({
                 pageSize,
             },
         },
-    });
+    })
 
     const SkeletonRow = ({ cellCount }) => (
         <TableRow>
@@ -73,7 +72,7 @@ const DataTable = ({
                 </TableCell>
             ))}
         </TableRow>
-    );
+    )
 
     return (
         <div>
@@ -100,7 +99,7 @@ const DataTable = ({
                             .filter((column) => column.getCanHide())
                             .map((column) => {
                                 const header =
-                                    column.columnDef?.name || column.id;
+                                    column.columnDef?.name || column.id
                                 return (
                                     <DropdownMenuCheckboxItem
                                         key={column.id}
@@ -112,7 +111,7 @@ const DataTable = ({
                                     >
                                         {header}
                                     </DropdownMenuCheckboxItem>
-                                );
+                                )
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -156,8 +155,8 @@ const DataTable = ({
                             ))
                         ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row, index) => {
-                                const isRtRwRow = row.original.nama_rt || row.original.nama_rw;
-                                const hasNoWargaData = !row.original.data || !row.original.data.warga;
+                                const isRtRwRow = row.original.nama_rt || row.original.nama_rw
+                                const hasNoWargaData = !row.original.data || !row.original.data.warga
 
                                 if (isRtRwRow && hasNoWargaData) {
                                     return (
@@ -173,7 +172,7 @@ const DataTable = ({
                                                 Jabatan untuk {row.original.nama_rt || row.original.nama_rw} belum ditentukan.
                                             </TableCell>
                                         </TableRow>
-                                    );
+                                    )
                                 }
 
                                 return (
@@ -197,7 +196,7 @@ const DataTable = ({
                                             </TableCell>
                                         ))}
                                     </TableRow>
-                                );
+                                )
                             })
                         ) : (
                             <TableRow>
@@ -263,7 +262,7 @@ const DataTable = ({
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default DataTable;
+export default DataTable

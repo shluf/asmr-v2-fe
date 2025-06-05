@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "@/lib/axios";
+import React, { useState, useEffect } from "react"
+import axios from "@/lib/axios"
 import {
     Table,
     TableBody,
@@ -7,77 +7,76 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { showAlert } from "@/components/partials/Alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Check, Loader2, X, Eye } from "lucide-react";
-import { DataField } from "@/components/partials/dataField";
-import { fetchApprovalRoleData } from "@/hooks/admin";
-import { format, parseISO } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
+} from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
+import { showAlert } from "@/components/partials/Alert"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Check, Loader2, X, Eye } from "lucide-react"
+import { DataField } from "@/components/partials/dataField"
+import { fetchApprovalRoleData } from "@/hooks/admin"
+import { format, parseISO } from 'date-fns'
+import { id as idLocale } from 'date-fns/locale'
 
 const formatDateSafe = (dateString, formatStr = 'EEEE, dd MMMM yyyy') => {
-  if (!dateString) return 'N/A';
+  if (!dateString) return 'N/A'
   try {
-    return format(parseISO(dateString), formatStr, { locale: idLocale });
+    return format(parseISO(dateString), formatStr, { locale: idLocale })
   } catch (error) {
-    return dateString; 
+    return dateString 
   }
-};
+}
 
 const ApprovalRole = () => {
-    const [dataWargaPending, setDataWargaPending] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [selectedWargaPending, setSelectedWargaPending] = useState(null);
-    const [actionLoading, setActionLoading] = useState({});
-    const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+    const [dataWargaPending, setDataWargaPending] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [selectedWargaPending, setSelectedWargaPending] = useState(null)
+    const [actionLoading, setActionLoading] = useState({})
+    const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
 
     const loadData = () => {
-        fetchApprovalRoleData(setIsLoading, setDataWargaPending);
+        fetchApprovalRoleData(setIsLoading, setDataWargaPending)
 
-    };
+    }
 
     useEffect(() => {
-        loadData();
-    }, []);
+        loadData()
+    }, [])
 
     const handleApprovalAction = async (pendingId, newStatus) => {
 
-        setActionLoading(prev => ({ ...prev, [pendingId]: true }));
-        const status = newStatus === 'approved' ? 'approve' : 'reject';
+        setActionLoading(prev => ({ ...prev, [pendingId]: true }))
+        const status = newStatus === 'approved' ? 'approve' : 'reject'
         try {
-            await axios.put(`/api/approval-role/warga/${pendingId}/${status}`);
+            await axios.put(`/api/approval-role/warga/${pendingId}/${status}`)
             showAlert({
                 title: "Berhasil!",
                 desc: `Permintaan berhasil di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
                 success: true,
                 color: "green",
-            });
-            loadData();
+            })
+            loadData()
             if (selectedWargaPending && selectedWargaPending.user.id === pendingId) {
-                setIsDetailDialogOpen(false);
-                setSelectedWargaPending(null);
+                setIsDetailDialogOpen(false)
+                setSelectedWargaPending(null)
             }
         } catch (error) {
-            console.error(`Error ${newStatus === 'approved' ? 'approving' : 'rejecting'} user:`, error.response?.data || error.message);
             showAlert({
                 title: "Gagal!",
                 desc: error.response?.data?.message || `Gagal ${newStatus === 'approved' ? 'menyetujui' : 'menolak'} permintaan.`,
                 success: false,
                 color: "red",
                 errors: error.response?.data?.errors
-            });
+            })
         } finally {
-            setActionLoading(prev => ({ ...prev, [pendingId]: false }));
+            setActionLoading(prev => ({ ...prev, [pendingId]: false }))
         }
-    };
+    }
 
     const openDetailDialog = (wargaPending) => {
-        setSelectedWargaPending(wargaPending);
-        setIsDetailDialogOpen(true);
-    };
+        setSelectedWargaPending(wargaPending)
+        setIsDetailDialogOpen(true)
+    }
 
     return (
         <div className="w-full p-6">
@@ -118,7 +117,7 @@ const ApprovalRole = () => {
                             </TableRow>
                         ) : (
                             dataWargaPending.sort((a, b) => a.user.status_akun - b.user.status_akun).map((wp) => {
-                                const isItemLoading = actionLoading[wp.id];
+                                const isItemLoading = actionLoading[wp.id]
                                 return (
                                 <TableRow key={wp.id}>
                                     <TableCell className="font-medium py-3">{formatDateSafe(wp.created_at)}</TableCell>
@@ -172,7 +171,7 @@ const ApprovalRole = () => {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                                );
+                                )
                             })
                         )}
                     </TableBody>
@@ -181,7 +180,7 @@ const ApprovalRole = () => {
             </div>
 
             {selectedWargaPending && (
-                <Dialog open={isDetailDialogOpen} onOpenChange={(isOpen) => { if(!isOpen) setSelectedWargaPending(null); setIsDetailDialogOpen(isOpen);}}>
+                <Dialog open={isDetailDialogOpen} onOpenChange={(isOpen) => { if(!isOpen) setSelectedWargaPending(null); setIsDetailDialogOpen(isOpen)}}>
                     <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                             <DialogTitle>Detail Permintaan Persetujuan: {selectedWargaPending.nama}</DialogTitle>
@@ -240,7 +239,7 @@ const ApprovalRole = () => {
                 </Dialog>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default ApprovalRole;
+export default ApprovalRole

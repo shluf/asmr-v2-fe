@@ -1,6 +1,7 @@
-
+import Loading from '@/components/partials/Loading'
 import RegisterForm from '@/components/Auth/RegisterForm'
 import GuestLayout from '@/components/Layout/GuestLayout'
+import { Suspense } from 'react'
 
 export const metadata = {
     title: 'ASMR - Register',
@@ -10,7 +11,9 @@ export const metadata = {
 const Page = () => {
     return (
         <GuestLayout button="login" header="Register" wide={true}>
-            <RegisterForm />
+            <Suspense fallback={<Loading />}>
+                <RegisterForm />
+            </Suspense>
         </GuestLayout>
     )
 }

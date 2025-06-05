@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React from 'react'
 
 const HowItWorksSection = () => {
     return (
@@ -78,7 +78,7 @@ const HowItWorksSection = () => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
 
-export default HowItWorksSection;
+export default HowItWorksSection

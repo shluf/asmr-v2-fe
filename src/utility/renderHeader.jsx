@@ -22,61 +22,61 @@ const pageWargaRoutes = [
 ]
 
 export const renderHeader = (setHeader, user) => {
-    const pathname = window.location.pathname;
-    const actualUserRole = user?.role;
-    let userDisplayRole;
+    const pathname = window.location.pathname
+    const actualUserRole = user?.role
+    let userDisplayRole
 
     if (actualUserRole === "PejabatRT") {
-        userDisplayRole = "RT";
+        userDisplayRole = "RT"
     } else if (actualUserRole === "PejabatRW") {
-        userDisplayRole = "RW";
+        userDisplayRole = "RW"
     } else {
-        userDisplayRole = actualUserRole;
+        userDisplayRole = actualUserRole
     }
     
     if (userDisplayRole && (pathname === `/${userDisplayRole.toLowerCase()}` || pathname === '/')) {
-        setHeader("Dashboard " + userDisplayRole);
-        return;
+        setHeader("Dashboard " + userDisplayRole)
+        return
     }
     
     const checkRouteMatch = (route, role) => {
         if (route === '') {
-            return pathname === `/${role}`;
+            return pathname === `/${role}`
         }
-        return pathname === `/${role}/${route}` || pathname.startsWith(`/${role}/${route}/`);
-    };
+        return pathname === `/${role}/${route}` || pathname.startsWith(`/${role}/${route}/`)
+    }
     
     switch (actualUserRole) {
         case "Admin":
             for (const data of pageAdminRoutes) {
                 if (checkRouteMatch(data.route, "admin")) {
-                    setHeader(data.name);
-                    return;
+                    setHeader(data.name)
+                    return
                 }
             }
-            break;
+            break
             
         case "PejabatRT":
         case "PejabatRW":
             for (const data of pageRTRWRoutes) {
                 if (checkRouteMatch(data.route, userDisplayRole.toLowerCase())) {
-                    setHeader(data.name);
-                    return;
+                    setHeader(data.name)
+                    return
                 }
             }
-            break;
+            break
             
         case "Warga":
             for (const data of pageWargaRoutes) {
                 if (checkRouteMatch(data.route, "warga")) {
-                    setHeader(data.name);
-                    return;
+                    setHeader(data.name)
+                    return
                 }
             }
-            break;
+            break
             
         default:
-            setHeader("Aplikasi Surat Menyurat");
-            break;
+            setHeader("Aplikasi Surat Menyurat")
+            break
     }
 }

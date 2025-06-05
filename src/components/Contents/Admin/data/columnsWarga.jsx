@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Eye, UserCog, UserX, Info } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { ArrowUpDown, Eye, UserCog, UserX, Info } from "lucide-react"
 import {
     Dialog,
     DialogClose,
@@ -9,23 +9,23 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
-import axios from "@/lib/axios";
-import { useState } from "react";
-import { DataField } from "@/components/partials/dataField";
-import { showAlert } from "@/components/partials/Alert";
-import { format, parseISO } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import PrimaryButton from "@/components/Atoms/PrimaryButton";
+} from "@/components/ui/dialog"
+import axios from "@/lib/axios"
+import { useState } from "react"
+import { DataField } from "@/components/partials/dataField"
+import { showAlert } from "@/components/partials/Alert"
+import { format, parseISO } from 'date-fns'
+import { id as idLocale } from 'date-fns/locale'
+import PrimaryButton from "@/components/Atoms/PrimaryButton"
 
 const formatDateSafe = (dateString, formatStr = 'dd MMM yyyy') => {
-  if (!dateString) return 'N/A';
+  if (!dateString) return 'N/A'
   try {
-    return format(parseISO(dateString), formatStr, { locale: idLocale });
+    return format(parseISO(dateString), formatStr, { locale: idLocale })
   } catch (error) {
-    return dateString; 
+    return dateString 
   }
-};
+}
 
 export const columnsWarga = (fetchData) => [
     {
@@ -46,8 +46,8 @@ export const columnsWarga = (fetchData) => [
         accessorKey: "jenis kelamin",
         header: () => <div className="text-center">Jenis Kelamin</div>,
         cell: ({ row }) => {
-            const jk = row.original.jenis_kelamin;
-            return <div className="text-left font-medium">{jk === "Pria" ? "Laki-laki" : jk === "Perempuan" ? "Perempuan" : jk || 'N/A'}</div>;
+            const jk = row.original.jenis_kelamin
+            return <div className="text-left font-medium">{jk === "Pria" ? "Laki-laki" : jk === "Perempuan" ? "Perempuan" : jk || 'N/A'}</div>
         },
     },
     {
@@ -86,20 +86,20 @@ export const columnsWarga = (fetchData) => [
         enableHiding: false,
         header: () => <div className="text-center">Aksi</div>,
         cell: ({ row }) => {
-            const warga = row.original;
-            const wargaId = warga.id;
-            const isUserActive = warga.user?.status_akun === 1;
+            const warga = row.original
+            const wargaId = warga.id
+            const isUserActive = warga.user?.status_akun === 1
 
-            const [isSubmitting, setIsSubmitting] = useState(false);
-            const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-            const [isConfirmDeactivateDialogOpen, setIsConfirmDeactivateDialogOpen] = useState(false);
+            const [isSubmitting, setIsSubmitting] = useState(false)
+            const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+            const [isConfirmDeactivateDialogOpen, setIsConfirmDeactivateDialogOpen] = useState(false)
 
             const handleToggleUserStatus = async () => {
 
-                setIsSubmitting(true);
+                setIsSubmitting(true)
                 try {
-                    const response = await axios.put(`/api/approval-role/warga/${wargaId}/${isUserActive ? "reject" : "approve"}`);
-                    const newStatus = response.data.status;
+                    const response = await axios.put(`/api/approval-role/warga/${wargaId}/${isUserActive ? "reject" : "approve"}`)
+                    const newStatus = response.data.status
 
                     showAlert({
                         title: "Berhasil!",
@@ -108,10 +108,9 @@ export const columnsWarga = (fetchData) => [
                         message: `Berhasil mengubah status akun warga.`,
                         color: "green",
                         onConfirm: () => fetchData(),
-                    });
-                    setIsConfirmDeactivateDialogOpen(false);
+                    })
+                    setIsConfirmDeactivateDialogOpen(false)
                 } catch (error) {
-                    console.error("Error toggling user status:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
                         desc: error.response?.data?.message || "Gagal mengubah status akun warga.",
@@ -119,11 +118,11 @@ export const columnsWarga = (fetchData) => [
                         message: error.response?.data?.message || "Gagal mengubah status akun warga.",
                         color: "red",
                         errors: error.response?.data?.errors
-                    });
+                    })
                 } finally {
-                    setIsSubmitting(false);
+                    setIsSubmitting(false)
                 }
-            };
+            }
 
             return (
                 <div className="flex items-center justify-center gap-2">
@@ -196,8 +195,8 @@ export const columnsWarga = (fetchData) => [
                         </Button>
                     )}
                 </div>
-            );
+            )
         },
     },
-];
+]
 

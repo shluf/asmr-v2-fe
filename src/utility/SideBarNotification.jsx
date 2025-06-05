@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect } from 'react';
-import axios from '@/lib/axios';
-import { create } from 'zustand';
+import { useEffect } from 'react'
+import axios from '@/lib/axios'
+import { create } from 'zustand'
 
 const useNotificationStore = create((set) => ({
   pageAdminRoutes: [
@@ -28,78 +28,75 @@ const useNotificationStore = create((set) => ({
   
   updateNotifications: (role, route, count) =>
     set((state) => {
-      const routes = `page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`;
-      if (!state[routes]) return state;
+      const routes = `page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`
+      if (!state[routes]) return state
      
       const updatedRoutes = state[routes].map(item =>
         item.route === route ? { ...item, notification: count } : item
-      );
+      )
      
-      return { [routes]: updatedRoutes };
+      return { [routes]: updatedRoutes }
     }),
   
   // Method untuk refresh notifikasi manual
   manualRefreshNotifications: async (role) => {
     try {
-      const response = await axios.get('/api/notifications/count');
-      const notifications = response.data;
+      const response = await axios.get('/api/notifications/count')
+      const notifications = response.data
       
       set((state) => {
-        const routes = `page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`;
-        if (!state[routes]) return state;
+        const routes = `page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`
+        if (!state[routes]) return state
 
         const updatedRoutes = state[routes].map(item => {
-          const matchingNotification = notifications.find(notif => notif.route === item.route);
+          const matchingNotification = notifications.find(notif => notif.route === item.route)
           return matchingNotification 
             ? { ...item, notification: matchingNotification.count } 
-            : item;
-        });
+            : item
+        })
 
-        return { [routes]: updatedRoutes };
-      });
+        return { [routes]: updatedRoutes }
+      })
 
-      return true; // Berhasil refresh
+      return true // Berhasil refresh
     } catch (error) {
-      console.error('Error manually refreshing notifications:', error);
-      return false; // Gagal refresh
+      return false // Gagal refresh
     }
   }
-}));
+}))
 
-const fetchNotifications = async (role) => {
+const fetchNotifications = async () => {
   try {
-    const response = await axios.get('/api/notifications/count');
-    return response.data;
+    const response = await axios.get('/api/notifications/count')
+    return response.data
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    return null;
+    return null
   }
-};
+}
 
 export const useNotificationPolling = (role) => {
-  const updateNotifications = useNotificationStore(state => state.updateNotifications);
+  const updateNotifications = useNotificationStore(state => state.updateNotifications)
  
   useEffect(() => {
     const pollNotifications = async () => {
-      const notifications = await fetchNotifications(role);
+      const notifications = await fetchNotifications()
       if (notifications) {
         notifications.forEach(({ route, count }) => {
-          updateNotifications(role, route, count);
-        });
+          updateNotifications(role, route, count)
+        })
       }
-    };
+    }
 
     // Polling setiap 20 detik
-    pollNotifications();
-    const interval = setInterval(pollNotifications, 20000);
-    return () => clearInterval(interval);
-  // }, [role, updateNotifications]);
-  }, [role]);
+    pollNotifications()
+    const interval = setInterval(pollNotifications, 20000)
+    return () => clearInterval(interval)
+  }, [role])
 
-  return useNotificationStore(state => state[`page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`] || []);
-};
+  return useNotificationStore(state => state[`page${role === "PejabatRT" || role === "PejabatRW" ? "RTRW" : role}Routes`] || [])
+}
 
 // Hook untuk menggunakan refresh manual
 export const useManualNotificationRefresh = () => {
-  return useNotificationStore(state => state.manualRefreshNotifications);
-};
+  return useNotificationStore(state => state.manualRefreshNotifications)
+}

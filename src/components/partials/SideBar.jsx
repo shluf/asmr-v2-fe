@@ -1,80 +1,80 @@
 'use client'
 
-import ApplicationLogo from "@/components/Atoms/ApplicationLogo";
-import NavLink from "@/components/Atoms/NavLink";
-import { Badge } from "@/components/ui/badge";
-import { useManualNotificationRefresh, useNotificationPolling } from "@/utility/SideBarNotification";
-import renderIcon from "@/utility/renderIcon";
-import Link from "next/link";
+import ApplicationLogo from "@/components/Atoms/ApplicationLogo"
+import NavLink from "@/components/Atoms/NavLink"
+import { Badge } from "@/components/ui/badge"
+import { useManualNotificationRefresh, useNotificationPolling } from "@/utility/SideBarNotification"
+import renderIcon from "@/utility/renderIcon"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
-import axios from "@/lib/axios";
-import { X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import axios from "@/lib/axios"
+import { X } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 const SideBar = ({ color, userRole }) => {
-  const pathname = usePathname();
-  const routes = useNotificationPolling(userRole);
-  const manualRefresh = useManualNotificationRefresh();
+  const pathname = usePathname()
+  const routes = useNotificationPolling(userRole)
+  const manualRefresh = useManualNotificationRefresh()
 
   const clearNotification = async (e, jenis) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       await axios.delete('/api/notifications/clear', {
         data: { jenis }, 
-      });
+      })
 
       await manualRefresh(userRole)
 
     } catch (error) {
-      console.error("Error clearing notification:", error);
+      // console.error("Error clearing notification:", error)
     }
-  };
+  }
 
   // Fungsi untuk memeriksa apakah route aktif
   const isActive = (route) => {
     if (route === "dashboard") {
-      return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`;
+      return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`
     }
-    return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}` || pathname.startsWith(`/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}/`);
-  };
+    return pathname === `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}` || pathname.startsWith(`/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}/${route}/`)
+  }
 
   // Fungsi untuk mendapatkan URL
   const getUrl = (route) => {
     if (route === "dashboard") {
-      return `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`;
+      return `/${userRole === "PejabatRT" ? "rt" : userRole === "PejabatRW" ? "rw" : userRole.toLowerCase()}`
     }
     
     if (userRole === "Warga") {
       if (route === "pengajuan" || route === "histori" || route === "akun" || route === "bantuan") {
-        return `/warga/${route}`;
+        return `/warga/${route}`
       }
-      return "/warga";
+      return "/warga"
     }
 
     if (userRole === "PejabatRT") {
       if (route === "pengajuan-masalah" || route === "rekap-pengajuan" || route === "bantuan") {
-        return `/rt/${route}`;
+        return `/rt/${route}`
       }
-      return "/rt";
+      return "/rt"
     }
 
     if (userRole === "PejabatRW") {
       if (route === "pengajuan-masalah" || route === "rekap-pengajuan" || route === "bantuan") {
-        return `/rw/${route}`;
+        return `/rw/${route}`
       }
-      return "/rw";
+      return "/rw"
     }
 
     if (userRole === "Admin") {
       if (route === "biodata-user" || route === "rekap-pengajuan" || route === "approval-role" || route === "tambah-rtrw") {
-        return `/admin/${route}`;
+        return `/admin/${route}`
       }
-      return "/admin";
+      return "/admin"
     }
     
-    return `/${route}`;
-  };
+    return `/${route}`
+  }
 
   return (
       <>
@@ -117,7 +117,7 @@ const SideBar = ({ color, userRole }) => {
                           ))}
                       </nav>
                   </div>
-                  <div className="mt-auto p-4"></div>
+                  <div className="mt-auto p-4" />
               </div>
           </div>
 
@@ -144,7 +144,7 @@ const SideBar = ({ color, userRole }) => {
               </nav>
           </div>
       </>
-  );
+  )
 }
 
 export default SideBar

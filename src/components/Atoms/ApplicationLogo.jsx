@@ -97,5 +97,5 @@ export default function ApplicationLogo(props) {
                 stroke="#789DB1"
             />
         </svg>
-    );
+    )
 }

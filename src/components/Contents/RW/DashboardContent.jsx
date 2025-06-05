@@ -1,36 +1,36 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { UserFilled } from "@/utility/svg-icons";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { UserFilled } from "@/utility/svg-icons"
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogFooter,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { id as idLocale } from "date-fns/locale";
-import { format } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
-import InputLabel from "@/components/Atoms/InputLabel";
-import TextInput from "@/components/Atoms/TextInput";
-import Link from "next/link";
-import ProgramKerja from "@/components/partials/ProgramKerja";
-import { ChevronRight } from "lucide-react";
-import { useProgramKerjaRW, usePengajuanTerbaruRW } from "@/hooks/rw";
-import { useAuthTokenClient } from "@/lib/jwt";
+} from "@/components/ui/dialog"
+import { id as idLocale } from "date-fns/locale"
+import { format } from "date-fns"
+import { Skeleton } from "@/components/ui/skeleton"
+import InputLabel from "@/components/Atoms/InputLabel"
+import TextInput from "@/components/Atoms/TextInput"
+import Link from "next/link"
+import ProgramKerja from "@/components/partials/ProgramKerja"
+import { ChevronRight } from "lucide-react"
+import { useProgramKerjaRW, usePengajuanTerbaruRW } from "@/hooks/rw"
+import { useAuthTokenClient } from "@/lib/jwt"
 
 const DashboardContent = () => {
-    const { payload } = useAuthTokenClient();
-    const idRW = payload?.id_rw;
+    const { payload } = useAuthTokenClient()
+    const idRW = payload?.id_rw
 
     const {
         pengajuanTerakhirRW,
         isLoadingPengajuanRW,
         handleActionPengajuanRW,
         isActionLoadingRW,
-    } = usePengajuanTerbaruRW(idRW);
+    } = usePengajuanTerbaruRW(idRW)
 
     const {
         dataProker,
@@ -49,15 +49,15 @@ const DashboardContent = () => {
         handleSubmitEdit: handleSubmitEditProker,
         handleSubmitTambah: handleSubmitTambahProker,
         isProcessing: isProcessingProker,
-    } = useProgramKerjaRW(idRW);
+    } = useProgramKerjaRW(idRW)
 
     const handleEditChange = (e) => {
-        setEditProker((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
+        setEditProker((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    }
 
     const handleTambahChange = (e) => {
-        setTambahProker((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
+        setTambahProker((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    }
 
     return (
         <>
@@ -467,7 +467,7 @@ const DashboardContent = () => {
                 </Dialog>
             </div>
         </>
-    );
-};
+    )
+}
 
-export default DashboardContent;
+export default DashboardContent

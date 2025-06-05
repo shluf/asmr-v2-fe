@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React from 'react'
 
 const FooterSection = () => {
     return (
@@ -28,7 +28,7 @@ const FooterSection = () => {
                 </div>
             </div>
         </footer>
-    );
-};
+    )
+}
 
-export default FooterSection;
+export default FooterSection

@@ -119,14 +119,14 @@ const RegisterForm = () => {
                 message: "Password konfirmasi tidak cocok",
                 success: false,
                 color: "red",
-            });
+            })
             
             setData(prev => ({
                 ...prev,
                 password: '',
                 password_confirmation: ''
-            }));
-            return;
+            }))
+            return
         }
 
         const status = await register({
@@ -138,7 +138,7 @@ const RegisterForm = () => {
             ...prev,
             password: '',
             password_confirmation: ''
-        }));
+        }))
 
         if (status === 200) {
             showAlert({
@@ -147,13 +147,13 @@ const RegisterForm = () => {
                 message: "Silahkan login menggunakan akun yang telah didaftarkan",
                 success: true,
                 color: "green",
-            });
+            })
             
             setTimeout(() => {
-                router.push('/login');
-            }, 2000);
+                router.push('/login')
+            }, 2000)
         } else {
-            const errorMessage = errors.general ? errors.general[0] : "Silahkan cek kembali data yang anda masukkan";
+            const errorMessage = errors.general ? errors.general[0] : "Silahkan cek kembali data yang anda masukkan"
             
             showAlert({
                 title: "Gagal",
@@ -161,7 +161,7 @@ const RegisterForm = () => {
                 message: errorMessage,
                 success: false,
                 color: "red",
-            });
+            })
         }
     }
 

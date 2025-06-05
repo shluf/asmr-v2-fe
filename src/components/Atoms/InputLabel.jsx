@@ -14,5 +14,5 @@ export default function InputLabel({
         >
             {value ? value : children}
         </label>
-    );
+    )
 }

@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from "react";
-import { UserFilled } from "@/utility/svg-icons";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ShieldCheck, ChevronRight } from 'lucide-react';
-import { fetchCountPengajuanJenis, fetchPengajuanBulanan, fetchWargaPendingData } from "@/hooks/admin";
-import Link from "next/link";
+import React, { useState, useEffect } from "react"
+import { UserFilled } from "@/utility/svg-icons"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ShieldCheck, ChevronRight } from 'lucide-react'
+import { fetchCountPengajuanJenis, fetchPengajuanBulanan, fetchWargaPendingData } from "@/hooks/admin"
+import Link from "next/link"
 import { 
   BarChart, 
   Bar as RechartsBar, 
@@ -18,15 +18,15 @@ import {
   PieChart,
   Pie as RechartsPie,
   Cell
-} from 'recharts';
+} from 'recharts'
 
 const DashboardContent = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [dataWarga, setDataWarga] = useState([]);
+    const [isLoading, setIsLoading] = useState(true)
+    const [dataWarga, setDataWarga] = useState([])
 
     const [pengajuanJenis, setPengajuanJenis] = useState([
         { jenis_surat: 'Lainnya', total: 0 },
-    ]);
+    ])
 
     const [pengajuanBulanan, setPengajuanBulanan] = useState([
         { name: "Jan", diterima: 0, ditolak: 0 },
@@ -41,20 +41,20 @@ const DashboardContent = () => {
         { name: "Oct", diterima: 0, ditolak: 0 },
         { name: "Nov", diterima: 0, ditolak: 0 },
         { name: "Dec", diterima: 0, ditolak: 0 },
-    ]);
+    ])
 
     useEffect(() => {
-        fetchWargaPendingData(setDataWarga, setIsLoading);
-        fetchCountPengajuanJenis(setPengajuanJenis);
-        fetchPengajuanBulanan(setPengajuanBulanan);
-    }, []);
+        fetchWargaPendingData(setDataWarga, setIsLoading)
+        fetchCountPengajuanJenis(setPengajuanJenis)
+        fetchPengajuanBulanan(setPengajuanBulanan)
+    }, [])
 
-    const COLORS = ['#2979FF', '#00D1FF'];
+    const COLORS = ['#2979FF', '#00D1FF']
 
     const pieChartData = pengajuanJenis.map(item => ({
         name: item.jenis_surat,
         value: item.total
-    }));
+    }))
 
     
     // Legend data for pie chart
@@ -68,7 +68,7 @@ const DashboardContent = () => {
         { name: 'Surat Keterangan Pindah', color: '#212121' },
         { name: 'Surat Ketenagakerjaan', color: '#E91E63' },
         { name: 'Lainnya', color: '#9E9E9E' },
-    ];
+    ]
 
     return (
         <div className="flex flex-col w-full mb-10">
@@ -106,11 +106,11 @@ const DashboardContent = () => {
                             </div>
                             <div className="flex items-center mt-4 text-sm">
                                 <div className="flex items-center mr-4">
-                                    <div className="w-3 h-3 bg-[#4AFA4A] mr-2"></div>
+                                    <div className="w-3 h-3 bg-[#4AFA4A] mr-2" />
                                     <span>Diterima</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-3 h-3 bg-[#FF3B30] mr-2"></div>
+                                    <div className="w-3 h-3 bg-[#FF3B30] mr-2" />
                                     <span>Ditolak</span>
                                 </div>
                             </div>
@@ -148,7 +148,7 @@ const DashboardContent = () => {
                                 <div className="grid grid-cols-2 gap-2 text-sm">
                                     {legendData.map((item, index) => (
                                         <div key={index} className="flex items-center">
-                                            <div className="w-4 h-4 mr-2" style={{ backgroundColor: item.color }}></div>
+                                            <div className="w-4 h-4 mr-2" style={{ backgroundColor: item.color }} />
                                             <span>{item.name}</span>
                                         </div>
                                     ))}
@@ -267,7 +267,7 @@ const DashboardContent = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default DashboardContent;
+export default DashboardContent

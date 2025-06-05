@@ -1,20 +1,20 @@
 'use client'
 
-import { useEffect, useState } from "react";
-import { submitPengajuan, fetchPengajuanAkunData } from "@/hooks/warga";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import TextInput from "@/components/Atoms/TextInput";
-import { Textarea } from "@/components/ui/textarea";
-import { showAlert } from "@/components/partials/Alert";
-import { useAuthTokenClient } from "@/lib/jwt";
+import { useEffect, useState } from "react"
+import { submitPengajuan, fetchPengajuanAkunData } from "@/hooks/warga"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import TextInput from "@/components/Atoms/TextInput"
+import { Textarea } from "@/components/ui/textarea"
+import { showAlert } from "@/components/partials/Alert"
+import { useAuthTokenClient } from "@/lib/jwt"
 
 const Pengajuan = () => {
-    const [dataWarga, setDataWarga] = useState({});
-    const [selectedJenisSurat, setSelectedJenisSurat] = useState("");
-    const [description, setDescription] = useState("");
+    const [dataWarga, setDataWarga] = useState({})
+    const [selectedJenisSurat, setSelectedJenisSurat] = useState("")
+    const [description, setDescription] = useState("")
     const [isLainnya, setIsLainnya] = useState(false)
-    const { payload } = useAuthTokenClient();
-    const [isLoading, setIsLoading] = useState(false);
+    const { payload } = useAuthTokenClient()
+    const [isLoading, setIsLoading] = useState(false)
     const initialPengajuanState = {
         nama_pemohon: "",
         nik_pemohon: "",
@@ -24,57 +24,57 @@ const Pengajuan = () => {
         alamat_pemohon: "",
         agama_pemohon: "",
         phone_pemohon: "",
-    };
+    }
 
-    const [pengajuan, setPengajuan] = useState(initialPengajuanState);
+    const [pengajuan, setPengajuan] = useState(initialPengajuanState)
 
     useEffect(() => {
         if (payload && payload.no_kk) {
-            setPengajuan(prev => ({ ...prev, nomor_kk_pemohon: payload.no_kk }));
+            setPengajuan(prev => ({ ...prev, nomor_kk_pemohon: payload.no_kk }))
         }
 
         const loadInitialData = async () => {
-            const result = await fetchPengajuanAkunData(setDataWarga, (akunData) => {
-                setPengajuan(prev => ({
-                    ...prev,
-                    nomor_kk_pemohon: akunData.no_kk || prev.nomor_kk_pemohon,
-                    alamat_pemohon: akunData.alamat || prev.alamat_pemohon,
-                }));
-            });
-        };
+            await fetchPengajuanAkunData(setDataWarga, (akunData) => {
+                setPengajuan(prevState => ({
+                    ...prevState,
+                    nomor_kk_pemohon: akunData.no_kk || prevState.nomor_kk_pemohon,
+                    alamat_pemohon: akunData.alamat || prevState.alamat_pemohon,
+                }))
+            })
+        }
 
-        loadInitialData();
-    }, []);
+        loadInitialData()
+    }, [])
 
     const handleJenisSuratChange = (event) => {
-        setSelectedJenisSurat(event.target.value);
+        setSelectedJenisSurat(event.target.value)
         if (event.target.value==="lainnya:") {
             setIsLainnya(true)
         } else {
             setIsLainnya(false)
         }
-    };
+    }
     
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const { name, value } = event.target
         setPengajuan((prevData) => ({
             ...prevData,
             [name]: value,
-        }));
-    };
+        }))
+    }
 
     const handleSubmit = async () => {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
-            const { nomor_kk_pemohon, ...restOfPengajuanState } = pengajuan;
+            const { nomor_kk_pemohon, ...restOfPengajuanState } = pengajuan
             const formDataToSubmit = {
                 ...restOfPengajuanState,
                 no_kk_pemohon: nomor_kk_pemohon,
                 jenis_surat: selectedJenisSurat,
                 deskripsi: description,
-            };
+            }
             
-            const result = await submitPengajuan(formDataToSubmit);
+            const result = await submitPengajuan(formDataToSubmit)
             
             if (result.success) {
                 showAlert({
@@ -82,13 +82,13 @@ const Pengajuan = () => {
                     desc: result.message || "Surat berhasil diajukan",
                     success: true,
                     color: "green",
-                });
+                })
                 
-                setSelectedJenisSurat("");
-                setDescription("");
-                setPengajuan(initialPengajuanState);
+                setSelectedJenisSurat("")
+                setDescription("")
+                setPengajuan(initialPengajuanState)
                 if (payload && payload.no_kk) {
-                    setPengajuan(prev => ({ ...initialPengajuanState, nomor_kk_pemohon: payload.no_kk }));
+                    setPengajuan({ ...initialPengajuanState, nomor_kk_pemohon: payload.no_kk })
                 }
             } else {
                 showAlert({
@@ -98,21 +98,20 @@ const Pengajuan = () => {
                     message: "Pengajuan gagal, mohon periksa kembali data yang Anda masukkan",
                     color: "red",
                     errors: result.errors
-                });
+                })
             }
         } catch (error) {
-            console.error("Error submitting pengajuan in component:", error);
             showAlert({
                 title: "Gagal Submit",
                 desc: "Terjadi kesalahan teknis saat mengirim pengajuan.",
                 message: "Terjadi kesalahan teknis saat mengirim pengajuan, mohon coba lagi nanti",
                 success: false,
                 color: "red",
-            });
+            })
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     return (
         <div className="w-full  flex justify-center items-start p-3 mb-4">
@@ -120,7 +119,7 @@ const Pengajuan = () => {
                 <h2 className="text-2xl font-bold text-blue-900 mb-6">
                     Form Pengajuan
                 </h2>
-                <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+                <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
                 <div className="text-blue-2  md:text-sm text-xs  mt-4">
                     Mohon Isi Formulir dengan Benar untuk Mempercepat Proses
                     Layanan Anda
@@ -174,7 +173,7 @@ const Pengajuan = () => {
                         <div className="w-full">
                         <Select 
                             onValueChange={(value) => 
-                                setPengajuan((prev) => ({ ...prev, jenis_kelamin_pemohon: value }))}
+                                setPengajuan(prevState => ({ ...prevState, jenis_kelamin_pemohon: value }))}
                             value={pengajuan.jenis_kelamin_pemohon}
                         >
 
@@ -199,7 +198,7 @@ const Pengajuan = () => {
                         <div className="w-full">
                         <Select 
                             onValueChange={(value) => 
-                                setPengajuan((prev) => ({ ...prev, agama_pemohon: value }))}
+                                setPengajuan(prevState => ({ ...prevState, agama_pemohon: value }))}
                             value={pengajuan.agama_pemohon}
                         >
                         <SelectTrigger  
@@ -329,7 +328,7 @@ const Pengajuan = () => {
                 </button>
             </form>
         </div>
-    );
-};
+    )
+}
 
-export default Pengajuan;
+export default Pengajuan

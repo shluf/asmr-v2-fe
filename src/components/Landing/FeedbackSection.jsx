@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const FeedbackSection = () => {
     const [form, setForm] = useState({
@@ -9,34 +9,34 @@ const FeedbackSection = () => {
         email: '',
         subject: '',
         message: ''
-    });
+    })
 
-    const ownerEmail = process.env.NEXT_PUBLIC_MAIL_USERNAME;
+    const ownerEmail = process.env.NEXT_PUBLIC_MAIL_USERNAME
 
     const createMailtoLink = () => {
-        const mailtoBody = `Yth. Tim Aplikasi Surat Menyurat RT/RW,%0D%0A%0D%0ADengan hormat,%0D%0ASaya ${form.firstName}, ingin menyampaikan beberapa kritik dan saran yang saya harap dapat menjadi bahan pertimbangan untuk perbaikan layanan di aplikasi ini.%0D%0A%0D%0A${form.message}%0D%0A%0D%0ATerima kasih atas perhatian dan kerjasamanya. Semoga kritik dan saran ini dapat membantu dalam meningkatkan layanan ini.%0D%0A%0D%0AHormat saya,%0D%0A${form.firstName} ${form.lastName}%0D%0A%0D%0AEmail: ${form.email}`;
-        return `mailto:${ownerEmail}?subject=${encodeURIComponent('Kritik & Saran - ' + form.subject)}&body=${mailtoBody}`;
-    };
+        const mailtoBody = `Yth. Tim Aplikasi Surat Menyurat RT/RW,%0D%0A%0D%0ADengan hormat,%0D%0ASaya ${form.firstName}, ingin menyampaikan beberapa kritik dan saran yang saya harap dapat menjadi bahan pertimbangan untuk perbaikan layanan di aplikasi ini.%0D%0A%0D%0A${form.message}%0D%0A%0D%0ATerima kasih atas perhatian dan kerjasamanya. Semoga kritik dan saran ini dapat membantu dalam meningkatkan layanan ini.%0D%0A%0D%0AHormat saya,%0D%0A${form.firstName} ${form.lastName}%0D%0A%0D%0AEmail: ${form.email}`
+        return `mailto:${ownerEmail}?subject=${encodeURIComponent('Kritik & Saran - ' + form.subject)}&body=${mailtoBody}`
+    }
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setForm(prevForm => ({
             ...prevForm,
             [name]: value
-        }));
-    };
+        }))
+    }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        window.open(createMailtoLink(), '_blank');
+        e.preventDefault()
+        window.open(createMailtoLink(), '_blank')
         setForm({
             firstName: '',
             lastName: '',
             email: '',
             subject: '',
             message: ''
-        });
-    };
+        })
+    }
 
     return (
         <section id="kritik-saran" className="bg-white md:px-0 lg:px-24 py-16 h-full box-border">
@@ -69,7 +69,7 @@ const FeedbackSection = () => {
                                 </div>
                                 <div className="col-span-2">
                                     <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-                                    <textarea id="message" name="message" rows="3" value={form.message} onChange={handleChange} className="mt-1 focus:ring-green focus:border-green block w-full shadow-sm sm:text-sm border-gray-300 rounded border-b-2" placeholder="Tulis pesan disini" required></textarea>
+                                    <textarea id="message" name="message" rows="3" value={form.message} onChange={handleChange} className="mt-1 focus:ring-green focus:border-green block w-full shadow-sm sm:text-sm border-gray-300 rounded border-b-2" placeholder="Tulis pesan disini" required />
                                 </div>
                             </div>
                             <div className="mt-6">
@@ -85,7 +85,7 @@ const FeedbackSection = () => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
 
-export default FeedbackSection;
+export default FeedbackSection

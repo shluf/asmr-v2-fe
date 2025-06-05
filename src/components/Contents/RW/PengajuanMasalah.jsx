@@ -1,30 +1,30 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { format } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { Check, X, ShieldCheck } from 'lucide-react';
+import React from 'react'
+import { format } from 'date-fns'
+import { id as idLocale } from 'date-fns/locale'
+import { Check, X, ShieldCheck } from 'lucide-react'
 import { 
   Card, 
   CardContent,
   CardHeader,
   CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import PrimaryButton from '@/components/Atoms/PrimaryButton';
-import { Skeleton } from '@/components/ui/skeleton';
-import TextInput from '@/components/Atoms/TextInput';
-import { usePengajuanMasalahRW } from '@/hooks/rw';
-import { useAuthTokenClient } from "@/lib/jwt";
+} from '@/components/ui/collapsible'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { Skeleton } from '@/components/ui/skeleton'
+import TextInput from '@/components/Atoms/TextInput'
+import { usePengajuanMasalahRW } from '@/hooks/rw'
+import { useAuthTokenClient } from "@/lib/jwt"
 
 const PengajuanMasalah = () => {
-  const { payload } = useAuthTokenClient();
-  const idRW = payload?.id_rw;
+  const { payload } = useAuthTokenClient()
+  const idRW = payload?.id_rw
 
   const {
     pengajuanMasalahDataRW,
@@ -33,7 +33,7 @@ const PengajuanMasalah = () => {
     setOpenItemsRW,
     handleActionRW,
     isActionLoadingRW,
-  } = usePengajuanMasalahRW(idRW);
+  } = usePengajuanMasalahRW(idRW)
 
   return (
     <>
@@ -87,7 +87,7 @@ const PengajuanMasalah = () => {
                   }
                 >
                   <Card className="shadow-md mt-6 sticky top-0 z-10">
-                    <div className='absolute -top-[25px] w-full h-6 bg-white'></div>
+                    <div className='absolute -top-[25px] w-full h-6 bg-white' />
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -256,7 +256,7 @@ const PengajuanMasalah = () => {
         </Card>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default PengajuanMasalah;
+export default PengajuanMasalah

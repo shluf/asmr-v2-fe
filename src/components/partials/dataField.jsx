@@ -1,5 +1,5 @@
-import TextInput from "@/Components/Atoms/TextInput";
-import { Textarea } from "@/Components/ui/textarea";
+import TextInput from "@/Components/Atoms/TextInput"
+import { Textarea } from "@/Components/ui/textarea"
 
 export const DataField = ({
     label,
@@ -23,7 +23,7 @@ export const DataField = ({
                     onChange={onChange}
                     color="blue"
                     className="w-full"
-                ></Textarea>
+                 />
             ) : period ? (
                 <div className="flex items-center gap-2">
                     <TextInput type="number" name={name.mulai} value={value.mulai} onChange={onChange.mulai} className="w-full" />
@@ -55,4 +55,4 @@ export const DataField = ({
             )}
         </div>
     </div>
-);
+)

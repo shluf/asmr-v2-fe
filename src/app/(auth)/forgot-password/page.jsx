@@ -1,5 +1,7 @@
+import Loading from '@/components/partials/Loading'
 import ForgotPasswordForm from '@/components/Auth/ForgotPasswordForm'
 import GuestLayout from '@/components/Layout/GuestLayout'
+import { Suspense } from 'react'
 
 export const metadata = {
     title: 'ASMR - Lupa Password',
@@ -9,7 +11,9 @@ export const metadata = {
 const Page = () => {
     return (
         <GuestLayout button="all" header="Lupa Password" wide={false}>
-            <ForgotPasswordForm />
+            <Suspense fallback={<Loading />}>
+                <ForgotPasswordForm />
+            </Suspense>
         </GuestLayout>
     )
 }

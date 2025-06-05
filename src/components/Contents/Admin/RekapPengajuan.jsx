@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { Check, X, ShieldCheck, Clock, Eye, EyeOff } from 'lucide-react';
+import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns'
+import { id as idLocale } from 'date-fns/locale'
+import { Check, X, ShieldCheck, Clock, Eye, EyeOff } from 'lucide-react'
 import { 
   Card, 
   CardContent,
   CardHeader,
   CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Skeleton } from '@/Components/ui/skeleton';
-import { fetchRekapPengajuanData } from '@/hooks/admin';
+} from '@/components/ui/collapsible'
+import { Skeleton } from '@/Components/ui/skeleton'
+import { fetchRekapPengajuanData } from '@/hooks/admin'
 
 const RekapPengajuan = ({ select }) => {
-  const [openItems, setOpenItems] = useState(select ? { [select]: true } : {});
-  const [rekapSurat, setRekapSurat] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [openItems, setOpenItems] = useState(select ? { [select]: true } : {})
+  const [rekapSurat, setRekapSurat] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
-      await fetchRekapPengajuanData(setRekapSurat);
-      setIsLoading(false);
-    };
-    loadData();
-  }, []);
+      setIsLoading(true)
+      await fetchRekapPengajuanData(setRekapSurat)
+      setIsLoading(false)
+    }
+    loadData()
+  }, [])
 
   const getApprovalDisplay = (status) => {
     switch (status) {
@@ -37,20 +37,20 @@ const RekapPengajuan = ({ select }) => {
       case 'Disetujui_RW':
       case 'Disetujui':
       case 'Selesai':
-        return { text: 'Disetujui', Icon: Check, color: 'green' };
+        return { text: 'Disetujui', Icon: Check, color: 'green' }
       case 'Ditolak_RT':
       case 'Ditolak_RW':
       case 'Ditolak':
-        return { text: 'Ditolak', Icon: X, color: 'red' };
+        return { text: 'Ditolak', Icon: X, color: 'red' }
       case 'Diproses_RT':
-        return { text: 'Menunggu Persetujuan RT', Icon: Clock, color: 'yellow' };
+        return { text: 'Menunggu Persetujuan RT', Icon: Clock, color: 'yellow' }
       case 'Diproses_RW':
-        return { text: 'Menunggu Persetujuan RW', Icon: Clock, color: 'yellow' };
+        return { text: 'Menunggu Persetujuan RW', Icon: Clock, color: 'yellow' }
       case 'Diajukan':
       default:
-        return { text: 'Menunggu Proses', Icon: Clock, color: 'gray' };
+        return { text: 'Menunggu Proses', Icon: Clock, color: 'gray' }
     }
-  };
+  }
 
   return (
     <div className="w-full space-y-4 mb-8">
@@ -95,8 +95,8 @@ const RekapPengajuan = ({ select }) => {
           </Card>
         ) : (
           rekapSurat.data.map((surat) => {
-            const approvalDisplay = getApprovalDisplay(surat.status);
-            const isItemOpen = openItems[surat.id];
+            const approvalDisplay = getApprovalDisplay(surat.status)
+            const isItemOpen = openItems[surat.id]
 
             return (
             <Collapsible
@@ -173,8 +173,7 @@ const RekapPengajuan = ({ select }) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2 justify-end items-center mt-6 pt-4 border-t">
-                </div>
+                <div className="flex gap-2 justify-end items-center mt-6 pt-4 border-t" />
               </CollapsibleContent>
             </Collapsible>
           )})

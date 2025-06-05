@@ -1,27 +1,27 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react'; 
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react' 
 
 export default forwardRef(function TextInput(
     { type = 'text', className = '', isFocused = false, color="blue", ...props },
     ref,
 ) {
-    const localRef = useRef(null);
-    const [showPassword, setShowPassword] = useState(false);
-    const isPassword = type === 'password';
+    const localRef = useRef(null)
+    const [showPassword, setShowPassword] = useState(false)
+    const isPassword = type === 'password'
     
     useImperativeHandle(ref, () => ({
         focus: () => localRef.current?.focus(),
-    }));
+    }))
     
     useEffect(() => {
         if (isFocused) {
-            localRef.current?.focus();
+            localRef.current?.focus()
         }
-    }, [isFocused]);
+    }, [isFocused])
     
     const togglePasswordVisibility = () => {
-        setShowPassword(prev => !prev);
-    };
+        setShowPassword(prev => !prev)
+    }
     
     return (
         <div className="relative w-full">
@@ -49,5 +49,5 @@ export default forwardRef(function TextInput(
                 </button>
             )}
         </div>
-    );
-});
+    )
+})

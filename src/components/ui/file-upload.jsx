@@ -1,31 +1,31 @@
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Upload } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import InputLabel from '@/components/Atoms/InputLabel';
-import InputError from '@/components/Atoms/InputError';
+import { useState, useCallback } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { Upload } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import InputLabel from '@/components/Atoms/InputLabel'
+import InputError from '@/components/Atoms/InputError'
 
 export default function FileUpload({ setData, id, accept, errors, required }) {
-  const [previews, setPreviews] = useState([]);
+  const [previews, setPreviews] = useState([])
 
   const onDrop = useCallback((acceptedFiles) => {
     const newPreviews = acceptedFiles.map(file => ({
       url: URL.createObjectURL(file),
       name: file.name
-    }));
+    }))
     
-    setPreviews(newPreviews);
+    setPreviews(newPreviews)
 
 
-    setData('ttd',acceptedFiles[0]);  
+    setData('ttd',acceptedFiles[0])  
 
-  }, [setData, id]);
+  }, [setData, id])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept,
     multiple: false  // Ensuring only one file is uploaded
-  });
+  })
 
   return (
     <div className="flex flex-col items-start gap-1 max-w-md mx-auto">
@@ -63,5 +63,5 @@ export default function FileUpload({ setData, id, accept, errors, required }) {
       </div>
       <InputError message={errors} className="mt-1" />
     </div>
-  );
+  )
 }

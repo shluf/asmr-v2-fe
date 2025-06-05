@@ -1,97 +1,95 @@
 'use client'
 
-import React, { useState, useEffect } from "react";
-import { format } from "date-fns";
-import idLocale from "date-fns/locale/id";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Check, Cog, Download, ShieldCheck, X, HelpCircle } from "lucide-react";
-import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { CollapsibleContent } from "@radix-ui/react-collapsible";
-import { fetchHistoryPengajuan } from "@/hooks/warga";
-import { Skeleton } from "@/components/ui/skeleton";
-import axios from "@/lib/axios";
-import { useAuthTokenClient } from "@/lib/jwt";
+import React, { useState, useEffect } from "react"
+import { format } from "date-fns"
+import idLocale from "date-fns/locale/id"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Check, Cog, Download, ShieldCheck, X, HelpCircle } from "lucide-react"
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { CollapsibleContent } from "@radix-ui/react-collapsible"
+import { fetchHistoryPengajuan } from "@/hooks/warga"
+import { Skeleton } from "@/components/ui/skeleton"
+import axios from "@/lib/axios"
+import { useAuthTokenClient } from "@/lib/jwt"
 
 const getStatusIcon = (status) => {
   switch (status) {
     case "approved":
-      return <Check className="h-6 w-6 text-white" />;
+      return <Check className="h-6 w-6 text-white" />
     case "in-progress":
-      return <Cog className="h-6 w-6 text-white" />;
+      return <Cog className="h-6 w-6 text-white" />
     case "rejected":
-      return <X className="h-6 w-6 text-white" />;
+      return <X className="h-6 w-6 text-white" />
     default:
-      return <HelpCircle className="h-6 w-6 text-white" />;
+      return <HelpCircle className="h-6 w-6 text-white" />
   }
-};
+}
 
 const getStatusColor = (status) => {
   switch (status) {
     case "approved":
-      return "bg-green-500";
+      return "bg-green-500"
     case "in-progress":
-      return "bg-yellow-500";
+      return "bg-yellow-500"
     case "rejected":
-      return "bg-red-500";
+      return "bg-red-500"
     default:
-      return "bg-gray-400";
+      return "bg-gray-400"
   }
-};
+}
 
 const HistoriPengajuan = () => {
-  const [dataPengajuan, setDataPengajuan] = useState([]);
-  const [openItems, setOpenItems] = useState({});
-  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
-  const [isDownloadLoading, setIsDownloadLoading] = useState(false);
-  const {payload} = useAuthTokenClient();
+  const [dataPengajuan, setDataPengajuan] = useState([])
+  const [openItems, setOpenItems] = useState({})
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true)
+  const [isDownloadLoading, setIsDownloadLoading] = useState(false)
+  const {payload} = useAuthTokenClient()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchHistoryPengajuan(payload.id_warga);
+        const result = await fetchHistoryPengajuan(payload.id_warga)
         if (result.success) {
-          setDataPengajuan(result.data);
-        } else {
-          console.error('Error fetching history:', result.message);
+          setDataPengajuan(result.data)
         }
       } catch (error) {
-        console.error('Error in history fetch:', error);
+        // console.error('Error in history fetch:', error)
       } finally {
-        setIsHistoryLoading(false);
+        setIsHistoryLoading(false)
       }
-    };
+    }
 
     if (payload) {
-      fetchData();
+      fetchData()
     }
-  }, []);
+  }, [])
 
   const handleDownloadSurat = async (id) => {
     try {
-      setIsDownloadLoading(true);
+      setIsDownloadLoading(true)
       const response = await axios.get(`/api/download-surat/${id}`, {
         responseType: 'blob'
-      });
+      })
       
       // Buat objek URL untuk blob
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = window.URL.createObjectURL(blob)
       
       // Buat link untuk download
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `surat-pengajuan-${id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `surat-pengajuan-${id}.pdf`)
+      document.body.appendChild(link)
+      link.click()
       
       // Bersihkan
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
     } catch (error) {
-      console.error('Error downloading document:', error);
+      // console.error('Error downloading document:', error)
     } finally {
-      setIsDownloadLoading(false);
+      setIsDownloadLoading(false)
     }
   }
 
@@ -190,7 +188,7 @@ const HistoriPengajuan = () => {
 
                     <CollapsibleContent className="mx-2 py-6 rounded-b-lg px-8 md:px-16 bg-[#d9d9d926] shadow-inner">
                       <div className="relative space-y-4">
-                        <span className="absolute top-4 left-[18.5px] bottom-4 bg-slate-300 w-[3px] z-10"></span>
+                        <span className="absolute top-4 left-[18.5px] bottom-4 bg-slate-300 w-[3px] z-10" />
                         {submission?.progress?.map((step, stepIndex) =>
                           step.status !== "pending" ? (
                             <div key={stepIndex} className="flex items-center gap-4">
@@ -225,7 +223,7 @@ const HistoriPengajuan = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default HistoriPengajuan;
+export default HistoriPengajuan

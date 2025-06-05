@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react';
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
 const NavigationBar = ({ scrolled, activeSection, user }) => {
     return (
@@ -11,7 +12,12 @@ const NavigationBar = ({ scrolled, activeSection, user }) => {
             <div className="container mx-auto px-4 py-2 flex justify-between items-center">
                 <div className="md:w-1/3">
                     <a href="#" className="text-2xl font-bold text-gray-800">
-                        <img src="/assets/logo.svg" alt="Logo" className="h-8 inline-block mr-2"/>
+                        <Image 
+                            src="/assets/logo.svg" 
+                            alt="Logo" 
+                            width={81} 
+                            height={54} 
+                            className="h-8 inline-block mr-2"/>
                     </a>
                 </div>
                 <div className="hidden md:flex justify-center md:min-w-[500px] md:w-1/3">
@@ -58,7 +64,7 @@ const NavigationBar = ({ scrolled, activeSection, user }) => {
                 </div>
             </div>
         </nav>
-    );
-};
+    )
+}
 
-export default NavigationBar;
+export default NavigationBar

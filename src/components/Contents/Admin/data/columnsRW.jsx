@@ -1,6 +1,6 @@
-import { AlertWrapper, showAlert } from "@/components/partials/Alert";
-import { DataField } from "@/components/partials/dataField";
-import { Button } from "@/components/ui/button";
+import { showAlert } from "@/components/partials/Alert"
+import { DataField } from "@/components/partials/dataField"
+import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
@@ -10,21 +10,20 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose
-} from "@/components/ui/dialog";
-import axios from "@/lib/axios";
-import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useAuthTokenClient } from "@/lib/jwt";
-import { format, parseISO } from 'date-fns';
+} from "@/components/ui/dialog"
+import axios from "@/lib/axios"
+import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { format, parseISO } from 'date-fns'
 
 const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return 'N/A'
     try {
-        return format(parseISO(dateString), 'dd MMM yyyy');
+        return format(parseISO(dateString), 'dd MMM yyyy')
     } catch (error) {
-        return dateString;
+        return dateString
     }
-};
+}
 
 export const columnsRW = (fetchData) => [
     {
@@ -75,8 +74,8 @@ export const columnsRW = (fetchData) => [
         id: "alamat",
         header: () => <div className="text-left">Alamat</div>,
         cell: ({ row }) => {
-            const [show, setShow] = useState(false);
-            const alamat = row.original.data?.warga?.alamat ? `${row.original.data.warga.alamat.alamat}, ${row.original.data.warga.alamat.kabupaten}, ${row.original.data.warga.alamat.provinsi}` : (row.original.data?.warga?.alamat_ktp || null);
+            const [show, setShow] = useState(false)
+            const alamat = row.original.data?.warga?.alamat ? `${row.original.data.warga.alamat.alamat}, ${row.original.data.warga.alamat.kabupaten}, ${row.original.data.warga.alamat.provinsi}` : (row.original.data?.warga?.alamat_ktp || null)
             return (
                 <div className="text-left font-medium">
                     <div
@@ -87,7 +86,7 @@ export const columnsRW = (fetchData) => [
                         {alamat ? alamat : <p className="text-red-500 text-xs">---</p>}
                     </div>
                 </div>
-            );
+            )
         },
     },
     {
@@ -101,8 +100,8 @@ export const columnsRW = (fetchData) => [
         enableHiding: true,
         header: () => <div className="text-center">Aksi</div>,
         cell: ({ row }) => {
-            const pejabat = row.original;
-            const pejabatId = pejabat.id;
+            const pejabat = row.original
+            const pejabatId = pejabat.id
 
             const initialFormState = {
                 nama: pejabat.data?.warga?.nama || "",
@@ -111,12 +110,12 @@ export const columnsRW = (fetchData) => [
                 periode_mulai: pejabat.data?.pejabat?.periode_mulai,
                 periode_selesai: pejabat.data?.pejabat?.periode_selesai,
                 ttd: pejabat.ttd || "",
-            };
+            }
 
-            const [formData, setFormData] = useState(initialFormState);
-            const [fileTTD, setFileTTD] = useState(null);
-            const [isSubmitting, setIsSubmitting] = useState(false);
-            const [isDialogOpen, setIsDialogOpen] = useState(false);
+            const [formData, setFormData] = useState(initialFormState)
+            const [fileTTD, setFileTTD] = useState(null)
+            const [isSubmitting, setIsSubmitting] = useState(false)
+            const [isDialogOpen, setIsDialogOpen] = useState(false)
 
             useEffect(() => {
                 if (isDialogOpen) {
@@ -127,40 +126,40 @@ export const columnsRW = (fetchData) => [
                         periode_mulai: pejabat.data?.pejabat?.periode_mulai,
                         periode_selesai: pejabat.data?.pejabat?.periode_selesai,
                         ttd: pejabat.ttd || "",
-                    });
-                    setFileTTD(null);
+                    })
+                    setFileTTD(null)
                 }
-            }, [isDialogOpen, pejabat]);
+            }, [isDialogOpen, pejabat])
 
             const handleInputChange = (e) => {
-                const { name, value, type, checked } = e.target;
+                const { name, value, type, checked } = e.target
                 setFormData((prev) => ({
                     ...prev,
                     [name]: type === 'checkbox' ? checked : value,
-                }));
-            };
+                }))
+            }
 
             const handleFileChange = (e) => {
-                setFileTTD(e.target.files[0]);
-            };
+                setFileTTD(e.target.files[0])
+            }
 
             const handleUpdate = async () => {
-                setIsSubmitting(true);
-                const payload = new FormData();
-                payload.append("nama", formData.nama);
-                payload.append("nama_rw", formData.nama_rw);
-                payload.append("email", formData.email);
-                payload.append("periode_mulai", formData.periode_mulai);
-                payload.append("periode_selesai", formData.periode_selesai);
+                setIsSubmitting(true)
+                const payload = new FormData()
+                payload.append("nama", formData.nama)
+                payload.append("nama_rw", formData.nama_rw)
+                payload.append("email", formData.email)
+                payload.append("periode_mulai", formData.periode_mulai)
+                payload.append("periode_selesai", formData.periode_selesai)
                 if (fileTTD) {
-                    payload.append("ttd", fileTTD);
+                    payload.append("ttd", fileTTD)
                 }
-                payload.append("_method", "PUT");
+                payload.append("_method", "PUT")
 
                 try {
                     const response = await axios.post(`/api/pejabat/rw/${pejabatId}`, payload, {
                         headers: { 'Content-Type': 'multipart/form-data' }
-                    });
+                    })
                     if (response.status === 200) {
                         showAlert({
                             title: "Berhasil!",
@@ -168,16 +167,16 @@ export const columnsRW = (fetchData) => [
                             success: true,
                             color: "green",
                             onConfirm: () => fetchData(),
-                        });
+                        })
                     } else {
                         showAlert({
                             title: "Gagal!",
                             desc: response.data.message || "Terjadi kesalahan saat memperbarui data.",
                             success: false,
                             color: "red",
-                        });
+                        })
                     }
-                    setIsDialogOpen(false);
+                    setIsDialogOpen(false)
                 } catch (error) {
                     showAlert({
                         title: "Gagal!",
@@ -185,35 +184,34 @@ export const columnsRW = (fetchData) => [
                         success: false,
                         color: "red",
                         errors: error.response?.data?.errors
-                    });
+                    })
                 } finally {
-                    setIsSubmitting(false);
+                    setIsSubmitting(false)
                 }
-            };
+            }
 
             const handleDelete = async () => {
-                setIsSubmitting(true);
+                setIsSubmitting(true)
                 try {
-                    await axios.delete(`/api/pejabat/rw/${pejabatId}`);
+                    await axios.delete(`/api/pejabat/rw/${pejabatId}`)
                     showAlert({
                         title: "Berhasil!",
                         desc: "Data Pejabat RW telah dihapus",
                         success: true,
                         color: "green",
                         onConfirm: () => fetchData(),
-                    });
+                    })
                 } catch (error) {
-                    console.error("Error deleting Pejabat RW:", error.response?.data || error.message);
                     showAlert({
                         title: "Gagal!",
                         desc: error.response?.data?.message || "Terjadi kesalahan saat menghapus data.",
                         success: false,
                         color: "red",
-                    });
+                    })
                 } finally {
-                    setIsSubmitting(false);
+                    setIsSubmitting(false)
                 }
-            };
+            }
 
             return (
                 <div className="flex items-center justify-center gap-2">
@@ -301,7 +299,7 @@ export const columnsRW = (fetchData) => [
                         </Button>
                     )}
                 </div>
-            );
+            )
         },
     },
-];
+]

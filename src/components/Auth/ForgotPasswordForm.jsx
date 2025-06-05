@@ -8,11 +8,10 @@ import InputError from '@/components/Atoms/InputError'
 import InputLabel from '@/components/Atoms/InputLabel'
 import PrimaryButton from '@/components/Atoms/PrimaryButton'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { AlertWrapper, showAlert } from '../partials/Alert'
 
 const ForgotPasswordForm = () => {
-    const router = useRouter()
     const searchParams = useSearchParams()
     const redirect = searchParams.get('redirect')
     
@@ -65,7 +64,6 @@ const ForgotPasswordForm = () => {
                 color: "green",
             })
         } catch (error) {
-            console.error("Password reset error:", error)
             showAlert({
                 title: "Gagal",
                 desc: "Gagal mengirim link reset password",

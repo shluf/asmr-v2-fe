@@ -1,6 +1,6 @@
-"use client";
+"use client"
 import * as React from "react"
-import useEmblaCarousel from "embla-carousel-react";
+import useEmblaCarousel from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -83,7 +83,7 @@ const Carousel = React.forwardRef((
 
     return () => {
       api?.off("select", onSelect)
-    };
+    }
   }, [api, onSelect])
 
   return (
@@ -109,7 +109,7 @@ const Carousel = React.forwardRef((
         {children}
       </div>
     </CarouselContext.Provider>)
-  );
+  )
 })
 Carousel.displayName = "Carousel"
 
@@ -127,7 +127,7 @@ const CarouselContent = React.forwardRef(({ className, ...props }, ref) => {
         )}
         {...props} />
     </div>)
-  );
+  )
 })
 CarouselContent.displayName = "CarouselContent"
 
@@ -145,7 +145,7 @@ const CarouselItem = React.forwardRef(({ className, ...props }, ref) => {
         className
       )}
       {...props} />)
-  );
+  )
 })
 CarouselItem.displayName = "CarouselItem"
 
@@ -166,7 +166,7 @@ const CarouselPrevious = React.forwardRef(({ className, variant = "outline", siz
       <ArrowLeft className="h-4 w-4" />
       <span className="sr-only">Previous slide</span>
     </Button>)
-  );
+  )
 })
 CarouselPrevious.displayName = "CarouselPrevious"
 
@@ -187,8 +187,8 @@ const CarouselNext = React.forwardRef(({ className, variant = "outline", size = 
       <ArrowRight className="h-4 w-4" />
       <span className="sr-only">Next slide</span>
     </Button>)
-  );
+  )
 })
 CarouselNext.displayName = "CarouselNext"
 
-export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
+export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext }

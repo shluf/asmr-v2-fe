@@ -1,6 +1,6 @@
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
-import { showAlert } from "@/components/partials/Alert";
+import { showAlert } from "@/components/partials/Alert"
 
 export const useRtRw = () => {
     const [rwList, setRwList] = useState([])

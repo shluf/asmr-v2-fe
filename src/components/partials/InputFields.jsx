@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import TextInput from '../Atoms/TextInput';
-import InputLabel from '../Atoms/InputLabel';
-import InputError from '../Atoms/InputError';
+import React, { useState } from 'react'
+import TextInput from '../Atoms/TextInput'
+import InputLabel from '../Atoms/InputLabel'
+import InputError from '../Atoms/InputError'
 
 const InputField = ({
     label,
@@ -12,7 +12,7 @@ const InputField = ({
     error,
     ...props
 }) => {
-    const [focusedField, setFocusedField] = useState("nama");
+    const [focusedField, setFocusedField] = useState("nama")
     
     return (
         <div>
@@ -30,7 +30,7 @@ const InputField = ({
             />
             <InputError message={error} className="mt-1" />
         </div>
-    );
-};
+    )
+}
 
 export default InputField

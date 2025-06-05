@@ -1,33 +1,33 @@
-import React from 'react';
-import { format } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { Check, X, Clock, ShieldCheck } from 'lucide-react';
+import React from 'react'
+import { format } from 'date-fns'
+import { id as idLocale } from 'date-fns/locale'
+import { Check, X, Clock, ShieldCheck } from 'lucide-react'
 import { 
   Card, 
   CardContent,
   CardHeader,
   CardTitle 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import PrimaryButton from '@/components/Atoms/PrimaryButton';
-import { Skeleton } from '@/components/ui/skeleton';
-import TextInput from '@/components/Atoms/TextInput';
-import { useRekapPengajuanRT } from '@/hooks/rt';
-import { useAuthTokenClient } from '@/lib/jwt';
+} from '@/components/ui/collapsible'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { Skeleton } from '@/components/ui/skeleton'
+import TextInput from '@/components/Atoms/TextInput'
+import { useRekapPengajuanRT } from '@/hooks/rt'
+import { useAuthTokenClient } from '@/lib/jwt'
 
 const RekapPengajuan = ({ select }) => {
-  const { payload } = useAuthTokenClient();
+  const { payload } = useAuthTokenClient()
   const {
     rekapPengajuanDataRT,
     isLoadingRekapRT,
     openItemsRT,
     setOpenItemsRT,
-  } = useRekapPengajuanRT(payload.id_rt, select);
+  } = useRekapPengajuanRT(payload.id_rt, select)
 
   return (
     <>
@@ -81,7 +81,7 @@ const RekapPengajuan = ({ select }) => {
               }
             >
               <Card className="mt-6 shadow-md sticky top-0 z-10">
-                <div className='absolute -top-[25px] w-full h-6 bg-white'></div>
+                <div className='absolute -top-[25px] w-full h-6 bg-white' />
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                     {/* Surat Info */}
@@ -231,7 +231,7 @@ const RekapPengajuan = ({ select }) => {
       </Card>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default RekapPengajuan;
+export default RekapPengajuan

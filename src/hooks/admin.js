@@ -1,14 +1,14 @@
-'use client';
-import axios from "@/lib/axios";
-import { showAlert } from "@/components/partials/Alert";
+'use client'
+import axios from "@/lib/axios"
+import { showAlert } from "@/components/partials/Alert"
 
 // Fungsi untuk mengambil data statistik warga
 export const fetchCountPengajuanJenis = async (setCountPengajuanJenis) => {
   try {
-    const response = await axios.get("/api/grafik/jumlah-pengajuan-jenis");
+    const response = await axios.get("/api/grafik/jumlah-pengajuan-jenis")
     if (response.status === 200 && response.data) {
-      setCountPengajuanJenis(response.data || []);
-      return true;
+      setCountPengajuanJenis(response.data || [])
+      return true
     }
     showAlert({
         title: "Gagal Memuat Statistik",
@@ -16,29 +16,28 @@ export const fetchCountPengajuanJenis = async (setCountPengajuanJenis) => {
         message: "Tidak dapat memuat statistik warga.",
         success: false,
         color: "orange",
-    });
-    return false;
+    })
+    return false
   } catch (error) {
-    console.error("Error fetching warga stats:", error);
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat statistik warga.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   }
-};
+}
 
 // Fungsi untuk mengambil data statistik RT/RW
 export const fetchPengajuanBulanan = async (setPengajuanBulanan) => {
   try {
-    const response = await axios.get("/api/grafik/jumlah-pengajuan-bulan");
+    const response = await axios.get("/api/grafik/jumlah-pengajuan-bulan")
     if (response.status === 200 && response.data) {
-      setPengajuanBulanan(response.data || []);
+      setPengajuanBulanan(response.data || [])
 
-      return true;
+      return true
     }
     showAlert({
         title: "Gagal Memuat Statistik",
@@ -46,161 +45,155 @@ export const fetchPengajuanBulanan = async (setPengajuanBulanan) => {
         message: "Tidak dapat memuat statistik RT/RW.",
         success: false,
         color: "orange",
-    });
-    return false;
+    })
+    return false
   } catch (error) {
-    console.error("Error fetching RT/RW stats:", error);
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat statistik RT/RW.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   }
-};
+}
 
 // Fungsi untuk mengambil data pengajuan warga yang menunggu persetujuan
 export const fetchWargaPendingData = async (setDataWarga, setIsLoading) => {
   try {
-    setIsLoading(true);
-    const response = await axios.get("/api/biodata/pending-warga");
+    setIsLoading(true)
+    const response = await axios.get("/api/biodata/pending-warga")
     // API response: { warga: [ ... ] }
     if (response.status === 200 && response.data && Array.isArray(response.data.warga)) {
-      setDataWarga(response.data.warga || []);
+      setDataWarga(response.data.warga || [])
     } else {
-      setDataWarga([]);
+      setDataWarga([])
       showAlert({
         title: "Gagal Memuat Data Pending",
         desc: response.data?.message || "Format respons tidak sesuai atau data warga pending tidak ditemukan.",
         message: "Tidak dapat memuat data warga pending.",
         success: false,
         color: "orange",
-      });
+      })
     }
-    return true; // Or based on actual success
+    return true // Or based on actual success
   } catch (error) {
-    console.error("Error fetching pending warga data:", error);
-    setDataWarga([]);
+    setDataWarga([])
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat data warga pending.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   } finally {
-    setIsLoading(false);
+    setIsLoading(false)
   }
-};
+}
 
 // Fungsi untuk mengambil data biodata RT, RW, dan Warga
 export const fetchBiodataUserData = async (setDataRT, setDataRW, setDataWarga, setLoading) => {
   try {
-    setLoading(true);
+    setLoading(true)
     // Added trailing slash for consistency with API doc
-    const response = await axios.get("/api/biodata/"); 
+    const response = await axios.get("/api/biodata/") 
     // API response: { rt: [], rw: [], warga: [] }
     if (response.status === 200 && response.data) {
-      setDataRT(response.data.rt || []);
-      setDataRW(response.data.rw || []);
-      setDataWarga(response.data.warga || []);
+      setDataRT(response.data.rt || [])
+      setDataRW(response.data.rw || [])
+      setDataWarga(response.data.warga || [])
     } else {
-      setDataRT([]);
-      setDataRW([]);
-      setDataWarga([]);
+      setDataRT([])
+      setDataRW([])
+      setDataWarga([])
       showAlert({
         title: "Gagal Memuat Biodata",
         desc: response.data?.message || "Format respons tidak sesuai atau data biodata tidak ditemukan.",
         message: "Tidak dapat memuat data biodata pengguna.",
         success: false,
         color: "orange",
-      });
+      })
     }
-    return true; // Or based on actual success
+    return true // Or based on actual success
   } catch (error) {
-    console.error("Error fetching biodata:", error);
-    setDataRT([]);
-    setDataRW([]);
-    setDataWarga([]);
+    setDataRT([])
+    setDataRW([])
+    setDataWarga([])
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat data biodata pengguna.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   } finally {
-    setLoading(false);
+    setLoading(false)
   }
-};
+}
 
 // Fungsi untuk mengambil rekap pengajuan surat
 export const fetchRekapPengajuanData = async (setRekapSurat) => {
   try {
-    const response = await axios.get("/api/surat/"); 
+    const response = await axios.get("/api/surat/") 
     if (response.status === 200 && response.data && response.data.status === 'success') {
-      console.log(response.data);
-      setRekapSurat(response.data || { data: [] }); 
+      setRekapSurat(response.data || { data: [] }) 
     } else {
-      setRekapSurat({ data: [] });
+      setRekapSurat({ data: [] })
       showAlert({
         title: "Gagal Memuat Rekap Surat",
         desc: response.data?.message || "Format respons tidak sesuai atau data rekap tidak ditemukan.",
         message: "Tidak dapat memuat data rekapitulasi pengajuan surat.",
         success: false,
         color: "orange",
-      });
+      })
     }
-    return true; // Or based on actual success
+    return true // Or based on actual success
   } catch (error) {
-    console.error("Error fetching rekap pengajuan data:", error);
-    setRekapSurat({ data: [] });
+    setRekapSurat({ data: [] })
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat data rekapitulasi pengajuan surat.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   }
-};
+}
 
 // Fungsi untuk mengambil data approval role warga
 export const fetchApprovalRoleData = async (setIsLoading, setDataWarga) => {
   try {
-    setIsLoading(true);
-    const response = await axios.get("/api/approval-role/warga");
+    setIsLoading(true)
+    const response = await axios.get("/api/approval-role/warga")
     // API response: { message: "...", data: [ ... ] }
     if (response.status === 200 && response.data && Array.isArray(response.data.data)) {
-      setDataWarga(response.data.data || []);
+      setDataWarga(response.data.data || [])
     } else {
-      setDataWarga([]);
+      setDataWarga([])
       showAlert({
         title: "Gagal Memuat Approval Role",
         desc: response.data?.message || "Format respons tidak sesuai atau data approval tidak ditemukan.",
         message: "Tidak dapat memuat data approval role.",
         success: false,
         color: "orange",
-      });
+      })
     }
-    return true; // Or based on actual success
+    return true // Or based on actual success
   } catch (error) {
-    console.error("Error fetching approval role data:", error);
-    setDataWarga([]);
+    setDataWarga([])
     showAlert({
       title: "Gagal Memuat Data",
       desc: error.response?.data?.message || error.message,
       message: "Tidak dapat memuat data approval role.",
       success: false,
       color: "red",
-    });
-    return false;
+    })
+    return false
   } finally {
-    setIsLoading(false);
+    setIsLoading(false)
   }
-}; 
+} 

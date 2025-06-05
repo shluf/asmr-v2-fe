@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import InputError from '@/components/Atoms/InputError';
-import InputLabel from '@/components/Atoms/InputLabel';
-import PrimaryButton from '@/components/Atoms/PrimaryButton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useForm } from 'react-hook-form';
-import React, { useEffect, useState } from 'react';
+import InputError from '@/components/Atoms/InputError'
+import InputLabel from '@/components/Atoms/InputLabel'
+import PrimaryButton from '@/components/Atoms/PrimaryButton'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useForm } from 'react-hook-form'
+import React, { useEffect, useState } from 'react'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs";
-import FileUpload from '@/components/ui/file-upload';
-import InputField from '@/components/partials/InputFields';
-import { showAlert } from '@/components/partials/Alert';
+} from "@/components/ui/tabs"
+import FileUpload from '@/components/ui/file-upload'
+import InputField from '@/components/partials/InputFields'
+import { showAlert } from '@/components/partials/Alert'
 
 const TambahRTRW = () => {
-  const [rwOptions, setRwOptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [rwOptions, setRwOptions] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     nama: "",
     username: "",
@@ -30,15 +30,15 @@ const TambahRTRW = () => {
     id_rw: "",
     alamat: "",
     ttd: null,
-  });
+  })
   
-  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+  const { handleSubmit, formState: { errors }, reset, setValue } = useForm({
     defaultValues: formData
-  });
+  })
 
   useEffect(() => {
-    fetchRWList();
-  }, []);
+    fetchRWList()
+  }, [])
 
   const fetchRWList = async () => {
     try {
@@ -46,21 +46,21 @@ const TambahRTRW = () => {
         { id: 1, nomor: "01" },
         { id: 2, nomor: "02" },
         { id: 3, nomor: "03" }
-      ]);
+      ])
     } catch (error) {
-      console.error('Error fetching RW list:', error);
+      // console.error('Error fetching RW list:', error) // Removed this line
     }
-  };
+  }
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
+    setIsLoading(true)
 
-    const formPayload = new FormData();
+    const formPayload = new FormData()
     Object.keys(data).forEach(key => {
       if (data[key] !== null && data[key] !== '') {
-        formPayload.append(key, data[key]);
+        formPayload.append(key, data[key])
       }
-    });
+    })
 
     try {
       // Simulasi respons API
@@ -68,10 +68,10 @@ const TambahRTRW = () => {
       
       // Simulasi sukses
       setTimeout(() => {
-        reset();
+        reset()
   
         if (data.jabatan === 'RW') {
-          fetchRWList();
+          fetchRWList()
         }
   
         showAlert({
@@ -79,9 +79,9 @@ const TambahRTRW = () => {
           desc: `Nama ${data.nama} dengan jabatan ${data.jabatan} ${data.nomor} telah ditambahkan`,
           message: "Silahkan cek kembali di laman Biodata User",
           color: "green",
-        });
+        })
 
-        setIsLoading(false);
+        setIsLoading(false)
         setFormData({
           nama: "",
           username: "",
@@ -93,24 +93,24 @@ const TambahRTRW = () => {
           id_rw: "",
           alamat: "",
           ttd: null,
-        });
-      }, 1000);
+        })
+      }, 1000)
       
     } catch (error) {
-      console.error('Error submitting form:', error);
+      // console.error('Error submitting form:', error) // Removed this line
       showAlert({
         title: "Akun gagal ditambahkan",
         desc: error.response?.data?.error || "Terjadi kesalahan",
         message: `Silahkan masukan kembali data ${data.jabatan} dengan benar`,
         success: false,
         color: "red",
-      });
-      setIsLoading(false);
+      })
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
       if (file.size > 2 * 1024 * 1024) { // 2MB limit
         showAlert({
@@ -119,9 +119,9 @@ const TambahRTRW = () => {
           message: "Maksimal ukuran file adalah 2MB",
           success: false,
           color: "red",
-        });
-        e.target.value = '';
-        return;
+        })
+        e.target.value = ''
+        return
       }
       if (!['image/jpeg', 'image/png'].includes(file.type)) {
         showAlert({
@@ -130,29 +130,29 @@ const TambahRTRW = () => {
           message: "Gunakan format JPG atau PNG",
           success: false,
           color: "red",
-        });
-        e.target.value = '';
-        return;
+        })
+        e.target.value = ''
+        return
       }
-      setValue('ttd', file);
+      setValue('ttd', file)
     }
-  };
+  }
 
   const handleRwChange = (selectedRw) => {
-    setValue('id_rw', selectedRw);
+    setValue('id_rw', selectedRw)
     setFormData(prev => ({
       ...prev,
       id_rw: selectedRw
-    }));
-  };
+    }))
+  }
 
   const handleInputChange = (id, value) => {
-    setValue(id, value);
+    setValue(id, value)
     setFormData(prev => ({
       ...prev,
       [id]: value
-    }));
-  };
+    }))
+  }
 
   return (
     <div className="w-full p-10 mb-8">
@@ -427,7 +427,7 @@ const TambahRTRW = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default TambahRTRW;
+export default TambahRTRW

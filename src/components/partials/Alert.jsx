@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from "react";
-import { Check, TriangleAlert } from "lucide-react";
+import { useState } from "react"
+import { Check, TriangleAlert } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,8 +9,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import PrimaryButton from "@/components/Atoms/PrimaryButton";
+} from "@/components/ui/alert-dialog"
+import PrimaryButton from "@/components/Atoms/PrimaryButton"
 
 function Alert({
   isOpen,
@@ -19,18 +19,17 @@ function Alert({
   desc = '',
   message = "Proses berhasil, tutup untuk melanjutkan",
   success = true,
-  customButton = false,
   color = "green",
   onConfirm,
   confirmButtonText = "Tutup"
 }) {
   const handleConfirm = () => {
     if (onConfirm) {
-      onConfirm();
+      onConfirm()
     }
 
-    onClose();
-  };
+    onClose()
+  }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -79,43 +78,41 @@ function Alert({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
 
-let showAlertHelper = null;
+let showAlertHelper = null
 
-export function showAlert({ title, success=true, message, desc, customButton, color, onConfirm, confirmButtonText }) {
+export function showAlert({ title, success=true, message, desc, color, onConfirm, confirmButtonText }) {
   if (showAlertHelper) {
-    showAlertHelper({ title, message, desc, success, customButton, color, onConfirm, confirmButtonText });
+    showAlertHelper({ title, message, desc, success, color, onConfirm, confirmButtonText })
   }
 }
 
 export function AlertWrapper() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const [alertProps, setAlertProps] = useState({
     title: "Berhasil!!",
     message: "Pengajuan surat berhasil.",
     desc: "",
     success: true,
-    customButton: false,
     color: "green",
     onConfirm: null,
     confirmButtonText: "Lanjutkan"
-  });
+  })
 
-  showAlertHelper = ({ title, message, desc, success, customButton, color, onConfirm, confirmButtonText }) => {
+  showAlertHelper = ({ title, message, desc, success, color, onConfirm, confirmButtonText }) => {
     setAlertProps({ 
       title, 
       message, 
       desc, 
       success, 
-      customButton, 
       color, 
       onConfirm, 
       confirmButtonText 
-    });
-    setIsOpen(true);
-  };
+    })
+    setIsOpen(true)
+  }
 
   return (
     <Alert
@@ -125,10 +122,9 @@ export function AlertWrapper() {
       desc={alertProps.desc}
       message={alertProps.message}
       success={alertProps.success}
-      customButton={alertProps.customButton}
       color={alertProps.color}
       onConfirm={alertProps.onConfirm}
       confirmButtonText={alertProps.confirmButtonText}
     />
-  );
+  )
 }

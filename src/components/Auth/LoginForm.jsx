@@ -39,7 +39,7 @@ const LoginForm = () => {
                 message: "Anda akan diarahkan ke halaman dashboard",
                 success: true,
                 color: "green",
-            });
+            })
         }
         
         if (errors.general) {
@@ -49,7 +49,7 @@ const LoginForm = () => {
                 message: "Silahkan coba lagi",
                 success: false,
                 color: "red",
-            });
+            })
         }
     }, [status, errors])
 
@@ -107,7 +107,7 @@ const LoginForm = () => {
                             userRole = payload.role
                         }
                     } catch (error) {
-                        console.error('Error parsing token:', error)
+                        // console.error('Error parsing token:', error)
                     }
                 }
                 
@@ -115,7 +115,7 @@ const LoginForm = () => {
                 redirectBasedOnRole(userRole)
             }
         } catch (error) {
-            console.error('Form submission error:', error)
+            // console.error('Form submission error:', error)
         } finally {
             setProcessing(false)
         }

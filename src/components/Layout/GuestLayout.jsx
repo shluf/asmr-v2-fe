@@ -13,7 +13,7 @@ const GuestLayout = ({ children, button, header, wide=false }) => {
                 <img
                     className="object-cover w-full h-full"
                     src="/assets/img/bg_land_overlay.png"
-                    alt="overlay"
+                    alt="overlay bg"
                 />
             </div>
 
@@ -98,7 +98,7 @@ const GuestLayout = ({ children, button, header, wide=false }) => {
                 </div>
             </div>
         </section>
-    );
+    )
 }
 
-export default GuestLayout;
+export default GuestLayout

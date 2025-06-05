@@ -1,39 +1,36 @@
-
 export function useAuthTokenClient() {
   const getCookie = (name) => {
-    if (typeof document === 'undefined') return null;
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  };
+    if (typeof document === 'undefined') return null
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop().split(';').shift()
+    return null
+  }
 
-  const authToken = getCookie('auth_token');
+  const authToken = getCookie('auth_token')
  
   try {
     if (authToken) {
-      const payload = extractJwtPayload(authToken);
+      const payload = extractJwtPayload(authToken)
       return {
         payload,
         authToken,
-      };
+      }
     }
-    return null;
+    return null
   } catch (error) {
-    console.error('Error parsing JWT token:', error);
-    return null;
+    return null
   }
 }
 
 export function extractJwtPayload(token) {
   try {
-    const tokenParts = token.split('.');
+    const tokenParts = token.split('.')
     if (tokenParts.length > 1) {
-      return JSON.parse(atob(tokenParts[1]));
+      return JSON.parse(atob(tokenParts[1]))
     }
-    return null;
+    return null
   } catch (error) {
-    console.error('Error extracting JWT payload:', error);
-    return null;
+    return null
   }
 } 

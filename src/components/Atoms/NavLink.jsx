@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link';
+import Link from 'next/link'
 
 export default function NavLink({
     active = false,
@@ -22,5 +22,5 @@ export default function NavLink({
         >
             {children}
         </Link>
-    );
+    )
 }

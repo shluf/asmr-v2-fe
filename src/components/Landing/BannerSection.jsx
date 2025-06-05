@@ -1,18 +1,19 @@
 'use client'
 
-import React from 'react';
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
 
 const BannerSection = ({ user }) => {
     return (
         <section id="beranda" className="relative bg-gray-100 py-16 h-screen box-border">
             <div className="absolute inset-0 flex justify-center z-0">
                 <img
+                    alt="overlay bg"
                     className="object-cover w-full h-full"
                     src="/assets/img/bg_land_overlay.png"
                     data-aos="zoom-in"
                     onLoad={(e) => {
-                        e.target.setAttribute('data-aos', 'zoom-in');
+                        e.target.setAttribute('data-aos', 'zoom-in')
                     }}
                 />
             </div>
@@ -61,7 +62,7 @@ const BannerSection = ({ user }) => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
 
-export default BannerSection;
+export default BannerSection
