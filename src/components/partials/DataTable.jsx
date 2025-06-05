@@ -155,28 +155,50 @@ const DataTable = ({
                                 />
                             ))
                         ) : table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row, index) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={
-                                        row.getIsSelected() && "selected"
-                                    }
-                                    className={
-                                        index % 2 === 0
-                                            ? "bg-white"
-                                            : "bg-gray-200"
-                                    }
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
+                            table.getRowModel().rows.map((row, index) => {
+                                const isRtRwRow = row.original.nama_rt || row.original.nama_rw;
+                                const hasNoWargaData = !row.original.data || !row.original.data.warga;
+
+                                if (isRtRwRow && hasNoWargaData) {
+                                    return (
+                                        <TableRow
+                                            key={row.id}
+                                            data-state={row.getIsSelected() && "selected"}
+                                            className={index % 2 === 0 ? "bg-white" : "bg-gray-200"}
+                                        >
+                                            <TableCell
+                                                colSpan={columns.length}
+                                                className="p-2 text-center text-red-500"
+                                            >
+                                                Jabatan untuk {row.original.nama_rt || row.original.nama_rw} belum ditentukan.
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }
+
+                                return (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={
+                                            row.getIsSelected() && "selected"
+                                        }
+                                        className={
+                                            index % 2 === 0
+                                                ? "bg-white"
+                                                : "bg-gray-200"
+                                        }
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                );
+                            })
                         ) : (
                             <TableRow>
                                 <TableCell

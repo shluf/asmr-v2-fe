@@ -20,7 +20,7 @@ const SideBar = ({ color, userRole }) => {
     e.preventDefault();
 
     try {
-      await axios.delete('/api/notification/clear', {
+      await axios.delete('/api/notifications/clear', {
         data: { jenis }, 
       });
 

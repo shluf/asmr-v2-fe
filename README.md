@@ -10,6 +10,10 @@ Lebih dari sekadar pengajuan surat, warga yang terdaftar dapat memantau progres 
 
 ## Instalasi Aplikasi Surat Menyurat RT/RW
 
+### Repositori 
+1. Frontend: https://github.com/shluf/asmr-v2-fe
+2. Backend: https://github.com/Asyfdzaky/ASMR-BACKEND-API
+
 ### Prasyarat
 * **MySql:** Pastikan MySql sudah terinstal.
 * **NodeJs:** Pastikan NodeJs sudah terinstal.
@@ -40,7 +44,6 @@ cp .env.example .env.local
 ```
 Kemudian, buka file `.env.local` dan sesuaikan environtment variable sesuai dengan kebutuhan.
 
-```
 #### Langkah 5: Jalankan Aplikasi Frontend
 ```bash
 npm run dev

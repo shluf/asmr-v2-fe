@@ -29,7 +29,7 @@ const formatDate = (dateString) => {
 export const columnsRW = (fetchData) => [
     {
         accessorFn: row => row.data?.warga?.nama,
-        id: "nama_pejabat_rw",
+        id: "nama",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -56,13 +56,13 @@ export const columnsRW = (fetchData) => [
     },
     {
         accessorFn: row => row.data?.user?.email,
-        id: "email_pejabat_rw",
+        id: "email",
         header: "Email",
         cell: ({ row }) => <div className="lowercase">{row.original.data?.user?.email || <p className="text-red-500 text-xs">---</p>}</div>,
     },
     {
         accessorFn: row => `${formatDate(row.data?.pejabat?.periode_mulai)} - ${formatDate(row.data?.pejabat?.periode_selesai)}`,
-        id: "periode_pejabat_rw",
+        id: "periode",
         header: () => <div className="text-left">Periode</div>,
         cell: ({ row }) => (
             <div className="text-left font-medium text-nowrap">
@@ -72,7 +72,7 @@ export const columnsRW = (fetchData) => [
     },
     {
         accessorFn: row => row.data?.warga?.alamat?.alamat ? `${row.original.data.warga.alamat.alamat}, ${row.original.data.warga.alamat.kabupaten}, ${row.original.data.warga.alamat.provinsi}` : (row.original.data?.warga?.alamat_ktp || 'N/A'),
-        id: "alamat_pejabat_rw",
+        id: "alamat",
         header: () => <div className="text-left">Alamat</div>,
         cell: ({ row }) => {
             const [show, setShow] = useState(false);

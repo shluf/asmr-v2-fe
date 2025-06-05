@@ -13,7 +13,6 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import FileUpload from '@/components/ui/file-upload';
-import axios from 'axios';
 import InputField from '@/components/partials/InputFields';
 import { showAlert } from '@/components/partials/Alert';
 

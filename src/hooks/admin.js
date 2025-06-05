@@ -3,26 +3,18 @@ import axios from "@/lib/axios";
 import { showAlert } from "@/components/partials/Alert";
 
 // Fungsi untuk mengambil data statistik warga
-export const fetchWargaStats = async (setWargaStats) => {
+export const fetchCountPengajuanJenis = async (setCountPengajuanJenis) => {
   try {
-    const response = await axios.get("/api/biodata/count");
-    // API response: { CountWarga: N, CountPejabat: N, ... }
-    // No top-level "status" or "data" field.
+    const response = await axios.get("/api/grafik/jumlah-pengajuan-jenis");
     if (response.status === 200 && response.data) {
-      setWargaStats([
-        { label: "Populasi Warga", value: response.data.CountWarga?.toString() || "0" },
-        { label: "Total Pengajuan Surat", value: response.data.CountPengajuanSurat?.toString() || "0" },
-        { label: "Total Pengajuan Dalam Proses", value: response.data.CountDataPengajuanPending?.toString() || "0" },
-        // Mapping total_pending_action to CountDataPengajuanSelesai as a placeholder
-        { label: "Total Pengajuan Selesai", value: response.data.CountDataPengajuanSelesai?.toString() || "0" }, 
-      ]);
+      setCountPengajuanJenis(response.data || []);
       return true;
     }
     showAlert({
         title: "Gagal Memuat Statistik",
         desc: "Format respons tidak sesuai atau data tidak ditemukan.",
         message: "Tidak dapat memuat statistik warga.",
-        success: false, // Ensure correct property name 'success'
+        success: false,
         color: "orange",
     });
     return false;
@@ -40,19 +32,12 @@ export const fetchWargaStats = async (setWargaStats) => {
 };
 
 // Fungsi untuk mengambil data statistik RT/RW
-export const fetchRtRwStats = async (setRtRwStats) => {
+export const fetchPengajuanBulanan = async (setPengajuanBulanan) => {
   try {
-    const response = await axios.get("/api/biodata/count");
-    // API response: { CountWarga: N, CountPejabat: N, ... }
+    const response = await axios.get("/api/grafik/jumlah-pengajuan-bulan");
     if (response.status === 200 && response.data) {
-      setRtRwStats([
-        // Mapping "Populasi Staff" to CountPejabat
-        { label: "Populasi Staff (Pejabat)", value: response.data.CountPejabat?.toString() || "0" },
-        { label: "Total Pengajuan Surat", value: response.data.CountPengajuanSurat?.toString() || "0" }, 
-        { label: "Total Pengajuan Dalam Proses", value: response.data.CountDataPengajuanPending?.toString() || "0" },
-        // Mapping total_pending_action to CountDataPengajuanSelesai as a placeholder
-        { label: "Total Pengajuan Selesai", value: response.data.CountDataPengajuanSelesai?.toString() || "0" },
-      ]);
+      setPengajuanBulanan(response.data || []);
+
       return true;
     }
     showAlert({

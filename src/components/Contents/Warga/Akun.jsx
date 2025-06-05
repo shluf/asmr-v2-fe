@@ -50,7 +50,7 @@ const Akun = ({ nikWarga }) => {
     e.preventDefault();
     setProcessing(true);
     try {
-        const response = await axios.put(`/api/surat/data-warga/`, data);
+        const response = await axios.put(`/api/profile/`, data);
         if (response.data.user) {
             console.log(response.data.warga);
             setProfileWarga((prevState) => ({

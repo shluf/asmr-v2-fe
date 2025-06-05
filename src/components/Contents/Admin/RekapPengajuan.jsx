@@ -14,9 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import PrimaryButton from '@/Components/Atoms/PrimaryButton';
 import { Skeleton } from '@/Components/ui/skeleton';
-import TextInput from '@/components/Atoms/TextInput';
 import { fetchRekapPengajuanData } from '@/hooks/admin';
 
 const RekapPengajuan = ({ select }) => {

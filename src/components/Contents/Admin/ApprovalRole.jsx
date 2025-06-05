@@ -184,25 +184,30 @@ const ApprovalRole = () => {
                 <Dialog open={isDetailDialogOpen} onOpenChange={(isOpen) => { if(!isOpen) setSelectedWargaPending(null); setIsDetailDialogOpen(isOpen);}}>
                     <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
-                            <DialogTitle>Detail Permintaan Persetujuan: {selectedWargaPending.user.nama}</DialogTitle>
+                            <DialogTitle>Detail Permintaan Persetujuan: {selectedWargaPending.nama}</DialogTitle>
                             <DialogDescription>
                                 Tinjau detail data warga yang mengajukan persetujuan akun.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-y-2 gap-x-4 py-4 text-sm max-h-[60vh] overflow-y-auto pr-2 md:grid-cols-2">
-                            <DataField className="md:col-span-2 bg-slate-50 p-2 rounded-md" label="Nama Lengkap" value={selectedWargaPending.user.nama || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="NIK" value={selectedWargaPending.user.nik || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="No. KK" value={selectedWargaPending.user.no_kk || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="Jenis Kelamin" value={selectedWargaPending.user.jenis_kelamin === "Pria" ? "Laki-laki" : selectedWargaPending.user.jenis_kelamin === "Perempuan" ? "Perempuan" : selectedWargaPending.user.jenis_kelamin || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="Tempat Lahir" value={selectedWargaPending.user.tempat_lahir || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="Tanggal Lahir" value={formatDateSafe(selectedWargaPending.user.tanggal_lahir)} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="Agama" value={selectedWargaPending.user.agama || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="Pendidikan" value={selectedWargaPending.user.pendidikan_terakhir || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="RT" value={selectedWargaPending.user.rt?.no_rt || 'N/A'} />
-                            <DataField className="bg-slate-50 p-2 rounded-md" label="RW" value={selectedWargaPending.user.rt?.rw?.no_rw || 'N/A'} />
-                            <DataField className="md:col-span-2 bg-slate-50 p-2 rounded-md" label="Alamat KTP" value={selectedWargaPending.user.alamat_ktp || (selectedWargaPending.user.alamat ? `${selectedWargaPending.user.alamat.nama_jalan}` : 'N/A')} /> 
-                            <DataField className="md:col-span-2 bg-blue-50 p-2 rounded-md ring-1 ring-blue-200" label="Status Permintaan Saat Ini" value={selectedWargaPending.user.status_akun == 1 ? 'Disetujui' : selectedWargaPending.user.status_akun == 2 ? 'Ditolak' : 'Pending'} />
-                            {selectedWargaPending.catatan && <DataField className="md:col-span-2 bg-yellow-50 p-2 rounded-md ring-1 ring-yellow-200" label="Catatan Sebelumnya" value={selectedWargaPending.catatan} />}
+                        <div className="grid gap-y-2 gap-x-4 py-4 text-sm max-h-[60vh] overflow-y-auto pr-2">
+                            <DataField className="md:col-span-2" label="Nama Lengkap" value={selectedWargaPending.nama || 'N/A'} />
+                            <DataField label="Email" value={selectedWargaPending.user.email || 'N/A'} />
+                            <DataField 
+                                className="md:col-span-2" 
+                                label="Alamat" 
+                                textarea 
+                                value={selectedWargaPending.user.alamat_ktp ? selectedWargaPending.user.alamat_ktp : (selectedWargaPending.user.alamat ? `${selectedWargaPending.user.alamat.nama_jalan || ''}, Kel. ${selectedWargaPending.user.alamat.kelurahan || ''}, Kec. ${selectedWargaPending.user.alamat.kecamatan || ''}, Kab/Kota ${selectedWargaPending.user.alamat.kabupaten || ''}, Prov. ${selectedWargaPending.user.alamat.provinsi || ''}`.replace(/ , Kel\. , Kec\. , Kab\/Kota , Prov\. $/,'').replace(/^, /,'') : 'N/A')} 
+                            />
+                            <DataField label="Tempat, Tanggal Lahir" value={`${selectedWargaPending.tempat_lahir || 'N/A'}, ${formatDateSafe(selectedWargaPending.tanggal_lahir)}`} />
+                            <DataField label="Agama" value={selectedWargaPending.agama || 'N/A'} />
+                            <DataField label="NIK" value={selectedWargaPending.nik || 'N/A'} />
+                            <DataField label="No. KK" value={selectedWargaPending.nomor_kk || 'N/A'} />
+                            <DataField label="Jenis Kelamin" value={selectedWargaPending.jenis_kelamin === "Pria" ? "Laki-laki" : selectedWargaPending.jenis_kelamin === "Perempuan" ? "Perempuan" : selectedWargaPending.jenis_kelamin || 'N/A'} />
+                            <DataField label="No. Telepon" value={selectedWargaPending.phone || 'N/A'} />
+                            <DataField label="RT" value={selectedWargaPending.rt?.nama_rt || 'N/A'} />
+                            <DataField label="RW" value={selectedWargaPending.rt?.rw?.nama_rw || 'N/A'} />
+                            <DataField className="md:col-span-2" label="Status Akun" value={selectedWargaPending.user.status_akun == 1 ? 'Disetujui' : selectedWargaPending.user.status_akun == 2 ? 'Ditolak' : 'Pending'} />
+                            {selectedWargaPending.catatan && <DataField className="md:col-span-2" label="Catatan Sebelumnya" value={selectedWargaPending.catatan} />}
                         </div>
                         <DialogFooter className="mt-4 pt-4 border-t">
                             {selectedWargaPending.user.status_akun == 0 ? (

@@ -24,7 +24,7 @@ export default forwardRef(function TextInput(
     };
     
     return (
-        <div className="relative">
+        <div className="relative w-full">
             <input
                 {...props}
                 type={isPassword && showPassword ? 'text' : type}

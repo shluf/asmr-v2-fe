@@ -14,12 +14,12 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .get('/api/user')
             .then(res => {
                 setIsLoading(false)
-                console.log('User data response:', res.data)
+                // console.log('User data response:', res.data)
                 return res.data
             })
             .catch(error => {
                 setIsLoading(false)
-                console.error('Error fetching user:', error.response?.data || error)
+                // console.error('Error fetching user:', error.response?.data || error)
                 if (error.response?.status !== 409) throw error
                 router.push('/verify-email')
             }),
@@ -41,7 +41,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             setErrors([])
 
             const response = await axios.post('/api/register', props)
-            console.log('Register response:', response.data)
+            // console.log('Register response:', response.data)
             
             if (response.status === 201 || response.status === 200) {
                 router.push('/login')
@@ -49,7 +49,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             
             return response.status
         } catch (error) {
-            console.error('Register error:', error.response?.data || error)
+            // console.error('Register error:', error.response?.data || error)
             if (error.response?.status === 500 && error.response?.data?.error) {
                 setErrors({ general: [error.response.data.error] })
             } else if (error.response?.status !== 422) {
@@ -106,14 +106,14 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 setIsLoading(false)
                 return true
             } else {
-                console.error('Invalid login response format:', response.data)
+                // console.error('Invalid login response format:', response.data)
                 setErrors({ general: ['Format respons login tidak valid'] })
                 setIsLoading(false)
                 return false
             }
         } catch (error) {
             setIsLoading(false)
-            console.error('Login error:', error.response?.data || error)
+            // console.error('Login error:', error.response?.data || error)
             
             if (error.response?.data?.message) {
                 setErrors({ general: [error.response.data.message] })
@@ -174,7 +174,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 }
             }
         } catch (e) {
-            console.error('Logout error:', e)
+            // console.error('Logout error:', e)
             // Hapus cookie sebagai fallback
             // document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax'
             // delete axios.defaults.headers.common['Authorization']

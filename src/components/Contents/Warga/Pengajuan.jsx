@@ -171,7 +171,7 @@ const Pengajuan = () => {
                     <div className="flex md:flex-row flex-col md:items-center items-start">
                         <label className="font-semibold w-60">Jenis Kelamin <span className="w-5 md:hidden">:</span></label>
                             <span className="w-5 md:block hidden">:</span>
-                        <div className="flex-1 min-w-60 sm:max-w-80 sm:min-w-80 w-full">
+                        <div className="w-full">
                         <Select 
                             onValueChange={(value) => 
                                 setPengajuan((prev) => ({ ...prev, jenis_kelamin_pemohon: value }))}
@@ -196,7 +196,7 @@ const Pengajuan = () => {
                     <div className="flex md:flex-row flex-col md:items-center items-start">
                         <label className="font-semibold w-60">Agama <span className="w-5 md:hidden">:</span></label>
                         <span className="w-5 md:block hidden">:</span>
-                        <div className="flex-1 min-w-60 sm:max-w-80 sm:min-w-80 w-full">
+                        <div className="w-full">
                         <Select 
                             onValueChange={(value) => 
                                 setPengajuan((prev) => ({ ...prev, agama_pemohon: value }))}
@@ -291,6 +291,7 @@ const Pengajuan = () => {
                             "lainnya:",
                         ].map((jenis, index) => (
                             <label className="flex items-center" key={index}>
+                                <div className="w-5">
                                 <TextInput
                                     color="green"
                                     type="radio"
@@ -300,6 +301,7 @@ const Pengajuan = () => {
                                     checked={selectedJenisSurat === jenis} 
                                     onChange={handleJenisSuratChange}
                                 />
+                                </div>
                                 <span className="ml-2">{jenis}</span>
                             </label>
                         ))}

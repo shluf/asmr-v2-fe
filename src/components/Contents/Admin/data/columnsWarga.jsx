@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Eye, XCircle, UserCog, UserX, Info } from "lucide-react";
+import { ArrowUpDown, Eye, UserCog, UserX, Info } from "lucide-react";
 import {
     Dialog,
     DialogClose,
@@ -11,14 +11,13 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import axios from "@/lib/axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DataField } from "@/components/partials/dataField";
-import { AlertWrapper, showAlert } from "@/components/partials/Alert";
-import { useAuthTokenClient } from "@/lib/jwt";
+import { showAlert } from "@/components/partials/Alert";
 import { format, parseISO } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import PrimaryButton from "@/components/Atoms/PrimaryButton";
 
-// Helper to format date strings or return placeholder
 const formatDateSafe = (dateString, formatStr = 'dd MMM yyyy') => {
   if (!dateString) return 'N/A';
   try {
@@ -30,7 +29,7 @@ const formatDateSafe = (dateString, formatStr = 'dd MMM yyyy') => {
 
 export const columnsWarga = (fetchData) => [
     {
-        accessorKey: "no_kk",
+        accessorKey: "nomor kk",
         header: () => <div className="text-left">Nomor KK</div>,
         cell: ({ row }) => <div className="text-left font-medium">{row.original.nomor_kk || 'N/A'}</div>,
     },
@@ -44,7 +43,7 @@ export const columnsWarga = (fetchData) => [
         cell: ({ row }) => <div className="capitalize">{row.original.nama || 'N/A'}</div>,
     },
     {
-        accessorKey: "jenis_kelamin",
+        accessorKey: "jenis kelamin",
         header: () => <div className="text-center">Jenis Kelamin</div>,
         cell: ({ row }) => {
             const jk = row.original.jenis_kelamin;
@@ -58,7 +57,7 @@ export const columnsWarga = (fetchData) => [
     },
     {
         accessorFn: row => row.rt?.no_rt,
-        id: "no_rt_warga",
+        id: "no rt",
         header: ({ column }) => (
             <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
                 RT <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -68,7 +67,7 @@ export const columnsWarga = (fetchData) => [
     },
     {
         accessorFn: row => row.rt?.rw?.no_rw,
-        id: "no_rw_warga",
+        id: "no rw",
         header: ({ column }) => (
             <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
                 RW <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -77,7 +76,7 @@ export const columnsWarga = (fetchData) => [
         cell: ({ row }) => <div className="text-center font-medium">{row.original.no_rw || 'N/A'}</div>,
     },
     {
-        accessorKey: "no_telp",
+        accessorKey: "no telp",
         header: () => <div className="text-left">Nomor Telp</div>,
         cell: ({ row }) => <div className="text-left font-medium">{row.original.phone || 'N/A'}</div>,
     },
@@ -150,9 +149,14 @@ export const columnsWarga = (fetchData) => [
                                 <DataField label="No. Telepon" value={warga.phone || 'N/A'} />
                                 <DataField label="RT" value={warga.no_rt || 'N/A'} />
                                 <DataField label="RW" value={warga.no_rw || 'N/A'} />
-                                <DataField className="md:col-span-2" label="Status Akun Pengguna" value={warga.user?.status_akun || (warga.user ? 'Data Tidak Lengkap' : 'Tidak Ada Akun')} />
                             </div>
                             <DialogFooter className="mt-4">
+                                <div className="flex items-center gap-2">Status</div>
+                                <PrimaryButton
+                                    color={warga.user?.status_akun === 1 ? "green" : warga.user?.status_akun === 2 ? "red" : "yellow"}
+                                >
+                                    {warga.user?.status_akun === 1 ? "Aktif" : warga.user?.status_akun === 2 ? "Nonaktif" : "Menunggu"}
+                                </PrimaryButton>
                                 <DialogClose asChild>
                                     <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>Tutup</Button>
                                 </DialogClose>

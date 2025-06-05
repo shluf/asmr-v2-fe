@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { extractJwtPayload } from './lib/jwt';
 
 export function middleware(request) {
-  // Get the auth token from cookies
   const authToken = request.cookies.get('auth_token')?.value;
   const isAuthenticated = !!authToken;
   

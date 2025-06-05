@@ -5,9 +5,8 @@ import { UserFilled } from "@/utility/svg-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import DataCard from "@/components/partials/DataCard";
 import { ShieldCheck, ChevronRight } from 'lucide-react';
-import { fetchRtRwStats, fetchWargaPendingData, fetchWargaStats } from "@/hooks/admin";
+import { fetchCountPengajuanJenis, fetchPengajuanBulanan, fetchWargaPendingData } from "@/hooks/admin";
 import Link from "next/link";
 import { 
   BarChart, 
@@ -24,74 +23,55 @@ import {
 const DashboardContent = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [dataWarga, setDataWarga] = useState([]);
-    const [activeMonth, setActiveMonth] = useState("Jan");
 
-    const [wargaStats, setWargaStats] = useState([
-        { label: "Populasi Warga", value: "···" },
-        { label: "Total Pengajuan Surat", value: "···" },
-        { label: "Total Pengajuan Dalam Proses", value: "···" },
-        { label: "Total Pengajuan Selesai", value: "···" },
+    const [pengajuanJenis, setPengajuanJenis] = useState([
+        { jenis_surat: 'Lainnya', total: 0 },
     ]);
 
-    const [RtRwStats, setRtRwStats] = useState([
-        { label: "Populasi Staff (Pejabat)", value: "···" },
-        { label: "Total Pengajuan Surat", value: "···" },
-        { label: "Total Pengajuan Dalam Proses", value: "···" },
-        { label: "Total Pengajuan Selesai", value: "···" },
+    const [pengajuanBulanan, setPengajuanBulanan] = useState([
+        { name: "Jan", diterima: 0, ditolak: 0 },
+        { name: "Feb", diterima: 0, ditolak: 0 },
+        { name: "Mar", diterima: 0, ditolak: 0 },
+        { name: "Apr", diterima: 0, ditolak: 0 },
+        { name: "May", diterima: 0, ditolak: 0 },
+        { name: "Jun", diterima: 0, ditolak: 0 },
+        { name: "Jul", diterima: 0, ditolak: 0 },
+        { name: "Aug", diterima: 0, ditolak: 0 },
+        { name: "Sep", diterima: 0, ditolak: 0 },
+        { name: "Oct", diterima: 0, ditolak: 0 },
+        { name: "Nov", diterima: 0, ditolak: 0 },
+        { name: "Dec", diterima: 0, ditolak: 0 },
     ]);
 
     useEffect(() => {
         fetchWargaPendingData(setDataWarga, setIsLoading);
-        fetchWargaStats(setWargaStats);
-        fetchRtRwStats(setRtRwStats);
+        fetchCountPengajuanJenis(setPengajuanJenis);
+        fetchPengajuanBulanan(setPengajuanBulanan);
     }, []);
 
-    // Bar chart data
-    const barChartData = [
-        { name: "Nov", diterima: 80, ditolak: 70 },
-        { name: "Dec", diterima: 60, ditolak: 55 },
-        { name: "Jan", diterima: 35, ditolak: 30 },
-        { name: "Feb", diterima: 80, ditolak: 70 },
-        { name: "Mar", diterima: 55, ditolak: 50 },
-        { name: "Apr", diterima: 65, ditolak: 60 },
-    ];
-  
-    // Pie chart data
-    const pieChartData = [
-        { name: 'Pengantar KTP/KK', value: 30 },
-        { name: 'Surat Pengantar nikah', value: 20 },
-        { name: 'Surat Domisili Tempat Tinggal', value: 15 },
-        { name: 'Surat Domisili Usaha', value: 10 },
-        { name: 'Pengantar Akta Kelahiran', value: 25 },
-    ];
-    
-    const COLORS = ['#2979FF', '#00D1FF', '#00E5FF', '#00FFA3', '#EEEEEE'];
+    const COLORS = ['#2979FF', '#00D1FF'];
+
+    const pieChartData = pengajuanJenis.map(item => ({
+        name: item.jenis_surat,
+        value: item.total
+    }));
+
     
     // Legend data for pie chart
     const legendData = [
-        { name: 'Pengantar KTP/KK', color: '#2979FF' },
-        { name: 'Surat Pengantar nikah', color: '#00D1FF' },
-        { name: 'Surat Domisili Tempat Tinggal', color: '#00E5FF' },
-        { name: 'Surat Domisili Usaha', color: '#00FFA3' },
-        { name: 'Pengantar Akta Kelahiran', color: '#EEEEEE' },
+        { name: 'Pengantar KTP', color: '#2979FF' },
+        { name: 'Pengantar KK', color: '#00D1FF' },
+        { name: 'Pengantar Akta Kelahiran', color: '#4CAF50' },
         { name: 'Surat Keterangan Kematian', color: '#FFC107' },
-        { name: 'Surat Keterangan Tidak Mampu', color: '#EEEEEE' },
+        { name: 'Surat Keterangan Tidak Mampu', color: '#FF3B30' },
         { name: 'Surat SKCK', color: '#673AB7' },
         { name: 'Surat Keterangan Pindah', color: '#212121' },
         { name: 'Surat Ketenagakerjaan', color: '#E91E63' },
-        { name: 'Lainnya', color: '#212121' },
+        { name: 'Lainnya', color: '#9E9E9E' },
     ];
 
     return (
         <div className="flex flex-col w-full mb-10">
-            {/* <div className="flex w-full h-full">
-                <div className="container mx-auto p-6">
-                    <DataCard 
-                        wargaStats={wargaStats} 
-                        RtRwStats={RtRwStats}
-                    />
-                </div>
-            </div> */}
 
             {/* Charts Section */}
             <div className="container mx-auto px-6">
@@ -100,22 +80,10 @@ const DashboardContent = () => {
                     <Card className="shadow-sm">
                         <CardContent className="p-6">
                             <h3 className="text-xl font-bold mb-4">Banyaknya aduan tahun 2025</h3>
-                            <div className="flex space-x-2 mb-4">
-                                {["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"].map((month) => (
-                                    <Button
-                                        key={month}
-                                        variant={activeMonth === month ? "default" : "outline"}
-                                        className="px-3 py-1 h-auto text-sm rounded-md"
-                                        onClick={() => setActiveMonth(month)}
-                                    >
-                                        {month}
-                                    </Button>
-                                ))}
-                            </div>
                             <div className="h-64 bg-gray-100 rounded-md">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
-                                        data={barChartData}
+                                        data={pengajuanBulanan}
                                         margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                                     >
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
