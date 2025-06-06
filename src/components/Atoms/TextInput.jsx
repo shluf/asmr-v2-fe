@@ -8,6 +8,7 @@ export default forwardRef(function TextInput(
     const localRef = useRef(null)
     const [showPassword, setShowPassword] = useState(false)
     const isPassword = type === 'password'
+    const isRadio = type === 'radio'
     
     useImperativeHandle(ref, () => ({
         focus: () => localRef.current?.focus(),
@@ -24,7 +25,7 @@ export default forwardRef(function TextInput(
     }
     
     return (
-        <div className="relative w-full">
+        <div className={`relative ${isRadio ? 'w-fit' : 'w-full'}`}>
             <input
                 {...props}
                 type={isPassword && showPassword ? 'text' : type}

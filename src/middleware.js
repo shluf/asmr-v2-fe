@@ -13,7 +13,7 @@ export function middleware(request) {
         userRole = payload.role.toLowerCase()
       }
     } catch (error) {
-      // console.error('Error getting user role:', error) Removed this line
+      // console.error('Error getting user role:', error)
     }
   }
   

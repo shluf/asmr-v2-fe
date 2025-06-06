@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import axios from "@/lib/axios"
 import { showAlert } from "@/components/partials/Alert"
+import { useSuratActions } from "@/hooks/surat"
 
 export const useProgramKerjaRW = () => {
     const [dataProker, setDataProker] = useState([])
@@ -295,7 +296,7 @@ export const usePengajuanTerbaruRW = (idRW) => {
         try {
             const payload = {
                 status_approval: approvalStatus === 'approved' ? 'Disetujui_RW' : 'Ditolak_RW',
-                id_pejabat_rw: idRW, 
+                id_rw: idRW, 
             }
             if (catatan) {
                 payload.catatan = catatan
@@ -404,12 +405,17 @@ export const useRekapPengajuanRW = (idRW, selectInitial) => {
         }
     }, [selectInitial, rekapPengajuanDataRW, openItemsRW])
 
+    const { isSuratActionLoading, previewSurat, downloadSurat } = useSuratActions(fetchRekapDataRW)
+
     return { 
         rekapPengajuanDataRW, 
         isLoadingRekapRW, 
         openItemsRW, 
         setOpenItemsRW, 
-        refetchRekapPengajuanRW: fetchRekapDataRW 
+        refetchRekapPengajuanRW: fetchRekapDataRW,
+        isActionLoadingRW: isSuratActionLoading,
+        previewSurat,
+        downloadSurat,
     }
 }
 
@@ -458,12 +464,14 @@ export const usePengajuanMasalahRW = (idRW) => {
         if (idRW) fetchMasalahDataRW()
     }, [idRW, fetchMasalahDataRW])
 
+    const { isSuratActionLoading, terbitkanSurat } = useSuratActions(fetchMasalahDataRW)
+
     const handleActionRW = async (id_pengajuan_surat, approvalStatus, catatan = null) => {
         setIsActionLoadingRW(prev => ({ ...prev, [id_pengajuan_surat]: true }))
         try {
             const payload = {
                 status_approval: approvalStatus === 'approved' ? 'Disetujui_RW' : 'Ditolak_RW',
-                id_pejabat_rw: idRW,
+                id_rw: idRW,
             }
             if (catatan) {
                 payload.catatan = catatan
@@ -508,7 +516,9 @@ export const usePengajuanMasalahRW = (idRW) => {
         openItemsRW,
         setOpenItemsRW,
         handleActionRW,
-        isActionLoadingRW,
-        refetchPengajuanMasalahRW: fetchMasalahDataRW
+        isActionLoadingRW: { ...isActionLoadingRW, ...isSuratActionLoading },
+        refetchPengajuanMasalahRW: fetchMasalahDataRW,
+        terbitkanSurat,
     }
 }
+

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import axios from "@/lib/axios"
 import { showAlert } from "@/components/partials/Alert"
+import { useSuratActions } from "@/hooks/surat"
 
 export const useProgramKerjaRT = () => {
     const [dataProkerRT, setDataProkerRT] = useState([])
@@ -92,7 +93,7 @@ export const usePengajuanTerbaruRT = (idRT) => {
         try {
             const payload = {
                 status_approval: approvalStatus === 'approved' ? 'Disetujui_RT' : 'Ditolak_RT',
-                id_pejabat_rt: idRT, 
+                id_rt: idRT, 
             }
             if (catatan) {
                 payload.catatan = catatan
@@ -190,7 +191,7 @@ export const usePengajuanMasalahRT = (idRT) => {
         try {
             const payload = {
                 status_approval: approvalStatus === 'approved' ? 'Disetujui_RT' : 'Ditolak_RT',
-                id_pejabat_rt: idRT,
+                id_rt: idRT,
             }
             if (catatan) {
                 payload.catatan = catatan
@@ -301,11 +302,16 @@ export const useRekapPengajuanRT = (idRT, selectInitial) => {
         }
     }, [selectInitial, rekapPengajuanDataRT, openItemsRT])
 
+    const { isSuratActionLoading, previewSurat, downloadSurat } = useSuratActions(fetchRekapDataRT)
+
     return { 
         rekapPengajuanDataRT, 
         isLoadingRekapRT, 
         openItemsRT, 
         setOpenItemsRT, 
-        refetchRekapPengajuanRT: fetchRekapDataRT 
+        refetchRekapPengajuanRT: fetchRekapDataRT,
+        isActionLoadingRT: isSuratActionLoading,
+        previewSurat,
+        downloadSurat,
     }
 } 

@@ -14,7 +14,7 @@ import {
 import { renderHeader } from "@/utility/renderHeader"
 import { useAuth } from "@/hooks/auth"
 import {
-    CircleUser,
+    LucideCircleUserRound,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -75,20 +75,20 @@ const DashboardLayout = ({
                                 <Button
                                     variant="secondary"
                                     size="icon"
-                                    className={`group rounded-full text-${color} focus-visible:ring-${color}`}
+                                    className={`group rounded-full text-${color} mb-2 focus-visible:ring-${color}`}
                                 >
-                                    <div className="relative mb-2">
+                                    <div className="relative">
                                         <div className={`relative w-10 h-10 rounded-full p-1 border-[3px] border-${color}`}>
-                                            <CircleUser className="h-10 w-10" />
-                                        </div>
+                                            <LucideCircleUserRound className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-20 w-20" />
                                         <div className={`absolute -bottom-2 group-hover:-bottom-1 left-1/2 transform transition-all -translate-x-1/2 bg-${color} text-white px-3 rounded-full text-[8px] font-medium`}>
                                             {role}
+                                        </div>
                                         </div>
                                     </div>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>{payload?.name || user?.name || 'User'}</DropdownMenuLabel>
+                                <DropdownMenuLabel>{payload?.name || payload?.role || user?.name || 'User'}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 {user.role === "Warga" &&
                                     <Link href="/warga/akun">

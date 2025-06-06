@@ -10,8 +10,8 @@ import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { fetchHistoryPengajuan } from "@/hooks/warga"
 import { Skeleton } from "@/components/ui/skeleton"
-import axios from "@/lib/axios"
 import { useAuthTokenClient } from "@/lib/jwt"
+import { useSuratActions } from "@/hooks/surat"
 
 const getStatusIcon = (status) => {
   switch (status) {
@@ -44,6 +44,8 @@ const HistoriPengajuan = () => {
   const [openItems, setOpenItems] = useState({})
   const [isHistoryLoading, setIsHistoryLoading] = useState(true)
   const [isDownloadLoading, setIsDownloadLoading] = useState(false)
+
+  const { isSuratActionLoading, downloadSurat } = useSuratActions()
   const {payload} = useAuthTokenClient()
 
   useEffect(() => {
@@ -67,25 +69,8 @@ const HistoriPengajuan = () => {
 
   const handleDownloadSurat = async (id) => {
     try {
-      setIsDownloadLoading(true)
-      const response = await axios.get(`/api/download-surat/${id}`, {
-        responseType: 'blob'
-      })
-      
-      // Buat objek URL untuk blob
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      const url = window.URL.createObjectURL(blob)
-      
-      // Buat link untuk download
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `surat-pengajuan-${id}.pdf`)
-      document.body.appendChild(link)
-      link.click()
-      
-      // Bersihkan
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(link)
+      setIsDownloadLoading(isSuratActionLoading)
+      await downloadSurat(id)
     } catch (error) {
       // console.error('Error downloading document:', error)
     } finally {
@@ -172,7 +157,7 @@ const HistoriPengajuan = () => {
                         {submission?.progress?.some(
                           (step) => step.title === "Penerbitan Surat" && step.status === "approved"
                         ) && (
-                          <Button disable={`${isDownloadLoading}`} variant="outline" className="rounded-full" onClick={() => handleDownloadSurat(submission.id_pengajuan_surat)}>
+                          <Button disable={`${isDownloadLoading}`} variant="outline" className="rounded-full" onClick={() => handleDownloadSurat(submission.id_pengajuan)}>
                             <Download className="w-4 h-4 mr-2" /> Unduh
                           </Button>
                         )}

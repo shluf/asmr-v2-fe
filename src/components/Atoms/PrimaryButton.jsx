@@ -1,4 +1,6 @@
-export default function PrimaryButton({
+import React from 'react'
+
+const PrimaryButton = React.forwardRef(({
     className,
     disabled,
     color = 'red',
@@ -6,7 +8,7 @@ export default function PrimaryButton({
     variant = "default",
     children,
     ...props
-}) {
+}, ref) => {
     const getColorClasses = () => {
         const colorStyles = {
             green: {
@@ -32,6 +34,7 @@ export default function PrimaryButton({
 
     return (
         <button
+            ref={ref}
             {...props}
             className={`
                 inline-flex items-center 
@@ -59,4 +62,8 @@ export default function PrimaryButton({
             {children}
         </button>
     )
-}
+})
+
+PrimaryButton.displayName = 'PrimaryButton'
+
+export default PrimaryButton

@@ -150,7 +150,6 @@ export const columnsWarga = (fetchData) => [
                                 <DataField label="RW" value={warga.no_rw || 'N/A'} />
                             </div>
                             <DialogFooter className="mt-4">
-                                <div className="flex items-center gap-2">Status</div>
                                 <PrimaryButton
                                     color={warga.user?.status_akun === 1 ? "green" : warga.user?.status_akun === 2 ? "red" : "yellow"}
                                 >

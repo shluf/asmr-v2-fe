@@ -195,7 +195,11 @@ const ApprovalRole = () => {
                                 className="md:col-span-2" 
                                 label="Alamat" 
                                 textarea 
-                                value={selectedWargaPending.user.alamat_ktp ? selectedWargaPending.user.alamat_ktp : (selectedWargaPending.user.alamat ? `${selectedWargaPending.user.alamat.nama_jalan || ''}, Kel. ${selectedWargaPending.user.alamat.kelurahan || ''}, Kec. ${selectedWargaPending.user.alamat.kecamatan || ''}, Kab/Kota ${selectedWargaPending.user.alamat.kabupaten || ''}, Prov. ${selectedWargaPending.user.alamat.provinsi || ''}`.replace(/ , Kel\. , Kec\. , Kab\/Kota , Prov\. $/,'').replace(/^, /,'') : 'N/A')} 
+                                value={selectedWargaPending.alamat ? 
+                                  (selectedWargaPending.alamat.alamat ? 
+                                    `${selectedWargaPending.alamat.alamat}${selectedWargaPending.alamat.kabupaten ? `, Kab. ${selectedWargaPending.alamat.kabupaten}` : ''}${selectedWargaPending.alamat.provinsi ? `, Prov. ${selectedWargaPending.alamat.provinsi}` : ''}` 
+                                    : 'N/A') 
+                                  : 'N/A'}
                             />
                             <DataField label="Tempat, Tanggal Lahir" value={`${selectedWargaPending.tempat_lahir || 'N/A'}, ${formatDateSafe(selectedWargaPending.tanggal_lahir)}`} />
                             <DataField label="Agama" value={selectedWargaPending.agama || 'N/A'} />

@@ -1,6 +1,6 @@
 import LoginForm from '@/components/Auth/LoginForm'
 import GuestLayout from '@/components/Layout/GuestLayout'
-import { Loader2Icon } from 'lucide-react'
+import LoadingSpinner from '@/components/partials/LoadingSpinner'
 import { Suspense } from 'react'
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const metadata = {
 const Page = () => {
     return (
         <GuestLayout button="register" header="Login" wide={false}>
-            <Suspense fallback={<Loader2Icon className="animate-spin" />}>
+            <Suspense fallback={<LoadingSpinner />}>
                 <LoginForm />
             </Suspense>
         </GuestLayout>

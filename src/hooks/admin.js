@@ -77,7 +77,7 @@ export const fetchWargaPendingData = async (setDataWarga, setIsLoading) => {
         color: "orange",
       })
     }
-    return true // Or based on actual success
+    return true 
   } catch (error) {
     setDataWarga([])
     showAlert({
@@ -97,7 +97,6 @@ export const fetchWargaPendingData = async (setDataWarga, setIsLoading) => {
 export const fetchBiodataUserData = async (setDataRT, setDataRW, setDataWarga, setLoading) => {
   try {
     setLoading(true)
-    // Added trailing slash for consistency with API doc
     const response = await axios.get("/api/biodata/") 
     // API response: { rt: [], rw: [], warga: [] }
     if (response.status === 200 && response.data) {
@@ -116,7 +115,7 @@ export const fetchBiodataUserData = async (setDataRT, setDataRW, setDataWarga, s
         color: "orange",
       })
     }
-    return true // Or based on actual success
+    return true 
   } catch (error) {
     setDataRT([])
     setDataRW([])
@@ -150,7 +149,7 @@ export const fetchRekapPengajuanData = async (setRekapSurat) => {
         color: "orange",
       })
     }
-    return true // Or based on actual success
+    return true 
   } catch (error) {
     setRekapSurat({ data: [] })
     showAlert({
@@ -182,7 +181,7 @@ export const fetchApprovalRoleData = async (setIsLoading, setDataWarga) => {
         color: "orange",
       })
     }
-    return true // Or based on actual success
+    return true 
   } catch (error) {
     setDataWarga([])
     showAlert({
@@ -196,4 +195,352 @@ export const fetchApprovalRoleData = async (setIsLoading, setDataWarga) => {
   } finally {
     setIsLoading(false)
   }
-} 
+}
+
+// -------------------------------
+// START: RT/RW Management Hooks
+// -------------------------------
+
+// Fetch all RWs
+export const fetchAllRW = async (setRWList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get("/api/wilayah/rw")
+    if (response.status === 200 && response.data && response.data.success) {
+      setRWList(response.data.data || [])
+      return true
+    }
+    setRWList([])
+    showAlert({ title: "Gagal Memuat Data RW", desc: response.data?.message || "Data RW tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setRWList([])
+    showAlert({ title: "Gagal Memuat Data RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Fetch all RTs
+export const fetchAllRT = async (setRTList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get("/api/wilayah/all-rt")
+    if (response.status === 200 && response.data && response.data.success) {
+      setRTList(response.data.data || [])
+      return true
+    }
+    setRTList([])
+    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || "Data RT tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setRTList([])
+    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+
+// Fetch RTs by RW ID
+export const fetchRTsByRW = async (idRw, setRTList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/wilayah/rt/${idRw}`)
+    if (response.status === 200 && response.data && response.data.success) {
+      setRTList(response.data.data || [])
+      return true
+    }
+    setRTList([])
+    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || `Data RT untuk RW ${idRw} tidak ditemukan.`, success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setRTList([])
+    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Fetch details of a specific RT (including Pejabat)
+export const fetchRTDetails = async (idRt, setRTDetail, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/pejabat/rt/${idRt}/details`)
+    if (response.status === 200 && response.data && response.data.success) { 
+      setRTDetail(response.data.data || null)
+      return true
+    }
+    setRTDetail(null)
+    showAlert({ title: "Gagal Memuat Detail RT", desc: response.data?.message || "Detail RT tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setRTDetail(null)
+    showAlert({ title: "Gagal Memuat Detail RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Fetch details of a specific RW (including Pejabat)
+export const fetchRWDetails = async (idRw, setRWDetail, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/pejabat/rw/${idRw}/details`)
+     if (response.status === 200 && response.data && response.data.success) { 
+      setRWDetail(response.data.data || null)
+      return true
+    }
+    setRWDetail(null)
+    showAlert({ title: "Gagal Memuat Detail RW", desc: response.data?.message || "Detail RW tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setRWDetail(null)
+    showAlert({ title: "Gagal Memuat Detail RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+
+// Fetch Warga by NIK
+export const fetchWargaByNIK = async (nik, setWargaList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/pejabat/warga/${nik}`)
+    if (response.status === 200 && response.data && response.data.warga) {
+      setWargaList(response.data.warga || []) // API returns { warga: [...] }
+      return true
+    }
+    setWargaList([])
+    showAlert({ title: "Gagal Mencari Warga", desc: response.data?.message || "Warga dengan NIK tersebut tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setWargaList([])
+    showAlert({ title: "Gagal Mencari Warga", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Fetch Warga within a specific RT
+export const fetchWargaByRT = async (idRt, setWargaList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/wilayah/rt/${idRt}/warga`)
+    if (response.status === 200 && response.data && response.data.success) {
+      setWargaList(response.data.data || [])
+      return true
+    }
+    setWargaList([])
+    showAlert({ title: "Gagal Memuat Warga RT", desc: response.data?.message || "Data Warga untuk RT ini tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setWargaList([])
+    showAlert({ title: "Gagal Memuat Warga RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Fetch Warga within a specific RW's scope
+export const fetchWargaByRW = async (idRw, setWargaList, setIsLoading) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.get(`/api/wilayah/rw/${idRw}/warga`)
+     if (response.status === 200 && response.data && response.data.success) {
+      setWargaList(response.data.data || [])
+      return true
+    }
+    setWargaList([])
+    showAlert({ title: "Gagal Memuat Warga RW", desc: response.data?.message || "Data Warga untuk RW ini tidak ditemukan.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    setWargaList([])
+    showAlert({ title: "Gagal Memuat Warga RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+
+// Create new RT entity
+export const createRTEntity = async (data, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.post("/api/pejabat/jabatan/rt", data)
+    if (response.status === 200 || response.status === 201) { 
+      showAlert({ title: "Sukses", desc: "RT baru berhasil ditambahkan.", success: true, color: "green" })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ title: "Gagal Menambahkan RT", desc: response.data?.message || "Gagal membuat RT baru.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    showAlert({ title: "Gagal Menambahkan RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Create new RW entity
+export const createRWEntity = async (data, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.post("/api/pejabat/jabatan/rw", data)
+     if (response.status === 200 || response.status === 201) {
+      showAlert({ title: "Sukses", desc: "RW baru berhasil ditambahkan.", success: true, color: "green" })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ title: "Gagal Menambahkan RW", desc: response.data?.message || "Gagal membuat RW baru.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    showAlert({ title: "Gagal Menambahkan RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Register/Assign Pejabat (RT/RW)
+export const registerPejabat = async (formData, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.post("/api/pejabat/register", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    if (response.status === 200) {
+      showAlert({ title: "Sukses", desc: response.data?.message || "Pejabat berhasil didaftarkan/diperbarui.", success: true, color: "green" })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    const errorMessages = error.response?.data?.messages
+    let desc = error.response?.data?.message || error.message
+    if (errorMessages) {
+        desc = Object.values(errorMessages).flat().join('; ')
+    }
+    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: desc, success: false, color: "red"})
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Update Pejabat RT & RT Details
+export const updatePejabatRT = async (idRt, formData, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    formData.append('_method', 'PUT')
+    const response = await axios.post(`/api/pejabat/rt/${idRt}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+     if (response.status === 200) {
+      showAlert({ title: "Sukses", desc: response.data?.message || "Data RT dan Pejabat berhasil diperbarui.", success: true, color: "green" })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ title: "Gagal Update RT", desc: response.data?.message || "Proses update gagal.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    const errorMessages = error.response?.data?.messages
+    let desc = error.response?.data?.message || error.message
+    if (errorMessages) {
+        desc = Object.values(errorMessages).flat().join('; ')
+    }
+    showAlert({ title: "Gagal Update RT", desc: desc, success: false, color: "red"})
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Update Pejabat RW & RW Details
+export const updatePejabatRW = async (idRw, formData, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    formData.append('_method', 'PUT')
+    const response = await axios.post(`/api/pejabat/rw/${idRw}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    if (response.status === 200) {
+      showAlert({ title: "Sukses", desc: response.data?.message || "Data RW dan Pejabat berhasil diperbarui.", success: true, color: "green" })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ title: "Gagal Update RW", desc: response.data?.message || "Proses update gagal.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+     const errorMessages = error.response?.data?.messages
+    let desc = error.response?.data?.message || error.message
+    if (errorMessages) {
+        desc = Object.values(errorMessages).flat().join('; ')
+    }
+    showAlert({ title: "Gagal Update RW", desc: desc, success: false, color: "red"})
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Unassign Pejabat from RT (deletes PejabatRT record)
+export const unassignPejabatRT = async (idRt, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.delete(`/api/pejabat/rt/${idRt}`)
+    if (response.status === 200) {
+      showAlert({ title: "Sukses", desc: response.data?.message || "Pejabat RT berhasil dihapus.", success: true, color: "green" })
+      if (callback) callback()
+      return true
+    }
+    showAlert({ title: "Gagal Hapus Pejabat RT", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    showAlert({ title: "Gagal Hapus Pejabat RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// Unassign Pejabat from RW (deletes PejabatRW record)
+export const unassignPejabatRW = async (idRw, setIsLoading, callback) => {
+  setIsLoading(true)
+  try {
+    const response = await axios.delete(`/api/pejabat/rw/${idRw}`)
+     if (response.status === 200) {
+      showAlert({ title: "Sukses", desc: response.data?.message || "Pejabat RW berhasil dihapus.", success: true, color: "green" })
+      if (callback) callback()
+      return true
+    }
+    showAlert({ title: "Gagal Hapus Pejabat RW", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    return false
+  } catch (error) {
+    showAlert({ title: "Gagal Hapus Pejabat RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// -------------------------------
+// END: RT/RW Management Hooks
+// -------------------------------

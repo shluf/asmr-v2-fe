@@ -3,7 +3,7 @@
 import React from 'react'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { Check, X, ShieldCheck } from 'lucide-react'
+import { Check, X, ShieldCheck, UploadIcon } from 'lucide-react'
 import { 
   Card, 
   CardContent,
@@ -33,6 +33,7 @@ const PengajuanMasalah = () => {
     setOpenItemsRW,
     handleActionRW,
     isActionLoadingRW,
+    terbitkanSurat,
   } = usePengajuanMasalahRW(idRW)
 
   return (
@@ -92,30 +93,50 @@ const PengajuanMasalah = () => {
                       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">
+                            <p className="font-bold flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
+                            <p className="text-sm flex h-1/2 text-black">
                               {format(new Date(surat.created_at), "EEEE, dd MMMM yyyy", { locale: idLocale })}
                             </p>
                           </div>
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">Nama Warga</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">{surat.warga?.nama || 'Undefined'}</p>
+                            <p className="font-bold flex items-center h-1/2 mb-1">Nama Warga</p>
+                            <p className="text-sm flex h-1/2 text-black">{surat.warga?.nama || 'Undefined'}</p>
                           </div>
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">{surat.approval_surat?.status_approval?.replace("_", " ") || 'N/A'}</p>
+                            <p className="font-bold flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
+                            { surat.status === 'Diajukan' || surat.status === 'Diproses_RT' || surat.status === 'Diproses_RW' ? (
+                          <div className="flex justify-center items-center bg-yellow-100 text-yellow-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Ditolak' ? (
+                          <div className="flex justify-center items-center bg-red-100 text-red-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Selesai' || surat.status === 'Disetujui' ? (
+                          <div className="flex justify-center items-center bg-green-100 text-green-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : <p className="text-sm text-black">
+                          {surat.status?.replace("_"," ") || 'N/A'}
+                        </p> }
                           </div>
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">Penanggung Jawab</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">{surat.rt?.nama_rt || 'RT -'}, {surat.rw?.nama_rw || 'RW -'}</p>
+                            <p className="font-bold flex items-center h-1/2 mb-1">Penanggung Jawab</p>
+                            <p className="text-sm flex h-1/2 text-black">{surat.rt?.nama_rt || 'RT -'}, {surat.rw?.nama_rw || 'RW -'}</p>
                           </div>
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">Keperluan</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">{surat.jenis_surat}</p>
+                            <p className="font-bold flex items-center h-1/2 mb-1">Keperluan</p>
+                            <p className="text-sm flex h-1/2 text-black">{surat.jenis_surat}</p>
                           </div>
                           <div className="flex flex-col h-full justify-between">
-                            <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                            <p className="text-sm flex h-1/2 text-blue-600">{surat.warga?.nik || '-'}</p>
+                            <p className="font-bold flex items-center h-1/2 mb-1">NIK</p>
+                            <p className="text-sm flex h-1/2 text-black">{surat.warga?.nik || '-'}</p>
                           </div>
                         </div>
 
@@ -226,10 +247,11 @@ const PengajuanMasalah = () => {
                       <PrimaryButton 
                         color="green"
                         rounded='full'
-                        disabled
+                        disabled={isActionLoadingRW[surat.id]}
+                        onClick={() => terbitkanSurat(surat.id)}
                       >
-                        <Check className="w-4 h-4 mr-2" />
-                        Disetujui
+                        <UploadIcon className="w-4 h-4 mr-2" />
+                        {isActionLoadingRW[surat.id] ? 'Memproses...' : 'Terbitkan'}
                       </PrimaryButton>
                       </div>
                     ) : surat.approval_surat?.status_approval === "Ditolak_RW" ? (

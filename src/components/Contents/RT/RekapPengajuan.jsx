@@ -1,7 +1,7 @@
 import React from 'react'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { Check, X, Clock, ShieldCheck } from 'lucide-react'
+import { Check, X, ShieldCheck, Eye, Download } from 'lucide-react'
 import { 
   Card, 
   CardContent,
@@ -27,6 +27,8 @@ const RekapPengajuan = ({ select }) => {
     isLoadingRekapRT,
     openItemsRT,
     setOpenItemsRT,
+    previewSurat,
+    downloadSurat,
   } = useRekapPengajuanRT(payload.id_rt, select)
 
   return (
@@ -87,30 +89,50 @@ const RekapPengajuan = ({ select }) => {
                     {/* Surat Info */}
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">
+                        <p className="font-bold flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
+                        <p className="text-sm flex h-1/2 text-black">
                           {format(new Date(surat.created_at), "EEEE, dd MMMM yyyy", { locale: idLocale })}
                         </p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Nama Warga</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nama}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Nama Warga</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.warga.nama}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.status === 'Diajukan' ? 'Diajukan' : surat.status === 'Diproses_RT' ? 'Diproses RT' : surat.status === 'Diproses_RW' ? 'Diproses RW' : surat.status === 'Disetujui' ? 'Disetujui' : 'Ditolak'}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
+                        { surat.status === 'Diajukan' || surat.status === 'Diproses_RT' || surat.status === 'Diproses_RW' ? (
+                          <div className="flex justify-center items-center bg-yellow-100 text-yellow-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Ditolak' ? (
+                          <div className="flex justify-center items-center bg-red-100 text-red-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Selesai' || surat.status === 'Disetujui' ? (
+                          <div className="flex justify-center items-center bg-green-100 text-green-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : <p className="text-sm text-black">
+                          {surat.status?.replace("_"," ") || 'N/A'}
+                        </p> }
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Penanggung Jawab</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.rt.nama_rt}, {surat.rw.nama_rw}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Penanggung Jawab</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.rt.nama_rt}, {surat.rw.nama_rw}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Keperluan</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.jenis_surat}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Keperluan</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.jenis_surat}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nik}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">NIK</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.warga.nik}</p>
                       </div>
                     </div>
 
@@ -200,15 +222,12 @@ const RekapPengajuan = ({ select }) => {
                         <PrimaryButton color={'red'} rounded='full'>
                             Tidak Disetujui RT <X className="w-4 h-4 ml-2" />
                           </PrimaryButton>
-                          ) : surat.approval_surat.status_approval === 'Disetujui_RT' || surat.approval_surat.status_approval === 'Disetujui_RW' || surat.approval_surat.status_approval === 'Disetujui' || surat.approval_surat.status_approval === 'Ditolak_RW' ? (
+                          ) : surat.approval_surat.status_approval === 'Disetujui_RT' || surat.approval_surat.status_approval === 'Disetujui_RW' || surat.approval_surat.status_approval === 'Ditolak_RW' ? (
                             <PrimaryButton color={'green'} rounded='full'>
                             Di Setujui RT <Check className="w-4 h-4 ml-2" />
                           </PrimaryButton>
-                          ) : (
-                            <PrimaryButton color={'yellow'} rounded='full'>
-                            Menunggu RT <Clock className="w-4 h-4 ml-2" />
-                          </PrimaryButton>
-                          )}
+                          ) : null
+                        }
                       {surat.approval_surat.status_approval === 'Ditolak_RW' ? (
                         <PrimaryButton color={'red'} rounded='full'>
                             Tidak Disetujui RW <X className="w-4 h-4 ml-2" />
@@ -217,11 +236,27 @@ const RekapPengajuan = ({ select }) => {
                             <PrimaryButton color={'green'} rounded='full'>
                             Di Setujui RW <Check className="w-4 h-4 ml-2" />
                           </PrimaryButton>
-                          ) : (
-                            <PrimaryButton color={'yellow'} rounded='full'>
-                            Menunggu RW <Clock className="w-4 h-4 ml-2" />
-                          </PrimaryButton>
-                          )}
+                          ) : surat.approval_surat?.status_approval === "Selesai" ? (
+                            <div className="flex gap-2 justify-end items-center w-full mt-4">
+                              <PrimaryButton 
+                                color="green"
+                                rounded='full'
+                                onClick={() => previewSurat(surat.id)}
+                              >
+                                <Eye className="w-4 h-4 mr-2" />
+                                Preview
+                              </PrimaryButton>
+                              <PrimaryButton 
+                                color="blue"
+                                rounded='full'
+                                onClick={() => downloadSurat(surat.id)}
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </PrimaryButton>
+                            </div>
+                          ) : null
+                        }
                       </div>
                   </CollapsibleContent>
               </Collapsible>

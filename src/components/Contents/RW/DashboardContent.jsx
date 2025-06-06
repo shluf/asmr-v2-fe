@@ -17,7 +17,7 @@ import InputLabel from "@/components/Atoms/InputLabel"
 import TextInput from "@/components/Atoms/TextInput"
 import Link from "next/link"
 import ProgramKerja from "@/components/partials/ProgramKerja"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, ShieldCheck } from "lucide-react"
 import { useProgramKerjaRW, usePengajuanTerbaruRW } from "@/hooks/rw"
 import { useAuthTokenClient } from "@/lib/jwt"
 
@@ -105,9 +105,23 @@ const DashboardContent = () => {
                                 ))}
                             </>
                         ) : !pengajuanTerakhirRW || pengajuanTerakhirRW.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
-                                Tidak ada pengajuan surat yang tersedia
-                            </div>
+                            <Card>
+                            <CardContent className="p-6">
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                        <ShieldCheck className="h-6 w-6 text-orange" />
+                                    </div>
+                                    <div className="flex flex-col h-full justify-between">
+                                        <p className="font-medium flex items-center h-1/2">
+                                            Tidak ada pengajuan surat yang tersedia
+                                        </p>
+                                        <p className="text-sm flex h-1/2 text-orange">
+                                            Belum ada surat yang diajukan oleh warga
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                         ) : (
                             pengajuanTerakhirRW.map((submission) => (
                                 <Card key={submission.id} className="overflow-hidden">

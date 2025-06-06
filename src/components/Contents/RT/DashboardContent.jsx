@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { UserFilled } from "@/utility/svg-icons"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, ShieldCheck } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import ProgramKerja from "@/components/partials/ProgramKerja"
 import Link from "next/link"
@@ -64,9 +64,23 @@ const DashboardContent = () => {
                                 ))}
                             </>
                         ) : !pengajuanTerakhirRT || pengajuanTerakhirRT.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
-                                Tidak ada pengajuan surat yang tersedia
-                            </div>
+                            <Card>
+                            <CardContent className="p-6">
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                        <ShieldCheck className="h-6 w-6 text-orange" />
+                                    </div>
+                                    <div className="flex flex-col h-full justify-between">
+                                        <p className="font-medium flex items-center h-1/2">
+                                            Tidak ada pengajuan surat yang tersedia
+                                        </p>
+                                        <p className="text-sm flex h-1/2 text-orange">
+                                            Belum ada surat yang diajukan oleh warga
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                         ) : (
                             pengajuanTerakhirRT.map((submission) => (
                                 <Card key={submission.id_pengajuan_surat} className="overflow-hidden">
@@ -120,7 +134,7 @@ const DashboardContent = () => {
                                                 </div>
                                             </div>
                                             <div className="flex md:flex-col p-4 gap-2 bg-gray-50 md:w-32 justify-center items-center">
-                                                {submission.approval_surat.status_approval === "Pending_RT" ? (
+                                                {submission.approval_surat?.status_approval === "Pending_RT" ? (
                                                     <>
                                                         <Button
                                                             variant="destructive"
@@ -144,13 +158,13 @@ const DashboardContent = () => {
                                                         variant="default"
                                                         disabled
                                                         className={`rounded-md w-full ${
-                                                            submission.approval_surat.status_approval === "Disetujui_RT"
+                                                            submission.approval_surat?.status_approval === "Disetujui_RT"
                                                                 ? "bg-green-600 hover:bg-green-700"
-                                                                : submission.approval_surat.status_approval === "Ditolak_RT" ? "bg-red-600 hover:bg-red-700"
+                                                                : submission.approval_surat?.status_approval === "Ditolak_RT" ? "bg-red-600 hover:bg-red-700"
                                                                 : "bg-gray-400"
                                                         }`}
                                                     >
-                                                        {submission.approval_surat.status_approval === "Disetujui_RT" ? "Disetujui" : submission.approval_surat.status_approval === "Ditolak_RT" ? "Ditolak" : submission.approval_surat.status_approval?.replace(/_/g, ' ')}
+                                                        {submission.approval_surat?.status_approval === "Disetujui_RT" ? "Disetujui" : submission.approval_surat?.status_approval === "Ditolak_RT" ? "Ditolak" : submission.approval_surat?.status_approval?.replace(/_/g, ' ')}
                                                     </Button>
                                                 )}
                                             </div>

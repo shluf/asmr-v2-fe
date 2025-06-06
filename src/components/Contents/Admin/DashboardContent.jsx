@@ -49,15 +49,6 @@ const DashboardContent = () => {
         fetchPengajuanBulanan(setPengajuanBulanan)
     }, [])
 
-    const COLORS = ['#2979FF', '#00D1FF']
-
-    const pieChartData = pengajuanJenis.map(item => ({
-        name: item.jenis_surat,
-        value: item.total
-    }))
-
-    
-    // Legend data for pie chart
     const legendData = [
         { name: 'Pengantar KTP', color: '#2979FF' },
         { name: 'Pengantar KK', color: '#00D1FF' },
@@ -69,6 +60,15 @@ const DashboardContent = () => {
         { name: 'Surat Ketenagakerjaan', color: '#E91E63' },
         { name: 'Lainnya', color: '#9E9E9E' },
     ]
+
+    const pieChartData = pengajuanJenis.map(item => {
+        const legendItem = legendData.find(legend => legend.name === item.jenis_surat)
+        return {
+            name: item.jenis_surat,
+            value: item.total,
+            color: legendItem ? legendItem.color : '#9E9E9E'
+        }
+    })
 
     return (
         <div className="flex flex-col w-full mb-10">
@@ -136,7 +136,7 @@ const DashboardContent = () => {
                                             label={false}
                                         >
                                             {pieChartData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
                                             ))}
                                         </RechartsPie>
                                     </PieChart>

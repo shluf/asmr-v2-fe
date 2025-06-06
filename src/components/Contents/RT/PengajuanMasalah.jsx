@@ -90,30 +90,50 @@ const PengajuanMasalah = () => {
                     {/* Surat Info */}
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">
+                        <p className="font-bold flex items-center h-1/2 mb-1">Tanggal Pengajuan</p>
+                        <p className="text-sm flex h-1/2 text-black">
                           {format(new Date(surat.created_at), "EEEE, dd MMMM yyyy", { locale: idLocale })}
                         </p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Nama Warga</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nama}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Nama Warga</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.warga.nama}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.status === 'Diajukan' ? 'Diajukan' : surat.status === 'Diproses_RT' ? 'Diproses RT' : surat.status === 'Diproses_RW' ? 'Diproses RW' : surat.status === 'Disetujui' ? 'Disetujui' : 'Ditolak'}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Status Tindak Lanjut</p>
+                        { surat.status === 'Diajukan' || surat.status === 'Diproses_RT' || surat.status === 'Diproses_RW' ? (
+                          <div className="flex justify-center items-center bg-yellow-100 text-yellow-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Ditolak' ? (
+                          <div className="flex justify-center items-center bg-red-100 text-red-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : surat.status === 'Selesai' || surat.status === 'Disetujui' ? (
+                          <div className="flex justify-center items-center bg-green-100 text-green-600 rounded-full px-2 py-1">
+                            <p className="text-sm">
+                              {surat.status?.replace("_"," ") || 'N/A'}
+                            </p>  
+                          </div>
+                        ) : <p className="text-sm text-black">
+                          {surat.status?.replace("_"," ") || 'N/A'}
+                        </p> }  
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Penanggung Jawab</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.rt.nama_rt}, {surat.rw.nama_rw}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Penanggung Jawab</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.rt.nama_rt}, {surat.rw.nama_rw}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">Keperluan</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.jenis_surat}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">Keperluan</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.jenis_surat}</p>
                       </div>
                       <div className="flex flex-col h-full justify-between">
-                        <p className="font-medium flex items-center h-1/2 mb-1">NIK</p>
-                        <p className="text-sm flex h-1/2 text-blue-600">{surat.warga.nik}</p>
+                        <p className="font-bold flex items-center h-1/2 mb-1">NIK</p>
+                        <p className="text-sm flex h-1/2 text-black">{surat.warga.nik}</p>
                       </div>
                     </div>
 
@@ -151,7 +171,7 @@ const PengajuanMasalah = () => {
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Jenis Kelamin</span>
                       <span className="w-5">:</span>
-                      <span className="flex-1">{surat.detail_pemohon.jenis_kelamin_pemohon === 'L' ? 'Laki-laki' : 'Perempuan'}</span>
+                      <span className="flex-1">{surat.detail_pemohon.jenis_kelamin_pemohon}</span>
                     </p>
                     <p className="flex">
                       <span className="font-semibold w-32 md:w-60">Agama</span>
@@ -199,7 +219,7 @@ const PengajuanMasalah = () => {
                 </div>
 
                 {/* Action Buttons */}
-                {(surat.approval_surat.status_approval === 'Pending_RT') ? (
+                {(surat.approval_surat.status_approval === 'Pending') ? (
                   <div className="flex gap-2 justify-end items-center w-full mt-4">
                     <PrimaryButton
                       color="red"
