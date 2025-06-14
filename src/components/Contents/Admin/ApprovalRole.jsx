@@ -52,6 +52,7 @@ const ApprovalRole = () => {
             showAlert({
                 title: "Berhasil!",
                 desc: `Permintaan berhasil di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+                message: `Silakan cek kembali data warga yang telah di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
                 success: true,
                 color: "green",
             })
@@ -64,6 +65,7 @@ const ApprovalRole = () => {
             showAlert({
                 title: "Gagal!",
                 desc: error.response?.data?.message || `Gagal ${newStatus === 'approved' ? 'menyetujui' : 'menolak'} permintaan.`,
+                message: "Silakan coba lagi.",
                 success: false,
                 color: "red",
                 errors: error.response?.data?.errors

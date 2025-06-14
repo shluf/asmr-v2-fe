@@ -112,6 +112,7 @@ export const columnsRW = (fetchData) => [
                     showAlert({
                         title: "Berhasil!",
                         desc: "Data Pejabat RW telah dihapus",
+                        message: "Silakan cek kembali data pejabat RW yang telah dihapus.",
                         success: true,
                         color: "green",
                         onConfirm: () => fetchData(),
@@ -120,6 +121,7 @@ export const columnsRW = (fetchData) => [
                     showAlert({
                         title: "Gagal!",
                         desc: error.response?.data?.message || "Terjadi kesalahan saat menghapus data.",
+                        message: "Silakan coba lagi.",
                         success: false,
                         color: "red",
                     })

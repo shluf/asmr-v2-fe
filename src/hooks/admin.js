@@ -221,11 +221,11 @@ export const fetchAllRW = async (setRWList, setIsLoading) => {
       return true
     }
     setRWList([])
-    showAlert({ title: "Gagal Memuat Data RW", desc: response.data?.message || "Data RW tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Data RW", desc: response.data?.message || "Data RW tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setRWList([])
-    showAlert({ title: "Gagal Memuat Data RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Data RW", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -242,11 +242,11 @@ export const fetchAllRT = async (setRTList, setIsLoading) => {
       return true
     }
     setRTList([])
-    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || "Data RT tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || "Data RT tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setRTList([])
-    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -264,11 +264,11 @@ export const fetchRTsByRW = async (idRw, setRTList, setIsLoading) => {
       return true
     }
     setRTList([])
-    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || `Data RT untuk RW ${idRw} tidak ditemukan.`, success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Data RT", desc: response.data?.message || `Data RT untuk RW ${idRw} tidak ditemukan.`, message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setRTList([])
-    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Data RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -285,11 +285,11 @@ export const fetchRTDetails = async (idRt, setRTDetail, setIsLoading) => {
       return true
     }
     setRTDetail(null)
-    showAlert({ title: "Gagal Memuat Detail RT", desc: response.data?.message || "Detail RT tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Detail RT", desc: response.data?.message || "Detail RT tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setRTDetail(null)
-    showAlert({ title: "Gagal Memuat Detail RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Detail RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -306,11 +306,11 @@ export const fetchRWDetails = async (idRw, setRWDetail, setIsLoading) => {
       return true
     }
     setRWDetail(null)
-    showAlert({ title: "Gagal Memuat Detail RW", desc: response.data?.message || "Detail RW tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Detail RW", desc: response.data?.message || "Detail RW tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setRWDetail(null)
-    showAlert({ title: "Gagal Memuat Detail RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Detail RW", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -328,11 +328,11 @@ export const fetchWargaByNIK = async (nik, setWargaList, setIsLoading) => {
       return true
     }
     setWargaList([])
-    showAlert({ title: "Gagal Mencari Warga", desc: response.data?.message || "Warga dengan NIK tersebut tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Mencari Warga", desc: response.data?.message || "Warga dengan NIK tersebut tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setWargaList([])
-    showAlert({ title: "Gagal Mencari Warga", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Mencari Warga", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -349,11 +349,11 @@ export const fetchWargaByRT = async (idRt, setWargaList, setIsLoading) => {
       return true
     }
     setWargaList([])
-    showAlert({ title: "Gagal Memuat Warga RT", desc: response.data?.message || "Data Warga untuk RT ini tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Warga RT", desc: response.data?.message || "Data Warga untuk RT ini tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setWargaList([])
-    showAlert({ title: "Gagal Memuat Warga RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Warga RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -370,11 +370,11 @@ export const fetchWargaByRW = async (idRw, setWargaList, setIsLoading) => {
       return true
     }
     setWargaList([])
-    showAlert({ title: "Gagal Memuat Warga RW", desc: response.data?.message || "Data Warga untuk RW ini tidak ditemukan.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Memuat Warga RW", desc: response.data?.message || "Data Warga untuk RW ini tidak ditemukan.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     setWargaList([])
-    showAlert({ title: "Gagal Memuat Warga RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Memuat Warga RW", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -388,14 +388,14 @@ export const createRTEntity = async (data, setIsLoading, callback) => {
   try {
     const response = await axios.post("/api/pejabat/jabatan/rt", data)
     if (response.status === 200 || response.status === 201) { 
-      showAlert({ title: "Sukses", desc: "RT baru berhasil ditambahkan.", success: true, color: "green" })
+      showAlert({ title: "Sukses", desc: "RT baru berhasil ditambahkan.", message: "Silakan cek kembali data RT yang telah ditambahkan.", success: true, color: "green" })
       if (callback) callback(response.data.data)
       return true
     }
-    showAlert({ title: "Gagal Menambahkan RT", desc: response.data?.message || "Gagal membuat RT baru.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Menambahkan RT", desc: response.data?.message || "Gagal membuat RT baru.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
-    showAlert({ title: "Gagal Menambahkan RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Menambahkan RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -408,14 +408,14 @@ export const createRWEntity = async (data, setIsLoading, callback) => {
   try {
     const response = await axios.post("/api/pejabat/jabatan/rw", data)
      if (response.status === 200 || response.status === 201) {
-      showAlert({ title: "Sukses", desc: "RW baru berhasil ditambahkan.", success: true, color: "green" })
+      showAlert({ title: "Sukses", desc: "RW baru berhasil ditambahkan.", message: "Silakan cek kembali data RW yang telah ditambahkan.", success: true, color: "green" })
       if (callback) callback(response.data.data)
       return true
     }
-    showAlert({ title: "Gagal Menambahkan RW", desc: response.data?.message || "Gagal membuat RW baru.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Menambahkan RW", desc: response.data?.message || "Gagal membuat RW baru.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
-    showAlert({ title: "Gagal Menambahkan RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Menambahkan RW", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -436,7 +436,7 @@ export const registerPejabat = async (formData, setIsLoading, callback) => {
       if (callback) callback(response.data.data)
       return true
     }
-    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: response.data?.message || "Proses gagal.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     const errorMessages = error.response?.data?.messages
@@ -444,7 +444,7 @@ export const registerPejabat = async (formData, setIsLoading, callback) => {
     if (errorMessages) {
         desc = Object.values(errorMessages).flat().join('; ')
     }
-    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: desc, success: false, color: "red"})
+    showAlert({ title: "Gagal Mendaftarkan Pejabat", desc: desc, message: "Silakan coba lagi.", success: false, color: "red"})
     return false
   } finally {
     setIsLoading(false)
@@ -466,7 +466,7 @@ export const updatePejabatRT = async (idRt, formData, setIsLoading, callback) =>
       if (callback) callback(response.data.data)
       return true
     }
-    showAlert({ title: "Gagal Update RT", desc: response.data?.message || "Proses update gagal.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Update RT", desc: response.data?.message || "Proses update gagal.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
     const errorMessages = error.response?.data?.messages
@@ -474,7 +474,7 @@ export const updatePejabatRT = async (idRt, formData, setIsLoading, callback) =>
     if (errorMessages) {
         desc = Object.values(errorMessages).flat().join('; ')
     }
-    showAlert({ title: "Gagal Update RT", desc: desc, success: false, color: "red"})
+    showAlert({ title: "Gagal Update RT", desc: desc, message: "Silakan coba lagi.", success: false, color: "red"})
     return false
   } finally {
     setIsLoading(false)
@@ -496,7 +496,7 @@ export const updatePejabatRW = async (idRw, formData, setIsLoading, callback) =>
       if (callback) callback(response.data.data)
       return true
     }
-    showAlert({ title: "Gagal Update RW", desc: response.data?.message || "Proses update gagal.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Update RW", desc: response.data?.message || "Proses update gagal.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
      const errorMessages = error.response?.data?.messages
@@ -504,7 +504,7 @@ export const updatePejabatRW = async (idRw, formData, setIsLoading, callback) =>
     if (errorMessages) {
         desc = Object.values(errorMessages).flat().join('; ')
     }
-    showAlert({ title: "Gagal Update RW", desc: desc, success: false, color: "red"})
+    showAlert({ title: "Gagal Update RW", desc: desc, message: "Silakan coba lagi.", success: false, color: "red"})
     return false
   } finally {
     setIsLoading(false)
@@ -521,10 +521,10 @@ export const unassignPejabatRT = async (idRt, setIsLoading, callback) => {
       if (callback) callback()
       return true
     }
-    showAlert({ title: "Gagal Hapus Pejabat RT", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Hapus Pejabat RT", desc: response.data?.message || "Proses gagal.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
-    showAlert({ title: "Gagal Hapus Pejabat RT", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Hapus Pejabat RT", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)
@@ -541,10 +541,10 @@ export const unassignPejabatRW = async (idRw, setIsLoading, callback) => {
       if (callback) callback()
       return true
     }
-    showAlert({ title: "Gagal Hapus Pejabat RW", desc: response.data?.message || "Proses gagal.", success: false, color: "orange" })
+    showAlert({ title: "Gagal Hapus Pejabat RW", desc: response.data?.message || "Proses gagal.", message: "Silakan coba lagi.", success: false, color: "orange" })
     return false
   } catch (error) {
-    showAlert({ title: "Gagal Hapus Pejabat RW", desc: error.response?.data?.message || error.message, success: false, color: "red" })
+    showAlert({ title: "Gagal Hapus Pejabat RW", desc: error.response?.data?.message || error.message, message: "Silakan coba lagi.", success: false, color: "red" })
     return false
   } finally {
     setIsLoading(false)

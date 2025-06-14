@@ -24,6 +24,7 @@ export const useSuratActions = (refetchCallback) => {
                 showAlert({
                     title: "Gagal Terbitkan Surat",
                     desc: response.data?.message || "Tidak dapat menerbitkan surat.",
+                    message: "Silakan coba lagi.",
                     success: false,
                     color: "orange",
                 })
@@ -53,6 +54,7 @@ export const useSuratActions = (refetchCallback) => {
                 showAlert({
                     title: "Gagal Memuat Pratinjau",
                     desc: "Gagal memuat pratinjau surat.",
+                    message: "Silakan coba lagi.",
                     success: false,
                     color: "orange",
                 })
@@ -98,6 +100,7 @@ export const useSuratActions = (refetchCallback) => {
                  showAlert({
                     title: "Gagal Mengunduh",
                     desc: "Gagal mengunduh surat.",
+                    message: "Silakan coba lagi.",
                     success: false,
                     color: "orange",
                 })

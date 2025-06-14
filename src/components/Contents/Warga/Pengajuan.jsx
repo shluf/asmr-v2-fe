@@ -80,6 +80,7 @@ const Pengajuan = () => {
                 showAlert({
                     title: "Berhasil",
                     desc: result.message || "Surat berhasil diajukan",
+                    message: "Proses pengajuan dapat dilihat di halaman pengajuan",
                     success: true,
                     color: "green",
                 })
