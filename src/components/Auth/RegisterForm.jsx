@@ -147,11 +147,11 @@ const RegisterForm = () => {
                 message: "Silahkan login menggunakan akun yang telah didaftarkan",
                 success: true,
                 color: "green",
+                onConfirm: () => {
+                    router.push('/login')
+                }
             })
             
-            setTimeout(() => {
-                router.push('/login')
-            }, 2000)
         } else {
             const errorMessage = errors.general ? errors.general[0] : "Silahkan cek kembali data yang anda masukkan"
             
