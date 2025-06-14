@@ -43,10 +43,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             const response = await axios.post('/api/register', props)
             // console.log('Register response:', response.data)
             
-            if (response.status === 201 || response.status === 200) {
-                router.push('/login')
-            }
-            
             return response.status
         } catch (error) {
             // console.error('Register error:', error.response?.data || error)
@@ -88,6 +84,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             })
 
             // console.log('Login response:', response.data)
+
+            if (response.status !== 401) {
+                setErrors({ general: [response.data.message] })
+            }
 
             if (response.data && response.data.token) {
                 const token = response.data.token
