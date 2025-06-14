@@ -8,6 +8,8 @@ const InputField = forwardRef(({
     id,
     type = "text",
     error,
+    pejabatNumber,
+    controlNumber,
     ...props
 }, ref) => {
     return (
@@ -18,6 +20,8 @@ const InputField = forwardRef(({
                 id={id}
                 name={id}
                 type={type}
+                pejabatNumber={pejabatNumber}
+                controlNumber={controlNumber}
                 className="mt-1 block w-full"
                 {...props}
             />

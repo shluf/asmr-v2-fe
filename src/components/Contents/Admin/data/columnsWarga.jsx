@@ -128,7 +128,7 @@ export const columnsWarga = (fetchData) => [
                 <div className="flex items-center justify-center gap-2">
                     <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3" onClick={() => setIsDetailDialogOpen(true)}>
+                            <Button size="sm" className="h-8 px-3 bg-[#444444] text-white" onClick={() => setIsDetailDialogOpen(true)}>
                                 <Eye className="h-4 w-4" /> Lihat Detail
                             </Button>
                         </DialogTrigger>

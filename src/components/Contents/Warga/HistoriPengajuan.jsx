@@ -150,23 +150,32 @@ const HistoriPengajuan = () => {
                         </div>
                         <div>
                           <p className="font-medium mb-1">Status Tindak Lanjut</p>
-                          <p className="text-sm text-blue-600">{submission?.status.replace(/_/g, ' ') || "Status tidak tersedia"}</p>
+                          <div className={`${submission?.status === "Disetujui" ? "bg-green-500" : submission?.status === "Ditolak" ? "bg-red-500" : "bg-yellow-500"} rounded-full px-2 py-1`}>
+                            <p className="text-sm text-center text-white">{submission?.status.replace(/_/g, ' ') || "Status tidak tersedia"}</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 min-w-full sm:min-w-48">
+                        <CollapsibleTrigger asChild>
+                          <Button className="rounded-lg flex-1 bg-[#444444] text-white">
+                            {openItems[index] ? "Sembunyikan" : "Selengkapnya"}
+                          </Button>
+                        </CollapsibleTrigger>
+
                         {submission?.progress?.some(
                           (step) => step.title === "Penerbitan Surat" && step.status === "approved"
                         ) && (
-                          <Button disable={`${isDownloadLoading}`} variant="outline" className="rounded-full" onClick={() => handleDownloadSurat(submission.id_pengajuan)}>
-                            <Download className="w-4 h-4 mr-2" /> Unduh
+                          <Button
+                            disabled={isDownloadLoading}
+                            variant="icon"
+                            className="rounded-lg bg-[#444444] text-white"
+                            onClick={() => handleDownloadSurat(submission.id_pengajuan)}
+                          >
+                            <Download className="w-4 h-4" />
                           </Button>
                         )}
-                        <CollapsibleTrigger asChild>
-                          <Button variant="outline" className="rounded-full">
-                            {openItems[index] ? "Sembunyikan" : "Lihat Selengkapnya"}
-                          </Button>
-                        </CollapsibleTrigger>
                       </div>
+
                     </div>
                     </CardContent>
                     </Card>

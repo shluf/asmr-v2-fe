@@ -3,7 +3,7 @@ const pageAdminRoutes = [
     { name: 'Biodata User', route: 'biodata-user'},
     { name: 'Rekapitulasi Pengajuan Surat', route: 'rekap-pengajuan'},
     { name: 'Approval Role', route: 'approval-role'},
-    { name: 'Tambah RT/RW', route: 'tambah-rtrw'}
+    { name: 'Kelola RT/RW', route: 'kelola-rtrw'}
 ]
 
 const pageRTRWRoutes = [

@@ -30,21 +30,31 @@ export const fetchCountPengajuanJenis = async (setCountPengajuanJenis) => {
   }
 }
 
-// Fungsi untuk mengambil data statistik RT/RW
-export const fetchPengajuanBulanan = async (setPengajuanBulanan) => {
+export const fetchPengajuanBulanan = async (setPengajuanBulanan, year, half = null) => {
+  if (!year) {
+    showAlert({
+      title: "Tahun Wajib Diisi",
+      desc: "Parameter tahun (year) harus diberikan untuk mengambil data statistik.",
+      message: "Tahun belum dipilih.",
+      success: false,
+      color: "orange",
+    })
+    return false
+  }
   try {
-    const response = await axios.get("/api/grafik/jumlah-pengajuan-bulan")
+    const data = { year }
+    if (half) data.half = half
+    const response = await axios.post("/api/grafik/jumlah-pengajuan-bulan", data)
     if (response.status === 200 && response.data) {
       setPengajuanBulanan(response.data || [])
-
       return true
     }
     showAlert({
-        title: "Gagal Memuat Statistik",
-        desc: "Format respons tidak sesuai atau data tidak ditemukan.",
-        message: "Tidak dapat memuat statistik RT/RW.",
-        success: false,
-        color: "orange",
+      title: "Gagal Memuat Statistik",
+      desc: "Format respons tidak sesuai atau data tidak ditemukan.",
+      message: "Tidak dapat memuat statistik RT/RW.",
+      success: false,
+      color: "orange",
     })
     return false
   } catch (error) {

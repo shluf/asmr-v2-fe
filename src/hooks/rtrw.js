@@ -15,7 +15,12 @@ export const useRtRw = () => {
             try {
                 const response = await axios.get('/api/wilayah/rw')
                 if (response.status === 200 && response.data && response.data.success) {
-                    setRwList(response.data.data || [])
+                    const mappedRwList = (response.data.data || []).map(rw => ({
+                        id: rw.id_rw,
+                        nama_rw: rw.nama_rw,
+                        pejabat: rw.pejabat || null,
+                    }))
+                    setRwList(mappedRwList)
                 } else {
                     setRwList([])
                     const errorMsg = response.data?.message || "Gagal mengambil data RW atau format salah."

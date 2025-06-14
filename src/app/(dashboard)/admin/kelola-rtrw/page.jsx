@@ -3,9 +3,10 @@
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import TambahRTRW from "@/components/Contents/Admin/TambahRTRW"
+import KelolaRTRW from "@/components/Contents/Admin/KelolaRTRW"
+import Loading from '@/components/partials/Loading'
 
-export default function TambahRTRWPage() {
+export default function KelolaRTRWPage() {
     const { user } = useAuth({ middleware: 'auth' })
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
@@ -20,7 +21,7 @@ export default function TambahRTRWPage() {
     }, [user, router])
 
     if (isLoading || !user) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+        return <Loading />
     }
 
     if (user.role !== 'Admin') {
@@ -29,7 +30,7 @@ export default function TambahRTRWPage() {
 
     return (
         <div className="p-4">
-            <TambahRTRW />
+            <KelolaRTRW />
         </div>
     )
 } 

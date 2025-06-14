@@ -26,9 +26,9 @@ export const DataField = ({
                  />
             ) : period ? (
                 <div className="flex items-center gap-2">
-                    <TextInput type="number" name={name.mulai} value={value.mulai} onChange={onChange.mulai} className="w-full" />
+                    <TextInput type="number" controlNumber={true} name={name.mulai} value={value.mulai} onChange={onChange.mulai} className="w-full" />
                     <span className="text-sm text-gray-500">-</span>
-                    <TextInput type="number" name={name.selesai} value={value.selesai} onChange={onChange.selesai} className="w-full" />
+                    <TextInput type="number" controlNumber={true} name={name.selesai} value={value.selesai} onChange={onChange.selesai} className="w-full" />
                 </div>
             ) : file ? (
                 <input 

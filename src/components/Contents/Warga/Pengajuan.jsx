@@ -48,7 +48,7 @@ const Pengajuan = () => {
 
     const handleJenisSuratChange = (event) => {
         setSelectedJenisSurat(event.target.value)
-        if (event.target.value==="lainnya:") {
+        if (event.target.value==="Lainnya") {
             setIsLainnya(true)
         } else {
             setIsLainnya(false)
@@ -231,7 +231,7 @@ const Pengajuan = () => {
                             name="tempat_tanggal_lahir_pemohon"
                             value={pengajuan.tempat_tanggal_lahir_pemohon}
                             onChange={handleInputChange}
-                            placeholder="Contoh: Jakarta, 01/01/2000"
+                            placeholder="Contoh: Jakarta, 01 Januari 2000"
                             className="flex-1 min-w-60 sm:min-w-80 p-2 border rounded w-full "
                             required
                         />
@@ -287,7 +287,7 @@ const Pengajuan = () => {
                             "Surat Ketenagakerjaan",
                             "Surat Pengantar Nikah",
                             "Surat Keterangan Pindah",
-                            "lainnya:",
+                            "Lainnya",
                         ].map((jenis, index) => (
                             <label className="flex items-center" key={index}>
                                 <div className="w-5">
@@ -301,7 +301,7 @@ const Pengajuan = () => {
                                     onChange={handleJenisSuratChange}
                                 />
                                 </div>
-                                <span className="ml-2">{jenis}</span>
+                                <span className="ml-2">{jenis} {jenis === "Lainnya" ? ":" : ""}</span>
                             </label>
                         ))}
                     </div>

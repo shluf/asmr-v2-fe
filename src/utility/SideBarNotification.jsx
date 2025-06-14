@@ -10,7 +10,7 @@ const useNotificationStore = create((set) => ({
     { name: 'Biodata User', route: 'biodata-user', icon: 'linechart', notification: 0 },
     { name: 'Rekap Pengajuan Warga', route: 'rekap-pengajuan', icon: 'history', notification: 0 },
     { name: 'Approval Role', route: 'approval-role', icon: 'user', notification: 0 },
-    { name: 'Tambah RT/RW', route: 'tambah-rtrw', icon: 'settings' }
+    { name: 'Kelola RT/RW', route: 'kelola-rtrw', icon: 'settings' }
   ],
   pageRTRWRoutes: [
     { name: 'Dashboard', route: 'dashboard', icon: 'home'},

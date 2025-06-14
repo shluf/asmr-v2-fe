@@ -67,7 +67,7 @@ const SideBar = ({ color, userRole }) => {
     }
 
     if (userRole === "Admin") {
-      if (route === "biodata-user" || route === "rekap-pengajuan" || route === "approval-role" || route === "tambah-rtrw") {
+      if (route === "biodata-user" || route === "rekap-pengajuan" || route === "approval-role" || route === "kelola-rtrw") {
         return `/admin/${route}`
       }
       return "/admin"
@@ -99,10 +99,10 @@ const SideBar = ({ color, userRole }) => {
                                   {data.name}
                                   {data.notification > 0 && (
                                       <Badge
+                                          variant="primary"
                                           onClick={(e) =>
                                               clearNotification(e, data.jenis)
                                           }
-                                          color={color}
                                           className="group ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
                                       >
                                           <span className="group-hover:hidden">

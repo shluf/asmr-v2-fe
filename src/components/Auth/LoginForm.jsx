@@ -10,16 +10,15 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuthTokenClient } from '@/lib/jwt'
 
 const LoginForm = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirect = searchParams.get('redirect')
-
-    const { login } = useAuth({
+    const authTokenClient = useAuthTokenClient()
+    const { login, logout } = useAuth({
         middleware: 'guest',
-        // Tidak langsung set redirectIfAuthenticated di sini,
-        // akan dihandle manual setelah login berhasil berdasarkan role
     })
 
     const [data, setData] = useState({
@@ -30,6 +29,12 @@ const LoginForm = () => {
     const [errors, setErrors] = useState([])
     const [processing, setProcessing] = useState(false)
     const [status, setStatus] = useState(null)
+
+    useEffect(() => {
+        if (authTokenClient === null) {
+            logout()
+        }
+    }, [authTokenClient])
 
     useEffect(() => {
         if (status) {

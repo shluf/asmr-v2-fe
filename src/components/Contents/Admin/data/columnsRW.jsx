@@ -1,5 +1,4 @@
 import { showAlert } from "@/components/partials/Alert"
-import { DataField } from "@/components/partials/dataField"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -12,9 +11,10 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import axios from "@/lib/axios"
-import { ArrowUpDown, Trash2, Edit3, Save, XCircle, Loader2, UserX2 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { ArrowUpDown, Trash2, Edit3, XCircle, Loader2, UserX2 } from "lucide-react"
+import { useState } from "react"
 import { format, parseISO } from 'date-fns'
+import Link from "next/link"
 
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A'
@@ -103,92 +103,7 @@ export const columnsRW = (fetchData) => [
             const pejabat = row.original
             const pejabatId = pejabat.id
 
-            const initialFormState = {
-                nama: pejabat.data?.warga?.nama || "",
-                nama_rw: pejabat.nama_rw || "",
-                email: pejabat.data?.user?.email || "",
-                periode_mulai: pejabat.data?.pejabat?.periode_mulai,
-                periode_selesai: pejabat.data?.pejabat?.periode_selesai,
-                ttd: pejabat.ttd || "",
-            }
-
-            const [formData, setFormData] = useState(initialFormState)
-            const [fileTTD, setFileTTD] = useState(null)
             const [isSubmitting, setIsSubmitting] = useState(false)
-            const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-            useEffect(() => {
-                if (isDialogOpen) {
-                    setFormData({
-                        nama: pejabat.data?.warga?.nama || "",
-                        nama_rw: pejabat.nama_rw || "",
-                        email: pejabat.data?.user?.email || "",
-                        periode_mulai: pejabat.data?.pejabat?.periode_mulai,
-                        periode_selesai: pejabat.data?.pejabat?.periode_selesai,
-                        ttd: pejabat.ttd || "",
-                    })
-                    setFileTTD(null)
-                }
-            }, [isDialogOpen, pejabat])
-
-            const handleInputChange = (e) => {
-                const { name, value, type, checked } = e.target
-                setFormData((prev) => ({
-                    ...prev,
-                    [name]: type === 'checkbox' ? checked : value,
-                }))
-            }
-
-            const handleFileChange = (e) => {
-                setFileTTD(e.target.files[0])
-            }
-
-            const handleUpdate = async () => {
-                setIsSubmitting(true)
-                const payload = new FormData()
-                payload.append("nama", formData.nama)
-                payload.append("nama_rw", formData.nama_rw)
-                payload.append("email", formData.email)
-                payload.append("periode_mulai", formData.periode_mulai)
-                payload.append("periode_selesai", formData.periode_selesai)
-                if (fileTTD) {
-                    payload.append("ttd", fileTTD)
-                }
-                payload.append("_method", "PUT")
-
-                try {
-                    const response = await axios.post(`/api/pejabat/rw/${pejabatId}`, payload, {
-                        headers: { 'Content-Type': 'multipart/form-data' }
-                    })
-                    if (response.status === 200) {
-                        showAlert({
-                            title: "Berhasil!",
-                            desc: `Data Pejabat ${formData.nama_rw} telah diperbarui.`,
-                            success: true,
-                            color: "green",
-                            onConfirm: () => fetchData(),
-                        })
-                    } else {
-                        showAlert({
-                            title: "Gagal!",
-                            desc: response.data.message || "Terjadi kesalahan saat memperbarui data.",
-                            success: false,
-                            color: "red",
-                        })
-                    }
-                    setIsDialogOpen(false)
-                } catch (error) {
-                    showAlert({
-                        title: "Gagal!",
-                        desc: error.response?.data?.message || "Terjadi kesalahan saat memperbarui data.",
-                        success: false,
-                        color: "red",
-                        errors: error.response?.data?.errors
-                    })
-                } finally {
-                    setIsSubmitting(false)
-                }
-            }
 
             const handleDelete = async () => {
                 setIsSubmitting(true)
@@ -217,82 +132,35 @@ export const columnsRW = (fetchData) => [
                 <div className="flex items-center justify-center gap-2">
                     {pejabat.data?.warga ? (
                         <>
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 px-3">
+                            <Link href={`/admin/kelola-rtrw/rw/${pejabatId}`} passHref legacyBehavior>
+                                <Button as="a" size="sm" className="bg-[#444444] text-white h-8 px-3">
                                     <Edit3 className="h-4 w-4" /> Edit
                                 </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle>Edit Data Pejabat RW: {formData.nama} ({formData.nama_rw})</DialogTitle>
-                                <DialogDescription>
-                                    Pastikan data yang dimasukkan sudah benar.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
-                                <DataField label="Nama Warga" id="nama" name="nama" value={formData.nama} onChange={handleInputChange} />
-                                <DataField label="Nama RW" id="nama_rw" name="nama_rw" value={formData.nama_rw} onChange={handleInputChange} placeholder="Contoh: Ketua RW" />
-                                <DataField label="Email" id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Contoh: email@example.com" />
-                                <DataField label="Periode" name={{mulai: "periode_mulai", selesai: "periode_selesai"}} value={{mulai: formData.periode_mulai, selesai: formData.periode_selesai}} onChange={handleInputChange} period={true} />
-                                <DataField label="Tanda Tangan" id="ttd" name="ttd" type="file" onChange={handleFileChange} accept=".png,.jpg,.jpeg" file={true}/>
-                                {pejabat.ttd && (
-                                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-md border border-blue-200 mt-2">
-                                        <div className="text-sm flex items-center">
-                                            <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                            <span className="font-medium">File TTD saat ini:</span>
-                                            <a 
-                                                href={pejabat.ttd}
-                                                target="_blank" 
-                                                rel="noopener noreferrer" 
-                                                className="ml-2 text-blue-600 hover:text-blue-800 hover:underline transition-colors flex items-center"
-                                            >
-                                                Lihat File
-                                                <svg className="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <DialogFooter className="mt-4">
-                                <DialogClose asChild>
-                                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Batal</Button>
-                                </DialogClose>
-                                <Button onClick={handleUpdate} disabled={isSubmitting}>
-                                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menyimpan...</> : <><Save className="mr-2 h-4 w-4" /> Simpan Perubahan</>}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                    
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="destructive" size="icon" className="h-8 w-8">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle>Konfirmasi Hapus</DialogTitle>
-                                <DialogDescription>
-                                    Apakah Anda yakin ingin menghapus data pejabat RW: <strong>{pejabat.data?.warga?.nama || pejabat.nama_rw}</strong> ({pejabat.nama_rw})? Tindakan ini tidak dapat diurungkan.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter className="mt-6">
-                                <DialogClose asChild>
-                                    <Button variant="outline">Batal</Button>
-                                </DialogClose>
-                                <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
-                                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menghapus...</> : <><XCircle className="mr-2 h-4 w-4" /> Ya, Hapus</>}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog> 
-                    </>
+                            </Link>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="destructive" size="icon" className="h-8 w-8">
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-md">
+                                    <DialogHeader>
+                                        <DialogTitle>Konfirmasi Hapus</DialogTitle>
+                                        <DialogDescription>
+                                            Apakah Anda yakin ingin menghapus data pejabat RW: <strong>{pejabat.data?.warga?.nama || pejabat.nama_rw}</strong> ({pejabat.nama_rw})? Tindakan ini tidak dapat diurungkan.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter className="mt-6">
+                                        <DialogClose asChild>
+                                            <Button variant="outline">Batal</Button>
+                                        </DialogClose>
+                                        <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
+                                            {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menghapus...</> : <><XCircle className="mr-2 h-4 w-4" /> Ya, Hapus</>}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </>
                     ) : (
                         <Button variant="outline" size="icon" className="h-8 w-full">
                             <UserX2 className="h-4 w-4" />

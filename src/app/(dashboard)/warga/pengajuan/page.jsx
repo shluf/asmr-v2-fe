@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Pengajuan from '@/components/Contents/Warga/Pengajuan'
+import Loading from '@/components/partials/Loading'
 
 export default function PengajuanPage() {
     const { user } = useAuth({ middleware: 'auth' })
@@ -20,7 +21,7 @@ export default function PengajuanPage() {
     }, [user, router])
 
     if (isLoading || !user) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+        return <Loading />
     }
 
     if (user.role !== 'Warga') {

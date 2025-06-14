@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import DashboardContent from "@/components/Contents/Admin/DashboardContent"
+import Loading from '@/components/partials/Loading'
 
 export default function AdminDashboard() {
     const { user } = useAuth({ middleware: 'auth' })
@@ -20,7 +21,7 @@ export default function AdminDashboard() {
     }, [user, router])
 
     if (isLoading || !user) {
-        return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+        return <Loading />
     }
 
     if (user.role !== 'Admin') {

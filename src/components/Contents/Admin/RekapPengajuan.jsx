@@ -107,7 +107,7 @@ const RekapPengajuan = ({ select }) => {
                 setOpenItems((prev) => ({ ...prev, [surat.id]: isOpen }))
               }
             >
-              <Card className="mt-6 shadow-md sticky top-0 z-10">
+              <Card className="mt-6 shadow-md sm:sticky top-0 z-10 text-sm">
                 <div className='absolute -top-[25px] w-full h-6 bg-white' />
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4 text-sm">
@@ -163,7 +163,7 @@ const RekapPengajuan = ({ select }) => {
                     </div>
 
                     <CollapsibleTrigger asChild>
-                      <Button variant="outline" className="rounded-full">
+                      <Button className="rounded-lg bg-[#444444] text-white">
                         {isItemOpen ? "Sembunyikan" : "Detail Surat"}
                       </Button>
                     </CollapsibleTrigger>
@@ -225,7 +225,7 @@ const RekapPengajuan = ({ select }) => {
                           "Pengantar KTP", "Pengantar KK", "Pengantar Akta Kelahiran",
                           "Surat Keterangan Kematian", "Surat Domisili Tempat tinggal", "Surat Domisili Usaha",
                           "Surat Keterangan Tidak Mampu", "Surat SKCK", "Surat Ketenagakerjaan",
-                          "Surat Pengantar Nikah", "Surat Keterangan Pindah", "lainnya:",
+                          "Surat Pengantar Nikah", "Surat Keterangan Pindah", "Lainnya",
                       ].map((jenis, index) => (
                           <label className="flex items-center" key={index}>
                               <TextInput
@@ -237,7 +237,7 @@ const RekapPengajuan = ({ select }) => {
                                   checked={surat.jenis_surat === jenis} 
                                   readOnly
                               />
-                              <span className="ml-2">{jenis}</span>
+                              <span className="ml-2">{jenis} {jenis === "Lainnya" ? ":" : ""}</span>
                           </label>
                       ))}
                       <p className='ml-8'>{surat.keterangan || surat.deskripsi || 'Tidak ada deskripsi tambahan.'}</p>
