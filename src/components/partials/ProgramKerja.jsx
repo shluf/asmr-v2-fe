@@ -115,7 +115,7 @@ const ProgramKerja = ({
     
     const otherEvents = dataProker.filter((event) => {
       const startDate = event.tanggal_mulai ? startOfDay(parseISO(event.tanggal_mulai)) : null
-      if (!startDate) return true // Keep if no start date for some reason (should not happen)
+      if (!startDate) return true
       const endDate = event.tanggal_selesai ? startOfDay(parseISO(event.tanggal_selesai)) : startDate
       return !((isSameDay(currentSelectedDayStart, startDate) || isAfter(currentSelectedDayStart, startDate)) &&
                (isSameDay(currentSelectedDayStart, endDate) || isBefore(currentSelectedDayStart, endDate)))

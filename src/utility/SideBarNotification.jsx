@@ -6,20 +6,20 @@ import { create } from 'zustand'
 
 const useNotificationStore = create((set) => ({
   pageAdminRoutes: [
-    { name: 'Dashboard', route: 'dashboard', icon: 'home' },
+    { name: 'Dashboard', jenis: 'proker', route: 'dashboard', icon: 'home' },
     { name: 'Biodata User', route: 'biodata-user', icon: 'linechart', notification: 0 },
     { name: 'Rekap Pengajuan Warga', route: 'rekap-pengajuan', icon: 'history', notification: 0 },
     { name: 'Approval Role', route: 'approval-role', icon: 'user', notification: 0 },
     { name: 'Kelola RT/RW', route: 'kelola-rtrw', icon: 'settings' }
   ],
   pageRTRWRoutes: [
-    { name: 'Dashboard', route: 'dashboard', icon: 'home'},
+    { name: 'Dashboard', jenis: 'proker', route: 'dashboard', icon: 'home'},
     { name: 'Pengajuan Warga', jenis: 'surat', route: 'pengajuan-masalah', icon: 'user', notification: 0 },
     { name: 'Rekap Pengajuan', route: 'rekap-pengajuan', icon: 'history', notification: 0 },
     { name: 'Bantuan', route: 'bantuan', icon: 'settings' }
   ],
   pageWargaRoutes: [
-    { name: 'Dashboard', route: 'dashboard', icon: 'home'},
+    { name: 'Dashboard', jenis: 'proker', route: 'dashboard', icon: 'home'},
     { name: 'Pengajuan', route: 'pengajuan', icon: 'file-up', notification: 0 },
     { name: 'Histori Pengajuan', jenis: 'surat', route: 'histori', icon: 'history', notification: 0 },
     { name: 'Akun', route: 'akun', icon: 'user' },

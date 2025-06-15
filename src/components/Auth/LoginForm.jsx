@@ -39,7 +39,7 @@ const LoginForm = () => {
     useEffect(() => {
         if (status) {
             showAlert({
-                title: "Berhasil",
+                title: "Login Berhasil",
                 desc: "Login berhasil",
                 message: "Anda akan diarahkan ke halaman dashboard",
                 success: true,
@@ -49,7 +49,7 @@ const LoginForm = () => {
         
         if (errors.general) {
             showAlert({
-                title: "Gagal",
+                title: "Login Gagal",
                 desc: errors.general[0],
                 message: "Silahkan coba lagi",
                 success: false,

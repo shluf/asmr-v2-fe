@@ -86,7 +86,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             // console.log('Login response:', response.data)
 
             if (response.status === 401) {
-                setErrors({ general: [response.data.message] })
+                setErrors({ general: [response.data.error] })
             }
 
             if (response.data && response.data.token) {
@@ -115,10 +115,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             setIsLoading(false)
             // console.error('Login error:', error.response?.data || error)
             
-            if (error.response?.data?.message) {
+            if (error.response?.data?.error) {
+                setErrors({ general: [error.response.data.error] })
+            } else if (error.response?.data?.message) {
                 setErrors({ general: [error.response.data.message] })
-            } else if (error.response?.data?.errors) {
-                setErrors(error.response.data.errors)
             } else {
                 setErrors({ general: ['Terjadi kesalahan pada server'] })
             }

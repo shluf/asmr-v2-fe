@@ -98,7 +98,7 @@ const DashboardLayout = ({
                                     </Link>
                                 }
                                 {user.role !== "Admin" &&
-                                    <Link href={`/${user.role.toLowerCase()}/bantuan`}>
+                                    <Link href={`/${user.role === "PejabatRT" ? "rt" : user.role === "PejabatRW" ? "rw" : user.role.toLowerCase()}/bantuan`}>
                                         <DropdownMenuItem className="cursor-pointer">
                                             Bantuan
                                         </DropdownMenuItem>
