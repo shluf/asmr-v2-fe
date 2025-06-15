@@ -120,9 +120,9 @@ const ApprovalRole = () => {
                         ) : (
                             dataWargaPending.sort((a, b) => {
                                 if (a.user.status_akun !== b.user.status_akun) {
-                                    return a.user.status_akun - b.user.status_akun;
+                                    return a.user.status_akun - b.user.status_akun
                                 }
-                                return new Date(b.created_at) - new Date(a.created_at);
+                                return new Date(b.created_at) - new Date(a.created_at)
                             }).map((wp) => {
                                 const isItemLoading = actionLoading[wp.id]
                                 return (

@@ -48,15 +48,15 @@ const KelolaRTRW = ({ initialType, initialId }) => {
   const [isAddWilayahModalOpen, setIsAddWilayahModalOpen] = useState(false)
   const [expandedRwIds, setExpandedRwIds] = useState({})
 
-  const [editingWilayah, setEditingWilayah] = useState({ type: null, id: null, value: '' });
-  const [isUpdating, setIsUpdating] = useState(false) // Tambahan state untuk mencegah blur cancel
+  const [editingWilayah, setEditingWilayah] = useState({ type: null, id: null, value: '' })
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const defaultPejabatFormValues = {
     id_warga: '',
     nama_jabatan: '',
     periode_mulai: '',
     periode_selesai: '',
-    ttd: null,
+    ttd: null
   }
 
   const {
@@ -118,7 +118,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
   }, [hasAutoSelected, isLoadingInitial, initialType, initialId, rwList, rtList])
 
   const handleSelectItem = async (type, id) => {
-    if (editingWilayah.id && !isUpdating) handleCancelEdit();
+    if (editingWilayah.id && !isUpdating) handleCancelEdit()
 
     setIsLoadingDetails(true)
     setSelectedItem({ type, id })
@@ -173,28 +173,21 @@ const KelolaRTRW = ({ initialType, initialId }) => {
     }
   }
 
-  // --- FUNGSI UNTUK EDIT INLINE ---
-  const handleStartEdit = (e, type, id, currentName) => {
-    e.stopPropagation();
-    const numericValue = currentName.replace(/[^0-9]/g, '');
-    setEditingWilayah({ type, id, value: numericValue });
-  };
-
   const handleCancelEdit = () => {
-    if (isUpdating) return; // Jangan cancel jika sedang update
-    setEditingWilayah({ type: null, id: null, value: '' });
-  };
+    if (isUpdating) return
+    setEditingWilayah({ type: null, id: null, value: '' })
+  }
 
   const handleEditValueChange = (e) => {
-    setEditingWilayah(prev => ({ ...prev, value: e.target.value }));
-  };
+    setEditingWilayah(prev => ({ ...prev, value: e.target.value }))
+  }
 
   const handleUpdateWilayahName = async () => {
-    if (!editingWilayah.type || !editingWilayah.id) return;
+    if (!editingWilayah.type || !editingWilayah.id) return
   
-    setIsUpdating(true); // Set flag bahwa sedang update
+    setIsUpdating(true)
 
-    const { type, id, value } = editingWilayah;
+    const { type, id, value } = editingWilayah
   
     if (!/^\d{1,3}$/.test(value)) {
       showAlert({ 
@@ -203,43 +196,48 @@ const KelolaRTRW = ({ initialType, initialId }) => {
         message: "Silakan coba lagi.",
         success: false, 
         color: "red" 
-      });
-      setIsUpdating(false);
-      return;
+      })
+      setIsUpdating(false)
+      return
     }
   
-    const paddedValue = value.padStart(3, '0');
-    const formattedName = `${type.toUpperCase()} ${paddedValue}`;
+    const paddedValue = value.padStart(3, '0')
+    const formattedName = `${type.toUpperCase()} ${paddedValue}`
     const data = {
       id: id,
       [`nama_${type}`]: formattedName
-    };
+    }
   
-    const success = await updateWilayah(type, data, setIsSubmitting, async (updatedData) => {
-      await loadInitialData();
+    const success = await updateWilayah(type, data, setIsSubmitting, async () => {
+      await loadInitialData()
       if (selectedItem?.type.toLowerCase() === type && selectedItem?.id === id) {
-        handleSelectItem(selectedItem.type, selectedItem.id);
+        handleSelectItem(selectedItem.type, selectedItem.id)
       }
-    });
+    })
   
     if (success) {
-      handleCancelEdit();
+      handleCancelEdit()
     }
     
-    setIsUpdating(false); // Reset flag setelah selesai
-  };
-  
+    setIsUpdating(false)
+  }
+
+  const handleStartEdit = (e, type, id, currentName) => {
+    e.stopPropagation()
+    const numericValue = currentName.replace(/[^0-9]/g, '')
+    setEditingWilayah({ type, id, value: numericValue })
+  }
+
   const handleEditKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      handleUpdateWilayahName();
+      e.preventDefault()
+      handleUpdateWilayahName()
     }
     if (e.key === 'Escape') {
-      e.preventDefault();
-      handleCancelEdit();
+      e.preventDefault()
+      handleCancelEdit()
     }
-  };
-  // --- AKHIR FUNGSI UNTUK EDIT INLINE ---
+  }
 
   const handleToggleRwDropdown = (rwId, e) => {
     e.stopPropagation()
@@ -433,7 +431,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                 const rwId = rw.id_rw || rw.id
                 const isExpanded = !!expandedRwIds[rwId]
                 const isSelected = selectedItem?.type === 'RW' && selectedItem?.id === rwId
-                const isEditing = editingWilayah.type === 'rw' && editingWilayah.id === rwId;
+                const isEditing = editingWilayah.type === 'rw' && editingWilayah.id === rwId
 
                 return (
                   <div key={rwId} className="my-1">
@@ -453,9 +451,9 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                                 onBlur={() => {
                                   setTimeout(() => {
                                     if (!isUpdating) {
-                                      handleCancelEdit();
+                                      handleCancelEdit()
                                     }
-                                  }, 300);
+                                  }, 300)
                                 }}
                                 autoFocus
                                 className="w-16 p-1 border-b-2 border-blue-500 rounded-sm focus:outline-none bg-transparent"
@@ -474,15 +472,15 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                           size="icon" 
                           className={`p-3 h-4 w-4 hover:bg-slate-200 rounded-sm transition-opacity text-black ${!isEditing && 'opacity-0 group-hover:opacity-100'}`}
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation()
                             if (isEditing) {
-                              handleUpdateWilayahName();
+                              handleUpdateWilayahName()
                             } else {
-                              handleStartEdit(e, 'rw', rwId, rw.nama_rw);
+                              handleStartEdit(e, 'rw', rwId, rw.nama_rw)
                             }
                           }}
                         >
-                          {isEditing ? <Send size={16} className="text-blue-600"/> : <Pencil size={16} />}
+                          {isEditing ? <Send size={16} className="text-blue-600" /> : <Pencil size={16} />}
                         </Button>
                         {rtsInRw.length > 0 && (
                           <button
@@ -501,7 +499,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                         {rtsInRw.map(rt => {
                           const rtId = rt.id_rt || rt.id
                           const isRtSelected = selectedItem?.type === 'RT' && selectedItem?.id === rtId
-                          const isRtEditing = editingWilayah.type === 'rt' && editingWilayah.id === rtId;
+                          const isRtEditing = editingWilayah.type === 'rt' && editingWilayah.id === rtId
 
                           return (
                             <div 
@@ -521,9 +519,9 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                                       onBlur={() => {
                                         setTimeout(() => {
                                           if (!isUpdating) {
-                                            handleCancelEdit();
+                                            handleCancelEdit()
                                           }
-                                        }, 300);
+                                        }, 300)
                                       }}
                                       autoFocus
                                       className="w-16 p-1 border-b-2 border-blue-500 rounded-sm focus:outline-none bg-transparent"
@@ -542,15 +540,15 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                                       size="icon" 
                                       className={`p-3 h-4 w-4 hover:bg-slate-200 rounded-sm transition-opacity text-black ${!isRtEditing && 'opacity-0 group-hover:opacity-100'}`}
                                       onClick={(e) => {
-                                        e.stopPropagation();
+                                        e.stopPropagation()
                                         if (isRtEditing) {
-                                          handleUpdateWilayahName();
+                                          handleUpdateWilayahName()
                                         } else {
-                                          handleStartEdit(e, 'rt', rtId, rt.nama_rt);
+                                          handleStartEdit(e, 'rt', rtId, rt.nama_rt)
                                         }
                                       }}
                                   >
-                                      {isRtEditing ? <Send size={16} className="text-blue-600"/> : <Pencil size={16} />}
+                                      {isRtEditing ? <Send size={16} className="text-blue-600" /> : <Pencil size={16} />}
                                   </Button>
                                   {isRtSelected && !isRtEditing && (
                                       <div className="w-2 h-2 ml-2 bg-blue-500 rounded-full" />
