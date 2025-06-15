@@ -86,7 +86,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             // console.log('Login response:', response.data)
 
             if (response.status === 401) {
-                setErrors({ general: [response.data.message] })
+                setErrors({ general: [response.data.error] })
             }
 
             if (response.data && response.data.token) {
