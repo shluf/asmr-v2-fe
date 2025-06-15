@@ -262,61 +262,65 @@ const DashboardContent = () => {
                                     placeholder="Contoh: Balai Warga"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="edit-tanggal_mulai">
-                                    Tanggal Mulai
-                                </InputLabel>
-                                <TextInput
-                                    id="edit-tanggal_mulai"
-                                    color="orange"
-                                    type="date"
-                                    name="tanggal_mulai"
-                                    value={editProker.tanggal_mulai}
-                                    onChange={handleEditChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="edit-tanggal_mulai">
+                                        Tanggal Mulai
+                                    </InputLabel>
+                                    <TextInput
+                                        id="edit-tanggal_mulai"
+                                        color="orange"
+                                        type="date"
+                                        name="tanggal_mulai"
+                                        value={editProker.tanggal_mulai}
+                                        onChange={handleEditChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="edit-tanggal_selesai">
+                                        Tanggal Selesai (Opsional)
+                                    </InputLabel>
+                                    <TextInput
+                                        id="edit-tanggal_selesai"
+                                        color="orange"
+                                        type="date"
+                                        name="tanggal_selesai"
+                                        value={editProker.tanggal_selesai}
+                                        onChange={handleEditChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="edit-tanggal_selesai">
-                                    Tanggal Selesai
-                                </InputLabel>
-                                <TextInput
-                                    id="edit-tanggal_selesai"
-                                    color="orange"
-                                    type="date"
-                                    name="tanggal_selesai"
-                                    value={editProker.tanggal_selesai}
-                                    onChange={handleEditChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="edit-waktu_mulai">
-                                    Waktu Mulai
-                                </InputLabel>
-                                <TextInput
-                                    id="edit-waktu_mulai"
-                                    color="orange"
-                                    type="time"
-                                    name="waktu_mulai"
-                                    value={editProker.waktu_mulai}
-                                    onChange={handleEditChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="edit-waktu_selesai">
-                                    Waktu Selesai
-                                </InputLabel>
-                                <TextInput
-                                    id="edit-waktu_selesai"
-                                    color="orange"
-                                    type="time"
-                                    name="waktu_selesai"
-                                    value={editProker.waktu_selesai}
-                                    onChange={handleEditChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="edit-waktu_mulai">
+                                        Waktu Mulai
+                                    </InputLabel>
+                                    <TextInput
+                                        id="edit-waktu_mulai"
+                                        color="orange"
+                                        type="time"
+                                        name="waktu_mulai"
+                                        value={editProker.waktu_mulai}
+                                        onChange={handleEditChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="edit-waktu_selesai">
+                                        Waktu Selesai (Opsional)
+                                    </InputLabel>
+                                    <TextInput
+                                        id="edit-waktu_selesai"
+                                        color="orange"
+                                        type="time"
+                                        name="waktu_selesai"
+                                        value={editProker.waktu_selesai}
+                                        onChange={handleEditChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <InputLabel htmlFor="edit-penanggung_jawab">
@@ -389,61 +393,65 @@ const DashboardContent = () => {
                                     placeholder="Contoh: Balai Warga"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="add-tanggal_mulai">
-                                    Tanggal Mulai
-                                </InputLabel>
-                                <TextInput
-                                    id="add-tanggal_mulai"
-                                    color="orange"
-                                    type="date"
-                                    name="tanggal_mulai"
-                                    value={tambahProker.tanggal_mulai}
-                                    onChange={handleTambahChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="add-tanggal_mulai">
+                                        Tanggal Mulai
+                                    </InputLabel>
+                                    <TextInput
+                                        id="add-tanggal_mulai"
+                                        color="orange"
+                                        type="date"
+                                        name="tanggal_mulai"
+                                        value={tambahProker.tanggal_mulai}
+                                        onChange={handleTambahChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="add-tanggal_selesai">
+                                        Tanggal Selesai (Opsional)
+                                    </InputLabel>
+                                    <TextInput
+                                        id="add-tanggal_selesai"
+                                        color="orange"
+                                        type="date"
+                                        name="tanggal_selesai"
+                                        value={tambahProker.tanggal_selesai}
+                                        onChange={handleTambahChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="add-tanggal_selesai">
-                                    Tanggal Selesai
-                                </InputLabel>
-                                <TextInput
-                                    id="add-tanggal_selesai"
-                                    color="orange"
-                                    type="date"
-                                    name="tanggal_selesai"
-                                    value={tambahProker.tanggal_selesai}
-                                    onChange={handleTambahChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="add-waktu_mulai">
-                                    Waktu Mulai
-                                </InputLabel>
-                                <TextInput
-                                    id="add-waktu_mulai"
-                                    color="orange"
-                                    type="time"
-                                    name="waktu_mulai"
-                                    value={tambahProker.waktu_mulai}
-                                    onChange={handleTambahChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <InputLabel htmlFor="add-waktu_selesai">
-                                    Waktu Selesai
-                                </InputLabel>
-                                <TextInput
-                                    id="add-waktu_selesai"
-                                    color="orange"
-                                    type="time"
-                                    name="waktu_selesai"
-                                    value={tambahProker.waktu_selesai}
-                                    onChange={handleTambahChange}
-                                    className="w-full border p-2 rounded-md"
-                                />
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="add-waktu_mulai">
+                                        Waktu Mulai
+                                    </InputLabel>
+                                    <TextInput
+                                        id="add-waktu_mulai"
+                                        color="orange"
+                                        type="time"
+                                        name="waktu_mulai"
+                                        value={tambahProker.waktu_mulai}
+                                        onChange={handleTambahChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <InputLabel htmlFor="add-waktu_selesai">
+                                        Waktu Selesai (Opsional)
+                                    </InputLabel>
+                                    <TextInput
+                                        id="add-waktu_selesai"
+                                        color="orange"
+                                        type="time"
+                                        name="waktu_selesai"
+                                        value={tambahProker.waktu_selesai}
+                                        onChange={handleTambahChange}
+                                        className="w-full border p-2 rounded-md"
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <InputLabel htmlFor="add-penanggung_jawab">
