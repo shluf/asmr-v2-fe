@@ -9,7 +9,7 @@ export const useSuratActions = (refetchCallback) => {
         setActionLoading(prev => ({ ...prev, [`terbit_${id_approval}`]: true }))
         try {
             const response = await axios.get(`/api/surat/${id_approval}/generate`)
-            if (response.status === 200 && response.data && response.data.status === 'success') {
+            if (response.status === 200 && response.data) {
                 showAlert({
                     title: "Berhasil!",
                     desc: response.data.message || "Surat berhasil diterbitkan.",
