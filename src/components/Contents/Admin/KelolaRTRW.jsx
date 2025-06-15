@@ -23,13 +23,15 @@ import {
   updatePejabatRW,
   unassignPejabatRT,
   unassignPejabatRW,
+  updateWilayah,
 } from '@/hooks/admin'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog"
-import { ChevronDown, ChevronRight, Sparkles } from 'lucide-react'
+import { ChevronDown, ChevronRight, Pencil, Send, Sparkles } from 'lucide-react'
 import { Skeleton } from "@/components/ui/skeleton"
+import { showAlert } from '@/components/partials/Alert'
 
 const KelolaRTRW = ({ initialType, initialId }) => {
   const [rwList, setRwList] = useState([])
@@ -45,6 +47,9 @@ const KelolaRTRW = ({ initialType, initialId }) => {
 
   const [isAddWilayahModalOpen, setIsAddWilayahModalOpen] = useState(false)
   const [expandedRwIds, setExpandedRwIds] = useState({})
+
+  const [editingWilayah, setEditingWilayah] = useState({ type: null, id: null, value: '' });
+  const [isUpdating, setIsUpdating] = useState(false) // Tambahan state untuk mencegah blur cancel
 
   const defaultPejabatFormValues = {
     id_warga: '',
@@ -84,6 +89,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
   useEffect(() => {
     loadInitialData()
   }, [loadInitialData])
+
   useEffect(() => {
     if (!hasAutoSelected && !isLoadingInitial && initialType && initialId && (rwList.length > 0 || rtList.length > 0)) {
       const type = initialType.toUpperCase()
@@ -112,6 +118,8 @@ const KelolaRTRW = ({ initialType, initialId }) => {
   }, [hasAutoSelected, isLoadingInitial, initialType, initialId, rwList, rtList])
 
   const handleSelectItem = async (type, id) => {
+    if (editingWilayah.id && !isUpdating) handleCancelEdit();
+
     setIsLoadingDetails(true)
     setSelectedItem({ type, id })
     resetPejabatForm(defaultPejabatFormValues)
@@ -164,6 +172,74 @@ const KelolaRTRW = ({ initialType, initialId }) => {
       setIsLoadingDetails(false)
     }
   }
+
+  // --- FUNGSI UNTUK EDIT INLINE ---
+  const handleStartEdit = (e, type, id, currentName) => {
+    e.stopPropagation();
+    const numericValue = currentName.replace(/[^0-9]/g, '');
+    setEditingWilayah({ type, id, value: numericValue });
+  };
+
+  const handleCancelEdit = () => {
+    if (isUpdating) return; // Jangan cancel jika sedang update
+    setEditingWilayah({ type: null, id: null, value: '' });
+  };
+
+  const handleEditValueChange = (e) => {
+    setEditingWilayah(prev => ({ ...prev, value: e.target.value }));
+  };
+
+  const handleUpdateWilayahName = async () => {
+    if (!editingWilayah.type || !editingWilayah.id) return;
+  
+    setIsUpdating(true); // Set flag bahwa sedang update
+
+    const { type, id, value } = editingWilayah;
+  
+    if (!/^\d{1,3}$/.test(value)) {
+      showAlert({ 
+        title: "Input Tidak Valid", 
+        desc: "Nomor wilayah harus berupa 1-3 digit angka.", 
+        message: "Silakan coba lagi.",
+        success: false, 
+        color: "red" 
+      });
+      setIsUpdating(false);
+      return;
+    }
+  
+    const paddedValue = value.padStart(3, '0');
+    const formattedName = `${type.toUpperCase()} ${paddedValue}`;
+    const data = {
+      id: id,
+      [`nama_${type}`]: formattedName
+    };
+  
+    const success = await updateWilayah(type, data, setIsSubmitting, async (updatedData) => {
+      await loadInitialData();
+      if (selectedItem?.type.toLowerCase() === type && selectedItem?.id === id) {
+        handleSelectItem(selectedItem.type, selectedItem.id);
+      }
+    });
+  
+    if (success) {
+      handleCancelEdit();
+    }
+    
+    setIsUpdating(false); // Reset flag setelah selesai
+  };
+  
+  const handleEditKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleUpdateWilayahName();
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancelEdit();
+    }
+  };
+  // --- AKHIR FUNGSI UNTUK EDIT INLINE ---
 
   const handleToggleRwDropdown = (rwId, e) => {
     e.stopPropagation()
@@ -357,47 +433,128 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                 const rwId = rw.id_rw || rw.id
                 const isExpanded = !!expandedRwIds[rwId]
                 const isSelected = selectedItem?.type === 'RW' && selectedItem?.id === rwId
+                const isEditing = editingWilayah.type === 'rw' && editingWilayah.id === rwId;
 
                 return (
                   <div key={rwId} className="my-1">
                     <div 
-                      className={`p-2 border rounded cursor-pointer hover:bg-slate-100 flex justify-between items-center ${isSelected ? 'bg-slate-200 border-slate-400' : ''}`}
-                      onClick={() => handleSelectRw(rwId)}
+                      className={`p-2 border rounded flex justify-between items-center ${isSelected ? 'bg-slate-200 border-slate-400' : 'hover:bg-slate-100'} ${!isEditing ? 'cursor-pointer group' : ''}`}
+                      onClick={!isEditing ? () => handleSelectRw(rwId) : undefined}
                     >
                       <div className="flex-grow">
-                        <span className={`font-semibold ${isSelected ? 'text-blue-700' : ''}`}>{rw.nama_rw}</span>
-                        {rw.pejabat && <p className="text-xs text-gray-600">Ketua: {rw.pejabat.nama_warga}</p>}
+                        {isEditing ? (
+                          <div className="flex items-center gap-1">
+                            <span className="font-semibold">RW</span>
+                            <input
+                                type="number"
+                                value={editingWilayah.value}
+                                onChange={handleEditValueChange}
+                                onKeyDown={handleEditKeyDown}
+                                onBlur={() => {
+                                  setTimeout(() => {
+                                    if (!isUpdating) {
+                                      handleCancelEdit();
+                                    }
+                                  }, 300);
+                                }}
+                                autoFocus
+                                className="w-16 p-1 border-b-2 border-blue-500 rounded-sm focus:outline-none bg-transparent"
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <span className={`font-semibold ${isSelected ? 'text-blue-700' : ''}`}>{rw.nama_rw}</span>
+                            {rw.pejabat && <p className="text-xs text-gray-600">Ketua: {rw.pejabat.nama_warga}</p>}
+                          </>
+                        )}
                       </div>
-                      {rtsInRw.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={(e) => handleToggleRwDropdown(rwId, e)}
-                          className="p-1 hover:bg-slate-200 rounded-sm transition-colors"
-                          aria-label={`${isExpanded ? 'Tutup' : 'Buka'} daftar RT di ${rw.nama_rw}`}
+                      <div className="flex items-center">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className={`p-3 h-4 w-4 hover:bg-slate-200 rounded-sm transition-opacity text-black ${!isEditing && 'opacity-0 group-hover:opacity-100'}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isEditing) {
+                              handleUpdateWilayahName();
+                            } else {
+                              handleStartEdit(e, 'rw', rwId, rw.nama_rw);
+                            }
+                          }}
                         >
-                          {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-                        </button>
-                      )}
+                          {isEditing ? <Send size={16} className="text-blue-600"/> : <Pencil size={16} />}
+                        </Button>
+                        {rtsInRw.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleToggleRwDropdown(rwId, e)}
+                            className="p-3 hover:bg-slate-200 rounded-sm transition-colors"
+                            aria-label={`${isExpanded ? 'Tutup' : 'Buka'} daftar RT di ${rw.nama_rw}`}
+                          >
+                            {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                          </button>
+                        )}
+                      </div>
                     </div>
                     {isExpanded && rtsInRw.length > 0 && (
                       <div className="ml-4 mt-1 pl-2 border-l-2 border-slate-200">
                         {rtsInRw.map(rt => {
                           const rtId = rt.id_rt || rt.id
                           const isRtSelected = selectedItem?.type === 'RT' && selectedItem?.id === rtId
+                          const isRtEditing = editingWilayah.type === 'rt' && editingWilayah.id === rtId;
+
                           return (
                             <div 
                               key={rtId} 
-                              className={`p-2 my-1 border-b border-slate-100 rounded-r cursor-pointer hover:bg-slate-50 transition-colors ${isRtSelected ? 'bg-blue-50 border-blue-200 font-medium text-blue-700' : ''}`}
-                              onClick={(e) => handleSelectRt(rtId, e)}
+                              className={`p-2 my-1 border-b border-slate-100 rounded-r transition-colors flex items-center justify-between ${isRtSelected ? 'bg-blue-50 border-blue-200' : 'hover:bg-slate-50'} ${!isRtEditing ? 'cursor-pointer group' : ''}`}
+                              onClick={!isRtEditing ? (e) => handleSelectRt(rtId, e) : undefined}
                             >
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <span className={isRtSelected ? 'font-semibold' : ''}>{rt.nama_rt}</span>
-                                  {rt.pejabat && <p className="text-xs text-gray-500">Ketua: {rt.pejabat.nama_warga}</p>}
-                                </div>
-                                {isRtSelected && (
-                                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                              <div className='flex-grow'>
+                                {isRtEditing ? (
+                                  <div className="flex items-center gap-1">
+                                    <span className="font-semibold">RT</span>
+                                    <input
+                                      type="number"
+                                      value={editingWilayah.value}
+                                      onChange={handleEditValueChange}
+                                      onKeyDown={handleEditKeyDown}
+                                      onBlur={() => {
+                                        setTimeout(() => {
+                                          if (!isUpdating) {
+                                            handleCancelEdit();
+                                          }
+                                        }, 300);
+                                      }}
+                                      autoFocus
+                                      className="w-16 p-1 border-b-2 border-blue-500 rounded-sm focus:outline-none bg-transparent"
+                                    />
+                                  </div>
+                                ) : (
+                                  <>
+                                    <span className={isRtSelected ? 'font-semibold text-blue-700' : ''}>{rt.nama_rt}</span>
+                                    {rt.pejabat && <p className="text-xs text-gray-500">Ketua: {rt.pejabat.nama_warga}</p>}
+                                  </>
                                 )}
+                              </div>
+                              <div className="flex items-center">
+                                  <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className={`p-3 h-4 w-4 hover:bg-slate-200 rounded-sm transition-opacity text-black ${!isRtEditing && 'opacity-0 group-hover:opacity-100'}`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (isRtEditing) {
+                                          handleUpdateWilayahName();
+                                        } else {
+                                          handleStartEdit(e, 'rt', rtId, rt.nama_rt);
+                                        }
+                                      }}
+                                  >
+                                      {isRtEditing ? <Send size={16} className="text-blue-600"/> : <Pencil size={16} />}
+                                  </Button>
+                                  {isRtSelected && !isRtEditing && (
+                                      <div className="w-2 h-2 ml-2 bg-blue-500 rounded-full" />
+                                  )}
                               </div>
                             </div>
                           )
@@ -437,7 +594,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                         control={rtControl}
                         rules={{ required: 'Nomor RT tidak boleh kosong', pattern: { value: /^\d{3}$/, message: 'Masukkan 3 digit angka' } }}
                         render={({ field }) => (
-                          <InputField label="Nomor RT" id="nama_rt_modal" type="number" controlNumber={true} pejabatNumber={true} {...field} error={rtErrors.nama_rt?.message} placeholder="Contoh: 001" />
+                          <InputField label="Nomor RT" id="nama_rt_modal" type="number" controlNumber={true} {...field} error={rtErrors.nama_rt?.message} placeholder="Contoh: 001" />
                         )}
                       />
                       <div>
@@ -472,7 +629,7 @@ const KelolaRTRW = ({ initialType, initialId }) => {
                         control={rwControl}
                         rules={{ required: 'Nomor RW tidak boleh kosong', pattern: { value: /^\d{3}$/, message: 'Masukkan 3 digit angka' } }}
                         render={({ field }) => (
-                          <InputField label="Nomor RW" id="nama_rw_modal" type="number" controlNumber={true} pejabatNumber={true} {...field} error={rwErrors.nama_rw?.message} placeholder="Contoh: 01" />
+                          <InputField label="Nomor RW" id="nama_rw_modal" type="number" controlNumber={true} {...field} error={rwErrors.nama_rw?.message} placeholder="Contoh: 009" />
                         )}
                       />
                       <DialogFooter className="pt-4">

@@ -422,6 +422,59 @@ export const createRWEntity = async (data, setIsLoading, callback) => {
   }
 }
 
+// Update Wilayah (RT/RW)
+export const updateWilayah = async (type, data, setIsLoading, callback) => {
+  if (!['rt', 'rw'].includes(type)) {
+    showAlert({
+      title: "Invalid Type",
+      desc: "Type harus berupa 'rt' atau 'rw'",
+      message: "Silakan coba lagi.",
+      success: false,
+      color: "red"
+    })
+    return false
+  }
+
+  setIsLoading(true)
+  try {
+    const response = await axios.put(`/api/wilayah/${type}`, data)
+    if (response.status === 200) {
+      showAlert({ 
+        title: "Sukses", 
+        desc: response.data?.message || `Data ${type.toUpperCase()} berhasil diperbarui.`, 
+        success: true, 
+        color: "green" 
+      })
+      if (callback) callback(response.data.data)
+      return true
+    }
+    showAlert({ 
+      title: `Gagal Update ${type.toUpperCase()}`, 
+      desc: response.data?.message || "Proses update gagal.", 
+      message: "Silakan coba lagi.", 
+      success: false, 
+      color: "orange" 
+    })
+    return false
+  } catch (error) {
+    const errorMessages = error.response?.data?.messages
+    let desc = error.response?.data?.message || error.message
+    if (errorMessages) {
+      desc = Object.values(errorMessages).flat().join('; ')
+    }
+    showAlert({ 
+      title: `Gagal Update ${type.toUpperCase()}`, 
+      desc: desc, 
+      message: "Silakan coba lagi.", 
+      success: false, 
+      color: "red"
+    })
+    return false
+  } finally {
+    setIsLoading(false)
+  }
+}
+
 // Register/Assign Pejabat (RT/RW)
 export const registerPejabat = async (formData, setIsLoading, callback) => {
   setIsLoading(true)
