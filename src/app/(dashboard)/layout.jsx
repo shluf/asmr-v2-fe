@@ -66,13 +66,14 @@ const DashboardLayout = ({
                         </div>
 
                         <div className="w-full flex-1">
-                            <h1 className="hidden sm:block text-lg font-semibold md:text-2xl">
+                            <h1 id="header-title" className="hidden sm:block text-lg font-semibold md:text-2xl">
                                 {header}
                             </h1>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button
+                                    id="profile-button"
                                     variant="secondary"
                                     size="icon"
                                     className={`group rounded-full text-${color} mb-2 focus-visible:ring-${color}`}
@@ -105,7 +106,7 @@ const DashboardLayout = ({
                                     </Link>
                                 }
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                                <DropdownMenuItem id="logout-button" onClick={logout} className="cursor-pointer">
                                     Logout
                                 </DropdownMenuItem>
                             </DropdownMenuContent>

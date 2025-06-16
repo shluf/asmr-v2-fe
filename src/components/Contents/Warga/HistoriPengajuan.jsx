@@ -157,7 +157,9 @@ const HistoriPengajuan = () => {
                       </div>
                       <div className="flex gap-2 min-w-full sm:min-w-48">
                         <CollapsibleTrigger asChild>
-                          <Button className="rounded-lg flex-1 bg-[#444444] text-white">
+                          <Button
+                            id="expand-button"
+                            className="rounded-lg flex-1 bg-[#444444] text-white">
                             {openItems[index] ? "Sembunyikan" : "Selengkapnya"}
                           </Button>
                         </CollapsibleTrigger>
@@ -166,6 +168,7 @@ const HistoriPengajuan = () => {
                           (step) => step.title === "Penerbitan Surat" && step.status === "approved"
                         ) && (
                           <Button
+                            id="download-button"
                             disabled={isDownloadLoading}
                             variant="icon"
                             className="rounded-lg bg-[#444444] text-white"
