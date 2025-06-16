@@ -33,9 +33,9 @@ function Alert({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="max-w-md rounded-3xl">
+      <AlertDialogContent id="alert-content" className="max-w-md rounded-3xl">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-2xl font-bold mb-4 text-center text-[#2C3E50]">
+          <AlertDialogTitle id="alert-title" className="text-2xl font-bold mb-4 text-center text-[#2C3E50]">
             {title}
           </AlertDialogTitle>
           <div className="flex justify-center">
@@ -65,13 +65,14 @@ function Alert({
 
           {onConfirm ? (
             <PrimaryButton
+              id="alert-confirm-button"
               color="green"
               onClick={handleConfirm}
             >
               {confirmButtonText}
             </PrimaryButton>
           ) : (
-              <PrimaryButton color="green" onClick={onClose}>
+              <PrimaryButton id="alert-close-button" color="green" onClick={onClose}>
                 Tutup
               </PrimaryButton>
           )}
