@@ -46,7 +46,7 @@ const RegisterForm = () => {
         provinsi: '',
         agama: '',
     })
-    const [errors, setErrors] = useState([])
+    const [errors, setErrors] = useState({})
     const [provinces, setProvinces] = useState([])
     const [regencies, setRegencies] = useState([])
 
@@ -96,7 +96,7 @@ const RegisterForm = () => {
                 color="yellow"
                 {...props}
             />
-            <InputError messages={error} className="mt-1" />
+            <InputError message={error} className="mt-1" />
         </div>
     )
 
@@ -111,23 +111,38 @@ const RegisterForm = () => {
     const submitForm = async event => {
         event.preventDefault()
 
+        const newErrors = {}
+
+        if (data.nik && data.nik.length < 16) {
+            newErrors.nik = ['NIK minimal 16 digit']
+        }
+
+        if (data.nomer_kk && data.nomer_kk.length < 16) {
+            newErrors.nomer_kk = ['Nomor KK minimal 16 digit']
+        }
+
+        if (data.password && data.password.length < 8) {
+            newErrors.password = ['Password minimal 8 karakter']
+        }
+
         if (data.password !== data.password_confirmation) {
-            setErrors({ password_confirmation: ['Password konfirmasi tidak cocok'] })
+            newErrors.password_confirmation = ['Password konfirmasi tidak cocok']
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors)
             showAlert({
-                title: "Gagal",
-                desc: "Registrasi gagal",
-                message: "Password konfirmasi tidak cocok",
+                title: 'Gagal',
+                desc: 'Registrasi gagal',
+                message: 'Silahkan cek kembali data yang anda masukkan',
                 success: false,
-                color: "red",
+                color: 'red',
             })
-            
-            setData(prev => ({
-                ...prev,
-                password: '',
-                password_confirmation: ''
-            }))
+            console.log(errors)
             return
         }
+        
+        setErrors({})
 
         const status = await register({
             ...data,
