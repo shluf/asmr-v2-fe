@@ -204,6 +204,7 @@ const ApprovalRole = () => {
                                                     0 ? (
                                                         <div className="flex space-x-2 justify-center">
                                                             <Button
+                                                                id="reject-button"
                                                                 variant="outline"
                                                                 size="sm"
                                                                 className="h-8 px-3 border-red-500 text-red-500 hover:bg-red-500 hover:text-white disabled:opacity-50"
