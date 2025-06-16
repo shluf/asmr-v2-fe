@@ -1,6 +1,7 @@
 import React from 'react'
 
 const PrimaryButton = React.forwardRef(({
+    id,
     className,
     disabled,
     color = 'red',
@@ -34,6 +35,7 @@ const PrimaryButton = React.forwardRef(({
 
     return (
         <button
+            id={id}
             ref={ref}
             {...props}
             className={`
