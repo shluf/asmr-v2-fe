@@ -46,7 +46,7 @@ const SideBar = ({ color, userRole }) => {
     }
     
     if (userRole === "Warga") {
-      if (route === "pengajuan" || route === "histori" || route === "akun" || route === "bantuan") {
+      if (route === "pengajuan" || route === "daftar-pengajuan" || route === "akun" || route === "bantuan") {
         return `/warga/${route}`
       }
       return "/warga"

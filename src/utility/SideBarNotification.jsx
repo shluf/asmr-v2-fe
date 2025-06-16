@@ -21,7 +21,7 @@ const useNotificationStore = create((set) => ({
   pageWargaRoutes: [
     { name: 'Dashboard', jenis: 'proker', route: 'dashboard', icon: 'home'},
     { name: 'Pengajuan', route: 'pengajuan', icon: 'file-up', notification: 0 },
-    { name: 'Histori Pengajuan', jenis: 'surat', route: 'histori', icon: 'history', notification: 0 },
+    { name: 'Daftar Pengajuan', jenis: 'surat', route: 'daftar-pengajuan', icon: 'history', notification: 0 },
     { name: 'Akun', route: 'akun', icon: 'user' },
     { name: 'Bantuan', route: 'bantuan', icon: 'settings' }
   ],

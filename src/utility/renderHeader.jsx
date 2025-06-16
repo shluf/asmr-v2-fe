@@ -16,7 +16,7 @@ const pageRTRWRoutes = [
 const pageWargaRoutes = [
     { name: 'Dashboard', route: ''},
     { name: 'Pengajuan Surat', route: 'pengajuan'},
-    { name: 'Histori Pengajuan', route: 'histori'},
+    { name: 'Daftar Pengajuan', route: 'daftar-pengajuan'},
     { name: 'Akun', route: 'akun'},
     { name: 'Bantuan', route: 'bantuan'}
 ]

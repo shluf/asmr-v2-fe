@@ -207,6 +207,56 @@ export const fetchApprovalRoleData = async (setIsLoading, setDataWarga) => {
   }
 }
 
+export const fetchWilayahStats = async (rwId, setStats, setLoading) => {
+  setLoading(true)
+  try {
+    const response = await axios.get('/api/biodata/')
+    if (response.status !== 200 || !response.data) {
+      throw new Error("Failed to fetch biodata")
+    }
+
+    const { rt: allRts, rw: allRws, warga: allWarga } = response.data
+
+    let wargaCount = 0
+    let pejabatCount = 0
+
+    if (rwId === 'all') {
+      wargaCount = allWarga?.length || 0
+      const rwPejabatCount = allRws?.filter(item => item.data && item.data.pejabat).length || 0
+      const rtPejabatCount = allRts?.filter(item => item.data && item.data.pejabat).length || 0
+      pejabatCount = rwPejabatCount + rtPejabatCount
+    } else {
+      const numericRwId = Number(rwId)
+      
+      const rtsInRw = allRts?.filter(item => item.id_rw === numericRwId) || []
+      const rtIdsInRw = rtsInRw.map(item => item.id)
+
+      wargaCount = allWarga?.filter(warga => rtIdsInRw.includes(warga.id_rt)).length || 0
+
+      const selectedRw = allRws?.find(item => item.id === numericRwId)
+      if (selectedRw && selectedRw.data && selectedRw.data.pejabat) {
+        pejabatCount += 1
+      }
+      
+      const rtPejabatCount = rtsInRw.filter(item => item.data && item.data.pejabat).length || 0
+      pejabatCount += rtPejabatCount
+    }
+
+    setStats({ warga: wargaCount, pejabat: pejabatCount })
+  } catch (error) {
+    setStats({ warga: 0, pejabat: 0 })
+    showAlert({
+      title: "Gagal Memuat Statistik Wilayah",
+      desc: "Terjadi kesalahan saat mengambil data statistik.",
+      message: "Tidak dapat memuat data warga dan pejabat.",
+      success: false,
+      color: "red",
+    })
+  } finally {
+    setLoading(false)
+  }
+}
+
 // -------------------------------
 // START: RT/RW Management Hooks
 // -------------------------------

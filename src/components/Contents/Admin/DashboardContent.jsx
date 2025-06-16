@@ -6,11 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ShieldCheck, ChevronRight, ChevronLeft, TrendingUp, Lightbulb, TrendingDown } from "lucide-react"
-import { fetchCountPengajuanJenis, fetchPengajuanBulanan, fetchWargaPendingData } from "@/hooks/admin"
+import { ShieldCheck, ChevronRight, ChevronLeft, TrendingUp, Lightbulb, TrendingDown, Users, User2Icon } from "lucide-react"
+import { fetchCountPengajuanJenis, fetchPengajuanBulanan, fetchWargaPendingData, fetchWilayahStats } from "@/hooks/admin"
 import Link from "next/link"
 import { Bar, BarChart, CartesianGrid, XAxis, PieChart, Pie, Cell } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import axios from "@/lib/axios"
+import { showAlert } from "@/components/partials/Alert"
 
 const DashboardContent = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -20,6 +22,9 @@ const DashboardContent = () => {
   const [currentYear] = useState(new Date().getFullYear())
   const [currentMonth] = useState(new Date().getMonth())
   const [pengajuanJenis, setPengajuanJenis] = useState([{ jenis_surat: "Lainnya", total: 0 }])
+  const [actionLoading, setActionLoading] = useState({})
+  const [wilayahStats, setWilayahStats] = useState({ warga: 0, pejabat: 0 })
+  const [statsLoading, setStatsLoading] = useState(true)
 
   const bulanIndonesia = [
     "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -165,6 +170,10 @@ const DashboardContent = () => {
     fetchPengajuanBulanan(setRawPengajuanData, currentYear)
   }, [])
 
+  useEffect(() => {
+    fetchWilayahStats(selectedRW, setWilayahStats, setStatsLoading)
+  }, [selectedRW])
+
   const legendData = [
     { name: "Pengantar KTP", color: "#2979FF" },
     { name: "Pengantar KK", color: "#00D1FF" },
@@ -188,6 +197,35 @@ const DashboardContent = () => {
       color: legendItem ? legendItem.color : "#9E9E9E",
     }
   })
+
+  const handleApprovalAction = async (pendingId, newStatus) => {
+    setActionLoading(prev => ({ ...prev, [pendingId]: true }))
+    const status = newStatus === 'approved' ? 'approve' : 'reject'
+    try {
+        await axios.put(`/api/approval-role/warga/${pendingId}/${status}`)
+        showAlert({
+            title: 'Berhasil!',
+            desc: `Permintaan berhasil di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+            message: `Silakan cek kembali data warga yang telah di-${newStatus === 'approved' ? 'setujui' : 'tolak'}.`,
+            success: true,
+            color: 'green',
+        })
+        fetchWargaPendingData(setDataWarga, setIsLoading)
+    } catch (error) {
+        showAlert({
+            title: 'Gagal!',
+            desc:
+                error.response?.data?.message ||
+                `Gagal ${newStatus === 'approved' ? 'menyetujui' : 'menolak'} permintaan.`,
+            message: 'Silakan coba lagi.',
+            success: false,
+            color: 'red',
+            errors: error.response?.data?.errors,
+        })
+    } finally {
+        setActionLoading(prev => ({ ...prev, [pendingId]: false }))
+    }
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -265,7 +303,7 @@ const DashboardContent = () => {
               </div>
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
-              <div className="flex gap-2 bg-blue-100 p-2 rounded-lg items-center">
+              <div className="flex w-full gap-2 bg-blue-100 p-2 rounded-lg items-center">
                 <div className="flex items-center p-4">
                   <Lightbulb className="h-6 w-6 text-blue" />
                 </div>
@@ -275,6 +313,30 @@ const DashboardContent = () => {
                   </div>
                   <div className="text-muted-foreground leading-none">
                     Menampilkan total pengajuan untuk {currentPeriod === "first" ? "6 bulan pertama" : "6 bulan terakhir"}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-4 w-full">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center p-4 bg-gray-100 rounded-lg">
+                    <User2Icon className="h-6 w-6 text-blue" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-lg">
+                      {statsLoading ? <Skeleton className="h-5 w-10" /> : wilayahStats.pejabat}
+                    </div>
+                    <div className="text-muted-foreground text-xs">Jumlah Pejabat</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center p-4 bg-gray-100 rounded-lg">
+                    <Users className="h-6 w-6 text-blue" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-lg">
+                      {statsLoading ? <Skeleton className="h-5 w-10" /> : wilayahStats.warga}
+                    </div>
+                    <div className="text-muted-foreground text-xs">Jumlah Warga</div>
                   </div>
                 </div>
               </div>
@@ -385,24 +447,26 @@ const DashboardContent = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full md:flex-1 gap-4">
-                        <div>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 w-full md:flex-1 gap-4 text-sm pr-2">
+                        <div className="space-y-1">
                           <div className="text-sm text-gray-500">Nama</div>
                           <div>{warga.nama}</div>
                         </div>
-                        <div>
-                          <div className="text-sm text-gray-500">NIK</div>
+                        <div className="space-y-1 sm:col-span-1 lg:col-span-1">
+                          <div className="text-sm text-gray-500 col-span-2">NIK</div>
                           <div className="text-ellipsis">{warga.nik}</div>
                         </div>
-                        <div>
-                          <div className="text-sm text-gray-500">RT</div>
-                          <div>{warga.no_rt}</div>
+                        <div className=" flex flex-col sm:flex-row lg:justify-start xl:justify-center items-start gap-2">
+                          <div>
+                            <div className="text-sm text-gray-500">RT</div>
+                            <div>{warga.no_rt}</div>
+                          </div>
+                          <div>
+                            <div className="text-sm text-gray-500">RW</div>
+                            <div>{warga.no_rw}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-sm text-gray-500">RW</div>
-                          <div>{warga.no_rw}</div>
-                        </div>
-                        <div className="flex-row items-center justify-center">
+                        <div className="space-y-1 flex-row items-center justify-center">
                           <div className="text-sm text-center text-gray-500">Status</div>
                           <div className="bg-[#FFC107] text-white px-3 py-1 rounded-full text-sm text-center">
                             {warga.user.status_akun === 0
@@ -414,11 +478,11 @@ const DashboardContent = () => {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
-                        <Button variant="destructive" className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 w-full sm:w-auto">
+                      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                        <Button onClick={() => handleApprovalAction(warga.id, "rejected")} disabled={actionLoading[warga.id]} variant="destructive" className="bg-[#FF3B30] hover:bg-[#FF3B30]/90 w-full sm:w-auto">
                           Tolak
                         </Button>
-                        <Button className="bg-[#4CAF50] hover:bg-[#4CAF50]/90 w-full sm:w-auto">Setujui</Button>
+                        <Button onClick={() => handleApprovalAction(warga.id, "approved")} disabled={actionLoading[warga.id]} className="bg-[#4CAF50] hover:bg-[#4CAF50]/90 w-full sm:w-auto">Setujui</Button>
                         <Link href={`/admin/approval-role`} className="w-full sm:w-auto flex justify-center">
                           <Button variant="ghost" className="rounded-full p-2 w-full sm:w-auto">
                             <ChevronRight className="h-5 w-5" />

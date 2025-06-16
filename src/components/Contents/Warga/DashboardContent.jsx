@@ -134,7 +134,7 @@ const DashboardContent = () => {
                                                 {dataPengajuan.approval_surat?.status_approval.replace(/_/g, ' ')}
                                             </div>
                                         </div>
-                                        <Link href="/warga/histori">
+                                        <Link href="/warga/daftar-pengajuan">
                                             <Button
                                                 variant="outline"
                                                 className="rounded-full mt-2"

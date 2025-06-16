@@ -78,24 +78,20 @@ const RekapPengajuan = ({ select }) => {
           rekapSurat.data.map((surat) => {
             const isItemOpen = openItems[surat.id] || false
             let rtStatus = 'pending'
-            if (surat.approval?.status_rt === 'Disetujui' || surat.status === 'Diproses_RW' || surat.status === 'Selesai' || surat.status === 'Disetujui' || surat.status === 'Ditolak_RW') {
+            if (surat.approval_surat.status_approval === 'Disetujui_RT' || surat.approval_surat.status_approval === 'Selesai' || surat.approval_surat.status_approval === 'Disetujui_RW' || surat.approval_surat.status_approval === 'Ditolak_RW') {
               rtStatus = 'approved'
-            } else if (surat.approval?.status_rt === 'Ditolak' || surat.status === 'Ditolak_RT') {
+            } else if (surat.approval_surat.status_approval === 'Ditolak_RT') {
               rtStatus = 'rejected'
-            } else if (surat.status === 'Diajukan' || surat.status === 'Diproses_RT' || surat.approval?.status_rt === 'Diproses') {
-              rtStatus = 'pending'
             }
 
             let rwStatus = 'pending'
             if (rtStatus === 'approved') {
-                if (surat.approval?.status_rw === 'Disetujui' || surat.status === 'Selesai' || surat.status === 'Disetujui') {
+                if (surat.approval_surat.status_approval === 'Disetujui_RW' || surat.approval_surat.status_approval === 'Selesai') {
                     rwStatus = 'approved'
-                } else if (surat.approval?.status_rw === 'Ditolak' || surat.status === 'Ditolak_RW') {
+                } else if (surat.approval_surat.status_approval === 'Ditolak_RW') {
                     rwStatus = 'rejected'
-                } else if (surat.status === 'Diproses_RW' || surat.approval?.status_rw === 'Diproses') {
-                    rwStatus = 'pending'
                 }
-            } else if (rtStatus === 'rejected') {
+            } else if (rtStatus !== 'approved') {
                 rwStatus = 'disabled'
             }
 

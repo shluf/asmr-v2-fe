@@ -113,12 +113,12 @@ const RegisterForm = () => {
 
         const newErrors = {}
 
-        if (data.nik && data.nik.length < 16) {
-            newErrors.nik = ['NIK minimal 16 digit']
+        if (data.nik && data.nik.length !== 16) {
+            newErrors.nik = ['NIK harus terdiri dari 16 digit']
         }
 
-        if (data.nomer_kk && data.nomer_kk.length < 16) {
-            newErrors.nomer_kk = ['Nomor KK minimal 16 digit']
+        if (data.nomer_kk && data.nomer_kk.length !== 16) {
+            newErrors.nomer_kk = ['Nomor KK harus terdiri dari 16 digit']
         }
 
         if (data.password && data.password.length < 8) {

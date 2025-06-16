@@ -33,7 +33,7 @@ export const useProgramKerjaRW = () => {
         delete: false,
     })
 
-    const fetchProkerData = useCallback(async () => {
+    const fetchProkerData = async () => {
         setProkerIsLoading(true)
         try {
             const response = await axios.get(`/api/proker/`)
@@ -61,11 +61,11 @@ export const useProgramKerjaRW = () => {
         } finally {
             setProkerIsLoading(false)
         }
-    }, [])
+    }
 
     useEffect(() => {
         fetchProkerData()
-    }, [fetchProkerData])
+    }, [])
 
     const handleEdit = (prokerItem) => {
         setEditProker({

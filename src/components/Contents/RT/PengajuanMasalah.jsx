@@ -138,7 +138,7 @@ const PengajuanMasalah = () => {
                     </div>
 
                     <CollapsibleTrigger asChild>
-                      <Button className="rounded-lg bg-[#444444] text-white">
+                      <Button id="expand-button" className="rounded-lg bg-[#444444] text-white">
                         {openItemsRT[surat.id] ? "Sembunyikan" : "Detail Surat"}
                       </Button>
                     </CollapsibleTrigger>
@@ -222,6 +222,7 @@ const PengajuanMasalah = () => {
                 {(surat.approval_surat.status_approval === 'Pending') ? (
                   <div className="flex gap-2 justify-end items-center w-full mt-4">
                     <PrimaryButton
+                      id="reject-button"
                       color="red"
                       rounded='full'
                       disabled={isActionLoadingRT[surat.id]}
@@ -231,6 +232,7 @@ const PengajuanMasalah = () => {
                       {isActionLoadingRT[surat.id] ? 'Menolak...' : 'Tolak'}
                     </PrimaryButton>
                     <PrimaryButton
+                      id="approve-button"
                       color="green"
                       rounded='full'
                       disabled={isActionLoadingRT[surat.id]}
@@ -242,7 +244,7 @@ const PengajuanMasalah = () => {
                   </div>
                 ) : surat.approval_surat.status_approval === "Disetujui_RT" ? (
                   <div className="flex gap-2 justify-end items-center w-full mt-4">
-                  <PrimaryButton 
+                  <PrimaryButton
                     color="green"
                     rounded='full'
                   >

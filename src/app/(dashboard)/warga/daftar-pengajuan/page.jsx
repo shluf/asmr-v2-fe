@@ -3,10 +3,10 @@
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import HistoriPengajuan from '@/components/Contents/Warga/HistoriPengajuan'
+import DaftarPengajuan from '@/components/Contents/Warga/DaftarPengajuan'
 import Loading from '@/components/partials/Loading'
 
-export default function HistoriPage() {
+export default function DaftarPengajuanPage() {
     const { user } = useAuth({ middleware: 'auth' })
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
@@ -30,7 +30,7 @@ export default function HistoriPage() {
 
     return (
         <div className="p-4">
-            <HistoriPengajuan nikWarga={user?.nik} />
+            <DaftarPengajuan nikWarga={user?.nik} />
         </div>
     )
 } 
