@@ -225,6 +225,7 @@ const ApprovalRole = () => {
                                                                 Tolak
                                                             </Button>
                                                             <Button
+                                                                id="approve-button"
                                                                 variant="outline"
                                                                 size="sm"
                                                                 className="h-8 px-3 border-green-500 text-green-500 hover:bg-green-500 hover:text-white disabled:opacity-50"
