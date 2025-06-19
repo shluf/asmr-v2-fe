@@ -170,7 +170,7 @@ const RekapPengajuan = ({ select }) => {
               <CollapsibleContent className='mb-7 mx-2 rounded-b-lg px-8 md:px-16 bg-[#d9d9d926] p-5 shadow-inner'>
                 <div className="mt-6 space-y-4 text-sm">
                   <p className="text-gray-600">
-                    Yang bertanda tangan di bawah ini Ketua RT {surat.approval?.pejabat_rt?.warga?.nama || 'undefined'} RW {surat.approval?.pejabat_rw?.warga?.nama || 'undefined'} {surat.warga?.alamat_ktp || surat.warga?.alamat?.nama_jalan || 'Alamat undefined'},
+                    Yang bertanda tangan di bawah ini Ketua {surat.warga?.rt?.nama_rt || 'undefined'} {surat.warga?.rt?.rw?.nama_rw || 'undefined'} {surat.detail_pemohon?.alamat_pemohon || 'Alamat undefined'},
                     memberikan keterangan kepada:
                   </p>
                   <div className="text-gray-800 space-y-2">
@@ -214,7 +214,7 @@ const RekapPengajuan = ({ select }) => {
                   </div>
 
                   <div className="mt-4">
-                    <p className="mb-2 text-gray-600">Benar bahwa yang bersangkutan adalah warga RT {surat.approval?.pejabat_rt?.warga?.nama || 'undefined'} RW {surat.approval?.pejabat_rw?.warga?.nama || 'undefined'} yang beralamat di{" "}
+                    <p className="mb-2 text-gray-600">Benar bahwa yang bersangkutan adalah warga {surat.warga?.rt?.nama_rt || 'undefined'} {surat.warga?.rt?.rw?.nama_rw || 'undefined'} yang beralamat di{" "}
                     {surat.detail_pemohon?.alamat_pemohon || 'Alamat undefined'}, dan bermaksud untuk mengurus surat:</p>
                     <div className="mt-4 ml-6 space-y-2">
                       {[
