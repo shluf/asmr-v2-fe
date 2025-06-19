@@ -1,11 +1,11 @@
-'use client';
-import { ArrowLeftIcon, HomeIcon } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import ApplicationLogo from '@/components/Atoms/ApplicationLogo';
+'use client'
+import { ArrowLeftIcon, HomeIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import ApplicationLogo from '@/components/Atoms/ApplicationLogo'
 
 const NotFoundPage = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4">
@@ -49,7 +49,7 @@ const NotFoundPage = () => {
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotFoundPage;
+export default NotFoundPage

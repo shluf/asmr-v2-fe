@@ -138,7 +138,6 @@ const RegisterForm = () => {
                 success: false,
                 color: 'red',
             })
-            console.log(errors)
             return
         }
         
