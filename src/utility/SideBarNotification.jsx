@@ -9,7 +9,7 @@ const useNotificationStore = create((set) => ({
     { name: 'Dashboard', jenis: 'proker', route: 'dashboard', icon: 'home' },
     { name: 'Biodata User', route: 'biodata-user', icon: 'linechart', notification: 0 },
     { name: 'Rekap Pengajuan Warga', route: 'rekap-pengajuan', icon: 'history', notification: 0 },
-    { name: 'Approval Role', route: 'approval-role', icon: 'user', notification: 0 },
+    { name: 'Approval Role', jenis: 'surat', route: 'approval-role', icon: 'user', notification: 0 },
     { name: 'Kelola RT/RW', route: 'kelola-rtrw', icon: 'settings' }
   ],
   pageRTRWRoutes: [
